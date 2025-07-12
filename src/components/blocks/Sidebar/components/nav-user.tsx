@@ -3,11 +3,8 @@
 import {
   BadgeCheck,
   Bell,
-  ChevronRight,
   ChevronsUpDown,
-  Languages,
   LogOut,
-  Sparkles,
 } from "lucide-react"
 
 import {
@@ -33,6 +30,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { ThemeToggle } from "./theme-toggle"
 
 export function NavUser({
   user,
@@ -93,10 +91,7 @@ export function NavUser({
                 <Bell />
                 Language
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Sparkles />
-                Dark/Light Toggle
-              </DropdownMenuItem>
+              <ThemeToggle />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
