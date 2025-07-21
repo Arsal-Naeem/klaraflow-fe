@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { useState } from 'react';
 import { ThemeProvider } from '@/contexts/theme-context';
+import { LanguageProvider } from '@/contexts/language-context';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -32,7 +33,9 @@ export function Providers({ children }: ProvidersProps) {
         disableTransitionOnChange={false}
       >
         <ThemeProvider>
-          {children}
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
         </ThemeProvider>
       </NextThemesProvider>
       <ReactQueryDevtools initialIsOpen={false} />
