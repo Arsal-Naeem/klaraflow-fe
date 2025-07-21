@@ -17,6 +17,7 @@ import { NavMain } from "@/components/blocks/Sidebar/components/nav-main";
 import { NavUser } from "@/components/blocks/Sidebar/components/nav-user";
 import { TeamSwitcher } from "@/components/blocks/Sidebar/components/team-switcher";
 import { NavFooter } from "@/components/blocks/Sidebar/components/nav-footer";
+import { useLanguage } from "@/contexts/language-context";
 import {
   Sidebar,
   SidebarContent,
@@ -111,8 +112,11 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { language } = useLanguage();
+  const sidebarSide = language === 'ar' ? 'right' : 'left';
+
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" side={sidebarSide} {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>

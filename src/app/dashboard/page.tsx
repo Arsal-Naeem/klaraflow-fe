@@ -1,4 +1,7 @@
+"use client";
+
 import { AppSidebar } from "@/components/blocks/Sidebar/app-sidebar"
+import { useLanguage } from "@/contexts/language-context"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,17 +17,27 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
+function RTLAwareSidebarTrigger() {
+  const { language } = useLanguage();
+  const triggerClass = language === 'ar' ? '-mr-1' : '-ml-1';
+  
+  return <SidebarTrigger className={triggerClass} />;
+}
+
 export default function Page() {
+  const { language } = useLanguage();
+  const separatorClass = language === 'ar' ? 'ml-2' : 'mr-2';
+
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
+            <RTLAwareSidebarTrigger />
             <Separator
               orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
+              className={`${separatorClass} data-[orientation=vertical]:h-4`}
             />
             <Breadcrumb>
               <BreadcrumbList>
