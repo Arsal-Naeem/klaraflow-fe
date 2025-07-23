@@ -1,7 +1,8 @@
 "use client";
 
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun, Monitor, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/contexts/theme-context";
+import { useLanguage } from "@/contexts/language-context";
 import {
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -11,6 +12,7 @@ import {
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const { language } = useLanguage();
 
   const themeOptions = [
     { value: "light", label: "Light", icon: Sun },
@@ -24,9 +26,14 @@ export function ThemeToggle() {
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger className="cursor-pointer">
-        <CurrentIcon className="h-4 w-4 mr-2" />
+      <DropdownMenuSubTrigger className={`cursor-pointer ${language === 'ar' ? 'flex-row-reverse' : ''} [&>svg:last-child]:hidden relative`}>
+        <CurrentIcon className={`h-4 w-4 ${language === 'ar' ? 'ml-4' : 'mr-4'}`} />
         Theme
+        {language === 'ar' ? (
+          <ChevronLeft className="mr-auto size-4" />
+        ) : (
+          <ChevronRight className="ml-auto size-4" />
+        )}
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
         {themeOptions.map((option) => {
@@ -39,12 +46,12 @@ export function ThemeToggle() {
               }
               className={`cursor-pointer ${
                 theme === option.value ? "bg-accent" : ""
-              }`}
+              } ${language === 'ar' ? 'flex-row-reverse' : ''}`}
             >
               <Icon className="h-4 w-4" />
               {option.label}
               {theme === option.value && (
-                <div className="ml-auto h-2 w-2 rounded-full bg-primary" />
+                <div className={`h-2 w-2 rounded-full bg-primary ${language === 'ar' ? 'mr-auto' : 'ml-auto'}`} />
               )}
             </DropdownMenuItem>
           );
