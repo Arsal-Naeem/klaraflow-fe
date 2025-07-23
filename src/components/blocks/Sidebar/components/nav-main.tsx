@@ -1,6 +1,11 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, ChevronDown, type LucideIcon } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  type LucideIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -16,6 +21,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -34,6 +40,7 @@ export function NavMain({
   }[];
 }) {
   const { language } = useLanguage();
+  const { state, setOpen } = useSidebar();
   const isArabic = language === "ar";
   const [openItems, setOpenItems] = useState<Record<string, boolean>>(() => {
     // Initialize with items that should be open by default
@@ -47,11 +54,21 @@ export function NavMain({
   });
 
   const toggleItem = (title: string) => {
+    if (state === "collapsed") {
+      setOpen(true);
+      setOpenItems((prev) => ({
+        ...prev,
+        [title]: true,
+      }));
+      return;
+    }
+
     setOpenItems((prev) => ({
       ...prev,
       [title]: !prev[title],
     }));
   };
+
   return (
     <SidebarGroup>
       {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
@@ -65,11 +82,18 @@ export function NavMain({
                 className="group/collapsible"
               >
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title} className="cursor-pointer">
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    className="cursor-pointer"
+                  >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     {openItems[item.title] ? (
-                      <ChevronDown className={`transition-transform duration-200 ${isArabic ? "mr-auto" : "ml-auto"}`} />
+                      <ChevronDown
+                        className={`transition-transform duration-200 ${
+                          isArabic ? "mr-auto" : "ml-auto"
+                        }`}
+                      />
                     ) : isArabic ? (
                       <ChevronLeft className="mr-auto transition-transform duration-200" />
                     ) : (
