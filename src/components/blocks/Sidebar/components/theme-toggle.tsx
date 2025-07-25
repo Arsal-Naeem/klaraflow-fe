@@ -1,8 +1,9 @@
 "use client";
 
 import { Moon, Sun, Monitor, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from 'next-intl';
 import { useTheme } from "@/stores/theme-store";
-import { useLanguage } from "@/stores/language-store";
+import { useLanguageNavigation } from '@/hooks/use-language-navigation';
 import {
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -11,13 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function ThemeToggle() {
+  const t = useTranslations();
   const { theme, setTheme } = useTheme();
-  const { language } = useLanguage();
+  const { locale } = useLanguageNavigation();
 
   const themeOptions = [
-    { value: "light", label: "Light", icon: Sun },
-    { value: "dark", label: "Dark", icon: Moon },
-    { value: "system", label: "System", icon: Monitor },
+    { value: "light", label: t('theme.light'), icon: Sun },
+    { value: "dark", label: t('theme.dark'), icon: Moon },
+    { value: "system", label: t('theme.system'), icon: Monitor },
   ];
 
   const currentThemeIcon =
@@ -26,10 +28,10 @@ export function ThemeToggle() {
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger className={`cursor-pointer ${language === 'ar' ? 'flex-row-reverse' : ''} [&>svg:last-child]:hidden relative`}>
-        <CurrentIcon className={`h-4 w-4 ${language === 'ar' ? 'ml-4' : 'mr-4'}`} />
-        Theme
-        {language === 'ar' ? (
+      <DropdownMenuSubTrigger className={`cursor-pointer ${locale === 'ar' ? 'flex-row-reverse' : ''} [&>svg:last-child]:hidden relative`}>
+        <CurrentIcon className={`h-4 w-4 ${locale === 'ar' ? 'ml-4' : 'mr-4'}`} />
+        {t('sidebar.theme')}
+        {locale === 'ar' ? (
           <ChevronLeft className="mr-auto size-4" />
         ) : (
           <ChevronRight className="ml-auto size-4" />
@@ -46,12 +48,12 @@ export function ThemeToggle() {
               }
               className={`cursor-pointer ${
                 theme === option.value ? "bg-accent" : ""
-              } ${language === 'ar' ? 'flex-row-reverse' : ''}`}
+              } ${locale === 'ar' ? 'flex-row-reverse' : ''}`}
             >
               <Icon className="h-4 w-4" />
               {option.label}
               {theme === option.value && (
-                <div className={`h-2 w-2 rounded-full bg-primary ${language === 'ar' ? 'mr-auto' : 'ml-auto'}`} />
+                <div className={`h-2 w-2 rounded-full bg-primary ${locale === 'ar' ? 'mr-auto' : 'ml-auto'}`} />
               )}
             </DropdownMenuItem>
           );

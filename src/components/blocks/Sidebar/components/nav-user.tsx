@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -33,6 +34,7 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const { language } = useLanguage();
+  const t = useTranslations();
 
   return (
     <SidebarMenu>
@@ -76,7 +78,7 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem className={`cursor-pointer ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
                 <BadgeCheck className={language === 'ar' ? 'ml-2' : 'mr-2'} />
-                Profile Settings
+                {t('user.profile')}
               </DropdownMenuItem>
               <LanguageToggle />
               <ThemeToggle />
@@ -84,7 +86,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem className={`cursor-pointer ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
               <LogOut className={language === 'ar' ? 'ml-2' : 'mr-2'} />
-              Logout
+              {t('user.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -5,6 +5,7 @@ import {
   Search,
 } from "lucide-react"
 import Link from "next/link"
+import { useTranslations } from 'next-intl';
 
 import { useState } from "react"
 import {
@@ -17,6 +18,7 @@ import {
 import { AskKlaraModal } from "@/components/blocks/Sidebar/components/ask-klara-modal"
 
 export function NavFooter() {
+  const t = useTranslations('sidebar');
   const [isAskKlaraOpen, setIsAskKlaraOpen] = useState(false)
 
   const handleAskKlara = () => {
@@ -26,13 +28,13 @@ export function NavFooter() {
   return (
     <>
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-        <SidebarGroupLabel>Settings</SidebarGroupLabel>
+        <SidebarGroupLabel>{t('settings')}</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/organization-settings">
                 <Settings />
-                <span>Organization Settings</span>
+                <span>{t('organizationSettings')}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -48,7 +50,7 @@ export function NavFooter() {
             >
               <SidebarMenuButton onClick={handleAskKlara} className="cursor-pointer bg-background rounded-md">
                 <Search />
-                <span>Ask Klara</span>
+                <span>{t('askKlara')}</span>
               </SidebarMenuButton>
             </div>
           </SidebarMenuItem>

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { ChevronsUpDown, Plus, UserPlus } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 import {
   DropdownMenu,
@@ -29,6 +30,7 @@ export function TeamSwitcher({
     plan: string;
   }[];
 }) {
+  const t = useTranslations('team');
   const { isMobile } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState(teams[0]);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = React.useState(false);
@@ -63,7 +65,7 @@ export function TeamSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Teams
+              {t('teams')}
             </DropdownMenuLabel>
             {teams.map((team, index) => (
               <DropdownMenuItem
@@ -83,7 +85,7 @@ export function TeamSwitcher({
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <Plus className="size-4" />
               </div>
-              <div className="text-muted-foreground font-medium">Add team</div>
+              <div className="text-muted-foreground font-medium">{t('addTeam')}</div>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer gap-2 p-2"
@@ -93,7 +95,7 @@ export function TeamSwitcher({
                 <UserPlus className="size-4" />
               </div>
               <div className="text-muted-foreground font-medium">
-                Invite Users
+                {t('inviteUsers')}
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>

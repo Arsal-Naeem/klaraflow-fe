@@ -1,0 +1,93 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "export": "تصدير",
+    "import": "استيراد",
+    "refresh": "تحديث",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "reset": "إعادة تعيين"
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "time": "الوقت",
+    "timesheet": "جدول الوقت",
+    "leaveRequest": "طلب إجازة",
+    "payroll": "كشف الراتب",
+    "company": "الشركة",
+    "employees": "الموظفون",
+    "departmentsTeams": "الأقسام/الفرق",
+    "reports": "التقارير"
+  },
+  "sidebar": {
+    "organizationSettings": "إعدادات المؤسسة",
+    "askKlara": "اسأل كلارا",
+    "settings": "الإعدادات",
+    "language": "اللغة",
+    "theme": "المظهر"
+  },
+  "theme": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "language": {
+    "english": "English",
+    "arabic": "العربية"
+  },
+  "askKlara": {
+    "placeholder": "اسأل كلارا أي شيء...",
+    "shortcut": "Enter",
+    "shortcutLabel": "للبحث"
+  },
+  "team": {
+    "teams": "الفرق",
+    "addTeam": "إضافة فريق",
+    "inviteUsers": "دعوة مستخدمين"
+  },
+  "organization": {
+    "name": "KlaraFlow",
+    "plan": "المؤسسة"
+  },
+  "user": {
+    "profile": "إعدادات الملف الشخصي",
+    "settings": "إعدادات الحساب",
+    "logout": "تسجيل الخروج",
+    "account": "الحساب"
+  },
+  "dashboard": {
+    "welcome": "أهلاً وسهلاً",
+    "overview": "نظرة عامة",
+    "recentActivity": "النشاط الحديث",
+    "quickActions": "إجراءات سريعة"
+  },
+  "forms": {
+    "validation": {
+      "required": "هذا الحقل مطلوب",
+      "email": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+      "minLength": "الحد الأدنى {min} أحرف مطلوب",
+      "maxLength": "الحد الأقصى {max} أحرف مسموح",
+      "pattern": "يرجى إدخال تنسيق صحيح"
+    }
+  },
+  "errors": {
+    "notFound": "الصفحة غير موجودة",
+    "unauthorized": "وصول غير مصرح به",
+    "serverError": "خطأ في الخادم الداخلي",
+    "networkError": "خطأ في اتصال الشبكة",
+    "validationError": "فشل في التحقق"
+  }
+}

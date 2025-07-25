@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Search, Send } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import {
   Dialog,
@@ -19,6 +20,7 @@ interface AskKlaraModalProps {
 }
 
 export function AskKlaraModal({ open, onOpenChange }: AskKlaraModalProps) {
+  const t = useTranslations("askKlara");
   const [query, setQuery] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,11 +43,10 @@ export function AskKlaraModal({ open, onOpenChange }: AskKlaraModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]" showCloseButton={false}>
-
-          <DialogTitle className="flex items-center gap-2 hidden">
-            <Search className="h-5 w-5" />
-            Ask Klara
-          </DialogTitle>
+        <DialogTitle className="flex items-center gap-2 hidden">
+          <Search className="h-5 w-5" />
+          Ask Klara
+        </DialogTitle>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
@@ -62,7 +63,7 @@ export function AskKlaraModal({ open, onOpenChange }: AskKlaraModalProps) {
             </div>
             <div className="relative">
               <Input
-                placeholder="Ask Klara anything..."
+                placeholder={t("placeholder")}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -83,9 +84,10 @@ export function AskKlaraModal({ open, onOpenChange }: AskKlaraModalProps) {
           <div className="text-xs text-muted-foreground text-center">
             Press{" "}
             <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-              <span className="text-xs">⌘</span>Enter
+              <span className="text-xs">⌘</span>
+              {t("shortcut")}
             </kbd>{" "}
-            to search
+            {t("shortcutLabel")}
           </div>
         </form>
       </DialogContent>

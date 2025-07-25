@@ -2,12 +2,11 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-type Language = 'en' | 'ar';
+import { type Locale } from '@/lib/locale-config';
 
 interface LanguageStore {
-  language: Language;
-  setLanguage: (language: Language) => void;
+  language: Locale;
+  setLanguage: (language: Locale) => void;
   isHydrated: boolean;
   setHydrated: (hydrated: boolean) => void;
 }

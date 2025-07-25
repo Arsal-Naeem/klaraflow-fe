@@ -7,6 +7,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 
 import {
   Collapsible,
@@ -23,7 +25,6 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useLanguage } from "@/stores/language-store";
 
 export function NavMain({
   items,
@@ -39,9 +40,10 @@ export function NavMain({
     }[];
   }[];
 }) {
-  const { language } = useLanguage();
+  const t = useTranslations("navigation");
+  const { locale } = useLanguageNavigation();
   const { state, setOpen } = useSidebar();
-  const isArabic = language === "ar";
+  const isArabic = locale === "ar";
   const [openItems, setOpenItems] = useState<Record<string, boolean>>(() => {
     // Initialize with items that should be open by default
     const initialState: Record<string, boolean> = {};
@@ -69,6 +71,21 @@ export function NavMain({
     }));
   };
 
+  // Helper function to get translated title
+  const getTranslatedTitle = (title: string) => {
+    const key = title
+      .replace(/[^a-zA-Z0-9]+/g, " ") // Replace non-alphanumerics with space
+      .split(" ")
+      .filter(Boolean)
+      .map((word, index) => {
+        if (index === 0) return word.toLowerCase();
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join("");
+
+    return t(key, { fallback: title });
+  };
+
   return (
     <SidebarGroup>
       {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
@@ -83,11 +100,11 @@ export function NavMain({
               >
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
-                    tooltip={item.title}
+                    tooltip={getTranslatedTitle(item.title)}
                     className="cursor-pointer"
                   >
                     {item.icon && <item.icon />}
-                    <span>{item.title}</span>
+                    <span>{getTranslatedTitle(item.title)}</span>
                     {openItems[item.title] ? (
                       <ChevronDown
                         className={`transition-transform duration-200 ${
@@ -109,7 +126,7 @@ export function NavMain({
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
-                            <span>{subItem.title}</span>
+                            <span>{getTranslatedTitle(subItem.title)}</span>
                           </a>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -118,10 +135,13 @@ export function NavMain({
                 </CollapsibleContent>
               </Collapsible>
             ) : (
-              <SidebarMenuButton tooltip={item.title} asChild>
+              <SidebarMenuButton
+                tooltip={getTranslatedTitle(item.title)}
+                asChild
+              >
                 <a href={item.url}>
                   {item.icon && <item.icon />}
-                  <span>{item.title}</span>
+                  <span>{getTranslatedTitle(item.title)}</span>
                 </a>
               </SidebarMenuButton>
             )}

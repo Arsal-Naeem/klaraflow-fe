@@ -17,7 +17,7 @@ import { NavMain } from "@/components/blocks/Sidebar/components/nav-main";
 import { NavUser } from "@/components/blocks/Sidebar/components/nav-user";
 import { TeamSwitcher } from "@/components/blocks/Sidebar/components/team-switcher";
 import { NavFooter } from "@/components/blocks/Sidebar/components/nav-footer";
-import { useLanguage } from "@/stores/language-store";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -112,8 +112,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { language } = useLanguage();
-  const sidebarSide = language === 'ar' ? 'right' : 'left';
+  const { locale } = useLanguageNavigation();
+  const sidebarSide = locale === 'ar' ? 'right' : 'left';
 
   return (
     <Sidebar collapsible="icon" side={sidebarSide} {...props}>
