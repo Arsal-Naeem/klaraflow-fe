@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
-import { useLanguage } from "@/contexts/language-context";
+import { useLanguage } from "@/stores/language-store";
 
 export function NavUser({
   user,

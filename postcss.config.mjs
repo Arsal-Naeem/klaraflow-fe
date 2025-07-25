@@ -3,6 +3,7 @@ const config = {
     [
       "@tailwindcss/postcss", 
       {
+        darkMode: 'class', // Enable dark mode with class strategy
         theme: {
           extend: {
             colors: {

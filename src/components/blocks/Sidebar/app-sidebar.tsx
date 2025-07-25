@@ -17,7 +17,7 @@ import { NavMain } from "@/components/blocks/Sidebar/components/nav-main";
 import { NavUser } from "@/components/blocks/Sidebar/components/nav-user";
 import { TeamSwitcher } from "@/components/blocks/Sidebar/components/team-switcher";
 import { NavFooter } from "@/components/blocks/Sidebar/components/nav-footer";
-import { useLanguage } from "@/contexts/language-context";
+import { useLanguage } from "@/stores/language-store";
 import {
   Sidebar,
   SidebarContent,

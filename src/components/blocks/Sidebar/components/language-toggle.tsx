@@ -1,7 +1,7 @@
 "use client";
 
 import { Globe, Languages, ChevronLeft, ChevronRight } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
+import { useLanguage } from "@/stores/language-store";
 import {
   DropdownMenuSub,
   DropdownMenuSubContent,

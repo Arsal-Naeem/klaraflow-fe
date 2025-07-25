@@ -1,8 +1,8 @@
 "use client";
 
 import { Moon, Sun, Monitor, ChevronLeft, ChevronRight } from "lucide-react";
-import { useTheme } from "@/contexts/theme-context";
-import { useLanguage } from "@/contexts/language-context";
+import { useTheme } from "@/stores/theme-store";
+import { useLanguage } from "@/stores/language-store";
 import {
   DropdownMenuSub,
   DropdownMenuSubContent,

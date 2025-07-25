@@ -23,7 +23,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useLanguage } from "@/contexts/language-context";
+import { useLanguage } from "@/stores/language-store";
 
 export function NavMain({
   items,
