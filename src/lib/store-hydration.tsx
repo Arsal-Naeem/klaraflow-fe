@@ -1,13 +1,11 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useLanguageStore } from '@/stores/language-store';
-import { useThemeStore } from '@/stores/theme-store';
+"use client";
+import { useEffect } from "react";
+import { useThemeStore } from "@/stores/theme-store";
 
 export function StoreHydration() {
   useEffect(() => {
     // Force hydration of both stores
-    useLanguageStore.persist.rehydrate();
+
     useThemeStore.persist.rehydrate();
   }, []);
 

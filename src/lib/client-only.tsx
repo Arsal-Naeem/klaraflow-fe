@@ -1,7 +1,5 @@
-'use client';
-
-import { useLanguageStore } from '@/stores/language-store';
-import { useThemeStore } from '@/stores/theme-store';
+"use client";
+import { useThemeStore } from "@/stores/theme-store";
 
 interface ClientOnlyProps {
   children: React.ReactNode;
@@ -9,10 +7,9 @@ interface ClientOnlyProps {
 }
 
 export function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
-  const languageHydrated = useLanguageStore((state) => state.isHydrated);
   const themeHydrated = useThemeStore((state) => state.isHydrated);
 
-  if (!languageHydrated || !themeHydrated) {
+  if (!themeHydrated) {
     return <>{fallback}</>;
   }
 
