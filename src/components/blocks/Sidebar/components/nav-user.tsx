@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
-import { useLanguage } from "@/stores/language-store";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 
 export function NavUser({
   user,
@@ -33,7 +33,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-  const { language } = useLanguage();
+  const { isRTL } = useLanguageNavigation();
   const t = useTranslations();
 
   return (
@@ -53,17 +53,17 @@ export function NavUser({
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
-              <ChevronsUpDown className={`size-4 ${language === 'ar' ? 'mr-auto' : 'ml-auto'}`} />
+              <ChevronsUpDown className={`size-4 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : (language === 'ar' ? "left" : "right")}
+            side={isMobile ? "bottom" : (isRTL ? "left" : "right")}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className={`flex items-center gap-2 px-1 py-1.5 text-sm ${language === 'ar' ? 'flex-row-reverse text-left' : 'text-left'}`}>
+              <div className={`flex items-center gap-2 px-1 py-1.5 text-sm ${isRTL ? 'flex-row-reverse text-left' : 'text-left'}`}>
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">AN</AvatarFallback>
@@ -76,16 +76,16 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className={`cursor-pointer ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
-                <BadgeCheck className={language === 'ar' ? 'ml-2' : 'mr-2'} />
+              <DropdownMenuItem className={`cursor-pointer ${isRTL ? 'flex-row-reverse' : 'text-left'}`}>
+                <BadgeCheck className={isRTL ? 'ml-2' : 'mr-2'} />
                 {t('user.profile')}
               </DropdownMenuItem>
               <LanguageToggle />
               <ThemeToggle />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className={`cursor-pointer ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
-              <LogOut className={language === 'ar' ? 'ml-2' : 'mr-2'} />
+            <DropdownMenuItem className={`cursor-pointer ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <LogOut className={isRTL ? 'ml-2' : 'mr-2'} />
               {t('user.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>

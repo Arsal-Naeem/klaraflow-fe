@@ -8,6 +8,7 @@ import { type Locale } from '@/lib/locale-config';
 
 export function useLanguageNavigation() {
   const locale = useLocale() as Locale;
+  const isRTL = locale === 'ar';
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -28,6 +29,7 @@ export function useLanguageNavigation() {
 
   return {
     locale,
+    isRTL,
     changeLanguage,
     isPending,
   };

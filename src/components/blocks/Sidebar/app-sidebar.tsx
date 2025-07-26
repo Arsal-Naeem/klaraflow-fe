@@ -112,8 +112,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { locale } = useLanguageNavigation();
-  const sidebarSide = locale === 'ar' ? 'right' : 'left';
+  const { isRTL } = useLanguageNavigation();
+  const sidebarSide = isRTL ? 'right' : 'left';
 
   return (
     <Sidebar collapsible="icon" side={sidebarSide} {...props}>
