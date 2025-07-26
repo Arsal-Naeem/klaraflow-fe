@@ -63,11 +63,11 @@ const data = {
       items: [
         {
           title: "Timesheet",
-          url: "#",
+          url: "time/timesheets",
         },
         {
           title: "Leave Request",
-          url: "#",
+          url: "time/leave-requests",
         },
       ],
     },
