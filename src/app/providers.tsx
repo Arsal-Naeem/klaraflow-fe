@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
-import { StoreHydration } from '@/components/store-hydration';
+import { StoreHydration } from '@/lib/store-hydration';
 
 interface ProvidersProps {
   children: React.ReactNode;
