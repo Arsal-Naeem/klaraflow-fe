@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
+import { normalizeTranslationKey } from "@/utils/helpers";
 import Link from "next/link";
 
 import {
@@ -74,16 +75,7 @@ export function NavMain({
 
   // Helper function to get translated title
   const getTranslatedTitle = (title: string) => {
-    const key = title
-      .replace(/[^a-zA-Z0-9]+/g, " ") // Replace non-alphanumerics with space
-      .split(" ")
-      .filter(Boolean)
-      .map((word, index) => {
-        if (index === 0) return word.toLowerCase();
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      })
-      .join("");
-
+    const key = normalizeTranslationKey(title);
     return t(key, { fallback: title });
   };
 

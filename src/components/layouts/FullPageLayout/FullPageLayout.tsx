@@ -17,6 +17,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useI18n } from "@/hooks/use-i18n";
+import { normalizeTranslationKey } from "@/utils/helpers";
 
 interface BreadcrumbItem {
   name: string;
@@ -37,21 +38,11 @@ export default function FullPageLayout({
 
   // Helper function to get translated breadcrumb text
   const getBreadcrumbText = (item: BreadcrumbItem): string => {
-    // If translationKey is provided, use it
     if (item.translationKey) {
       return t(item.translationKey);
     }
 
-    // Try to get translation from breadcrumbs section
-    const normalizedName = item.name
-      .replace(/[^a-zA-Z0-9]+/g, " ") // Replace non-alphanumerics with space
-      .split(" ")
-      .filter(Boolean)
-      .map((word, index) => {
-        if (index === 0) return word.toLowerCase();
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      })
-      .join("");
+    const normalizedName = normalizeTranslationKey(item.name);
     try {
       return tBreadcrumbs(normalizedName);
     } catch {
