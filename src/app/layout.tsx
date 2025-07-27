@@ -38,6 +38,34 @@ export default async function RootLayout({
       dir={locale === "ar" ? "rtl" : "ltr"}
       suppressHydrationWarning
     >
+      <head>
+        {/* Inline script to set theme before React mounts */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme-storage');
+                  if (theme) {
+                    var parsed = JSON.parse(theme);
+                    var selected = parsed.state?.theme || 'system';
+                    var root = document.documentElement;
+                    var apply = function(t) {
+                      if (t === 'system') {
+                        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                      }
+                      root.classList.remove('light', 'dark');
+                      root.classList.add(t);
+                      root.setAttribute('data-theme', t);
+                    };
+                    apply(selected);
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

@@ -11,7 +11,7 @@ export function InitialLoader() {
     if (isHydrated) {
       const timer = setTimeout(() => {
         setIsLoading(false);
-      }, 300); // Short delay for smooth transition
+      }, 500); // Short delay for smooth transition
 
       return () => clearTimeout(timer);
     }
