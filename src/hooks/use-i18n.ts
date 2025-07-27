@@ -34,6 +34,7 @@ export function useI18n() {
 
     // Namespaced translation helpers
     tCommon: (key: string) => t(`common.${key}`),
+    tBreadcrumbs: (key: string) => t(`breadcrumbs.${key}`),
     tNavigation: (key: string) => t(`navigation.${key}`),
     tSidebar: (key: string) => t(`sidebar.${key}`),
     tUser: (key: string) => t(`user.${key}`),

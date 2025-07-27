@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 import { AppSidebar } from "@/components/blocks/Sidebar/app-sidebar";
 import {
@@ -14,10 +16,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface BreadcrumbItem {
   name: string;
   route?: string;
+  translationKey?: string;
 }
 
 interface FullPageLayoutProps {
@@ -29,6 +33,32 @@ export default function FullPageLayout({
   children,
   breadcrumbItems,
 }: FullPageLayoutProps) {
+  const { t, tBreadcrumbs } = useI18n();
+
+  // Helper function to get translated breadcrumb text
+  const getBreadcrumbText = (item: BreadcrumbItem): string => {
+    // If translationKey is provided, use it
+    if (item.translationKey) {
+      return t(item.translationKey);
+    }
+
+    // Try to get translation from breadcrumbs section
+    const normalizedName = item.name
+      .replace(/[^a-zA-Z0-9]+/g, " ") // Replace non-alphanumerics with space
+      .split(" ")
+      .filter(Boolean)
+      .map((word, index) => {
+        if (index === 0) return word.toLowerCase();
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join("");
+    try {
+      return tBreadcrumbs(normalizedName);
+    } catch {
+      return item.name;
+    }
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -58,10 +88,12 @@ export default function FullPageLayout({
                       >
                         {item.route ? (
                           <BreadcrumbLink href={item.route}>
-                            {item.name}
+                            {getBreadcrumbText(item)}
                           </BreadcrumbLink>
                         ) : (
-                          <BreadcrumbPage>{item.name}</BreadcrumbPage>
+                          <BreadcrumbPage>
+                            {getBreadcrumbText(item)}
+                          </BreadcrumbPage>
                         )}
                       </BreadcrumbItem>
                     </>

@@ -1,27 +1,4 @@
-import { type Locale, LOCALE_CONFIG, getAllLocales } from '@/lib/locale-config';
-
-// Mapping for translating English navigation items to translation keys
-export const navigationKeyMap: Record<string, string> = {
-  'dashboard': 'dashboard',
-  'time': 'time',
-  'timesheet': 'timesheet',
-  'leaverequest': 'leaveRequest',
-  'payroll': 'payroll',
-  'company': 'company',
-  'employees': 'employees',
-  'departmentsteams': 'departmentsTeams',
-  'reports': 'reports',
-  'organizationsettings': 'organizationSettings',
-  'askklara': 'askKlara',
-};
-
-/**
- * Helper function to get the translation key for navigation items
- */
-export function getNavigationKey(title: string): string {
-  const normalizedTitle = title.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
-  return navigationKeyMap[normalizedTitle] || title.toLowerCase();
-}
+import { type Locale, LOCALE_CONFIG, getAllLocales } from "@/lib/locale-config";
 
 /**
  * Type definitions for structured translations
@@ -49,6 +26,19 @@ export interface TranslationStructure {
     previous: string;
     submit: string;
     reset: string;
+  };
+  breadcrumbs: {
+    dashboard: string;
+    time: string;
+    timesheets: string;
+    leaveRequests: string;
+    payroll: string;
+    company: string;
+    employees: string;
+    departments: string;
+    reports: string;
+    organizationSettings: string;
+    profileSettings: string;
   };
   navigation: {
     dashboard: string;
@@ -124,14 +114,17 @@ export interface TranslationStructure {
 /**
  * Helper function to get locale direction
  */
-export function getLocaleDirection(locale: Locale): 'ltr' | 'rtl' {
+export function getLocaleDirection(locale: Locale): "ltr" | "rtl" {
   return LOCALE_CONFIG[locale].direction;
 }
 
 /**
  * Helper function to get locale display name
  */
-export function getLocaleDisplayName(locale: Locale, inLocale?: Locale): string {
+export function getLocaleDisplayName(
+  locale: Locale,
+  inLocale?: Locale
+): string {
   const config = LOCALE_CONFIG[locale];
   return inLocale ? config.name : config.nativeName;
 }
@@ -148,9 +141,9 @@ export function getAvailableLocales() {
  */
 export function formatDate(date: Date, locale: Locale): string {
   return new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   }).format(date);
 }
 
@@ -159,11 +152,11 @@ export function formatDate(date: Date, locale: Locale): string {
  */
 export function formatTime(date: Date, locale: Locale): string {
   const config = LOCALE_CONFIG[locale];
-  const hour12 = config.timeFormat === '12h';
-  
+  const hour12 = config.timeFormat === "12h";
+
   return new Intl.DateTimeFormat(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
     hour12,
   }).format(date);
 }
@@ -171,9 +164,13 @@ export function formatTime(date: Date, locale: Locale): string {
 /**
  * Format currency according to locale (can be extended for multi-currency)
  */
-export function formatCurrency(amount: number, locale: Locale, currency = 'USD'): string {
+export function formatCurrency(
+  amount: number,
+  locale: Locale,
+  currency = "USD"
+): string {
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency,
   }).format(amount);
 }
@@ -189,7 +186,7 @@ export function formatNumber(number: number, locale: Locale): string {
  * Helper to determine if a locale uses RTL layout
  */
 export function isRTL(locale: Locale): boolean {
-  return getLocaleDirection(locale) === 'rtl';
+  return getLocaleDirection(locale) === "rtl";
 }
 
 /**

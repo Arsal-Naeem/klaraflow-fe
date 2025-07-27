@@ -21,19 +21,36 @@
     "submit": "إرسال",
     "reset": "إعادة تعيين"
   },
+  "breadcrumbs": {
+    "dashboard": "لوحة التحكم",
+    "time": "الوقت",
+    "timesheets": "جداول الوقت",
+    "leaveRequests": "طلبات الإجازة",
+    "payroll": "كشف الراتب",
+    "company": "الشركة",
+    "employees": "الموظفون",
+    "departments": "الأقسام",
+    "reports": "التقارير",
+    "organizationSettings": "إعدادات المؤسسة",
+    "profileSettings": "إعدادات الملف الشخصي"
+  },
   "navigation": {
     "dashboard": "لوحة التحكم",
     "time": "الوقت",
     "timesheet": "جدول الوقت",
+    "timesheets": "جداول الوقت",
     "leaveRequest": "طلب إجازة",
+    "leaveRequests": "طلبات الإجازة",
     "payroll": "كشف الراتب",
     "company": "الشركة",
     "employees": "الموظفون",
+    "departments": "الأقسام",
     "departmentsTeams": "الأقسام/الفرق",
     "reports": "التقارير"
   },
   "sidebar": {
     "organizationSettings": "إعدادات المؤسسة",
+    "profileSettings": "إعدادات الملف الشخصي",
     "askKlara": "اسأل كلارا",
     "settings": "الإعدادات",
     "language": "اللغة",

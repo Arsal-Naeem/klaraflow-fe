@@ -32,6 +32,19 @@
     "departmentsTeams": "Departments/Teams",
     "reports": "Reports"
   },
+  "breadcrumbs": {
+    "dashboard": "Dashboard",
+    "time": "Time",
+    "timesheets": "Timesheets",
+    "leaveRequests": "Leave Requests",
+    "payroll": "Payroll",
+    "company": "Company",
+    "employees": "Employees",
+    "departments": "Departments",
+    "reports": "Reports",
+    "organizationSettings": "Organization Settings",
+    "profileSettings": "Profile Settings"
+  },
   "sidebar": {
     "organizationSettings": "Organization Settings",
     "askKlara": "Ask Klara",
