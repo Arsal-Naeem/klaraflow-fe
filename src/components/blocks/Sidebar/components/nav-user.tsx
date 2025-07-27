@@ -1,7 +1,7 @@
 "use client";
 
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -22,6 +22,7 @@ import {
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
+import Link from "next/link";
 
 export function NavUser({
   user,
@@ -53,17 +54,23 @@ export function NavUser({
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
-              <ChevronsUpDown className={`size-4 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+              <ChevronsUpDown
+                className={`size-4 ${isRTL ? "mr-auto" : "ml-auto"}`}
+              />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : (isRTL ? "left" : "right")}
+            side={isMobile ? "bottom" : isRTL ? "left" : "right"}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className={`flex items-center gap-2 px-1 py-1.5 text-sm ${isRTL ? 'flex-row-reverse text-left' : 'text-left'}`}>
+              <div
+                className={`flex items-center gap-2 px-1 py-1.5 text-sm ${
+                  isRTL ? "flex-row-reverse text-left" : "text-left"
+                }`}
+              >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">AN</AvatarFallback>
@@ -76,17 +83,25 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className={`cursor-pointer ${isRTL ? 'flex-row-reverse' : 'text-left'}`}>
-                <BadgeCheck className={isRTL ? 'ml-2' : 'mr-2'} />
-                {t('user.profile')}
-              </DropdownMenuItem>
+              <Link href="/profile-settings">
+                <DropdownMenuItem
+                  className={`cursor-pointer ${
+                    isRTL ? "flex-row-reverse" : "text-left"
+                  }`}
+                >
+                  <BadgeCheck className={isRTL ? "ml-2" : "mr-2"} />
+                  {t("user.profile")}
+                </DropdownMenuItem>
+              </Link>
               <LanguageToggle />
               <ThemeToggle />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className={`cursor-pointer ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <LogOut className={isRTL ? 'ml-2' : 'mr-2'} />
-              {t('user.logout')}
+            <DropdownMenuItem
+              className={`cursor-pointer ${isRTL ? "flex-row-reverse" : ""}`}
+            >
+              <LogOut className={isRTL ? "ml-2" : "mr-2"} />
+              {t("user.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

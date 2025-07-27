@@ -8,8 +8,6 @@ import {
   Command,
   GalleryVerticalEnd,
   LayoutDashboard,
-  Search,
-  Settings2,
   Users,
 } from "lucide-react";
 
@@ -63,50 +61,38 @@ const data = {
       items: [
         {
           title: "Timesheet",
-          url: "time/timesheets",
+          url: "/time/timesheets",
         },
         {
           title: "Leave Request",
-          url: "time/leave-requests",
+          url: "/time/leave-requests",
         },
       ],
     },
     {
       title: "Payroll",
-      url: "#",
+      url: "/payroll",
       icon: Calculator,
     },
     {
       title: "Company",
-      url: "#",
+      url: "/company",
       icon: Users,
       items: [
         {
           title: "Employees",
-          url: "#",
+          url: "/company/employees",
         },
         {
           title: "Departments/Teams",
-          url: "#",
+          url: "/company/departments",
         },
       ],
     },
     {
       title: "Reports",
-      url: "#",
+      url: "/reports",
       icon: BookOpen,
-    },
-  ],
-  footer: [
-    {
-      name: "Organization Settings",
-      url: "#",
-      icon: Settings2,
-    },
-    {
-      name: "Ask Klara",
-      url: "#",
-      icon: Search,
     },
   ],
 };
