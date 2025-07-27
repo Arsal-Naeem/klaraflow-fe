@@ -129,7 +129,7 @@ export function NavMain({
                                 href={subItem.url}
                                 className={
                                   isSubActive
-                                    ? "text-primary font-semibold bg-accent"
+                                    ? "text-primary font-semibold bg-accent hover:bg-accent"
                                     : ""
                                 }
                               >
@@ -146,11 +146,11 @@ export function NavMain({
                 <SidebarMenuButton
                   tooltip={getTranslatedTitle(item.title)}
                   asChild
-                  className={
+                  className={`hover:bg-accent/80 dark:hover:bg-accent/80 ${
                     item.url === activeUrl
                       ? "text-primary font-semibold bg-accent"
                       : ""
-                  }
+                  }`}
                 >
                   <Link href={item.url}>
                     {item.icon && <item.icon />}
