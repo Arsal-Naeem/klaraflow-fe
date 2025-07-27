@@ -9,6 +9,7 @@
     "delete": "Delete",
     "confirm": "Confirm",
     "close": "Close",
+    "copy": "Copy",
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
@@ -19,7 +20,8 @@
     "next": "Next",
     "previous": "Previous",
     "submit": "Submit",
-    "reset": "Reset"
+    "reset": "Reset",
+    "email": "Email"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -69,7 +71,12 @@
   "team": {
     "teams": "Teams",
     "addTeam": "Add team",
-    "inviteUsers": "Invite Users"
+    "invite": "Invite",
+    "inviteUsers": "Invite Users",
+    "inviteByEmail": "Invite by Email",
+    "inviteByLink": "Invite by Link",
+    "inviteByLinkDescription": "Share this URL to invite users to join your team.",
+    "inviteByEmailDescription": "Enter email addresses to invite users directly."
   },
   "organization": {
     "name": "KlaraFlow",

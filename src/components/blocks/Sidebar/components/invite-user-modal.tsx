@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useTranslations } from "next-intl"
 
 interface InviteUserModalProps {
   isOpen: boolean
@@ -22,8 +23,10 @@ type InviteMode = "url" | "email"
 export function InviteUserModal({ isOpen, onOpenChange }: InviteUserModalProps) {
   const [inviteEmail, setInviteEmail] = React.useState("")
   const [mode, setMode] = React.useState<InviteMode>("url")
-  
-  // Generate a sample invite URL (you can replace this with your actual URL generation logic)
+  const tTeam = useTranslations("team")
+  const tCommon = useTranslations("common")
+
+  // Generate a sample invite URL (replace with your actual logic)
   const inviteUrl = "https://klaraflow.com/invite?token=abc123def456"
 
   const handleInviteUser = () => {
@@ -44,73 +47,67 @@ export function InviteUserModal({ isOpen, onOpenChange }: InviteUserModalProps) 
       <DialogContent className="sm:max-w-[550px]">
         <DialogHeader>
           <DialogTitle>
-            {mode === "url" ? "Invite by URL" : "Invite by Email"}
+            {mode === "url"
+              ? tTeam("inviteByLink")
+              : tTeam("inviteByEmail")}
           </DialogTitle>
-          {/* <DialogDescription>
-            {mode === "url" 
-              ? "Share this URL to invite users to join your team."
-              : "Send an invitation to join your team. Enter the email address of the person you'd like to invite."
-            }
-          </DialogDescription> */}
+          <DialogDescription>
+            {mode === "url"
+              ? tTeam("inviteByLinkDescription", { default: "Share this URL to invite users to join your team." })
+              : tTeam("inviteByEmailDescription", { default: "Send an invitation to join your team. Enter the email address of the person you'd like to invite." })}
+          </DialogDescription>
         </DialogHeader>
-        
+
         <div className="grid gap-4 py-4">
           {mode === "url" ? (
             <div className="grid gap-2">
               <div className="flex gap-2">
-                <Input
-                  value={inviteUrl}
-                  readOnly
-                  className="flex-1"
-                />
-                <Button 
-                  type="button" 
+                <Input value={inviteUrl} readOnly className="flex-1" />
+                <Button
+                  type="button"
                   onClick={handleCopyUrl}
                   variant="outline"
                 >
-                  Copy
+                  {tCommon("copy")}
                 </Button>
               </div>
             </div>
           ) : (
             <div className="grid gap-2">
               <label htmlFor="email" className="text-sm font-medium">
-                Email
+                {tCommon("email", { default: "Email" })}
               </label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Input the Email Address"
+                placeholder={tTeam("inviteByEmail", { default: "Input the Email Address" })}
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
               />
             </div>
           )}
         </div>
-        
+
         <DialogFooter>
           {mode === "url" ? (
-            <Button 
-              type="button" 
-              onClick={() => setMode("email")}
-            >
-              Invite by Email
+            <Button type="button" onClick={() => setMode("email")}>
+              {tTeam("inviteByEmail")}
             </Button>
           ) : (
             <div className="flex gap-2">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => setMode("url")}
               >
-                Invite by URL
+                {tTeam("inviteByLink")}
               </Button>
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 onClick={handleInviteUser}
                 disabled={!inviteEmail}
               >
-                Invite
+                {tTeam("invite")}
               </Button>
             </div>
           )}

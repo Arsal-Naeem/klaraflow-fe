@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ChevronsUpDown, Plus, UserPlus } from "lucide-react";
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { InviteUserModal } from "@/components/blocks/Sidebar/components/invite-user-modal";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 
 export function TeamSwitcher({
   teams,
@@ -30,7 +31,8 @@ export function TeamSwitcher({
     plan: string;
   }[];
 }) {
-  const t = useTranslations('team');
+  const { isRTL } = useLanguageNavigation();
+  const t = useTranslations("team");
   const { isMobile } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState(teams[0]);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = React.useState(false);
@@ -64,7 +66,7 @@ export function TeamSwitcher({
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
+            {/* <DropdownMenuLabel className="text-muted-foreground text-xs">
               {t('teams')}
             </DropdownMenuLabel>
             {teams.map((team, index) => (
@@ -86,17 +88,17 @@ export function TeamSwitcher({
                 <Plus className="size-4" />
               </div>
               <div className="text-muted-foreground font-medium">{t('addTeam')}</div>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem
-              className="cursor-pointer gap-2 p-2"
+              className={`cursor-pointer gap-2 p-2 ${
+                isRTL ? "flex-row-reverse text-left" : "text-left"
+              }`}
               onClick={() => setIsInviteDialogOpen(true)}
             >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <UserPlus className="size-4" />
               </div>
-              <div className="text-muted-foreground font-medium">
-                {t('inviteUsers')}
-              </div>
+              <div className="font-medium">{t("inviteUsers")}</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

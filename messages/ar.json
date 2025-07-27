@@ -9,6 +9,7 @@
     "delete": "حذف",
     "confirm": "تأكيد",
     "close": "إغلاق",
+    "copy": "نسخ",
     "search": "بحث",
     "filter": "تصفية",
     "sort": "ترتيب",
@@ -19,7 +20,8 @@
     "next": "التالي",
     "previous": "السابق",
     "submit": "إرسال",
-    "reset": "إعادة تعيين"
+    "reset": "إعادة تعيين",
+    "email": "البريد الإلكتروني"
   },
   "breadcrumbs": {
     "dashboard": "لوحة التحكم",
@@ -73,7 +75,12 @@
   "team": {
     "teams": "الفرق",
     "addTeam": "إضافة فريق",
-    "inviteUsers": "دعوة مستخدمين"
+    "inviteUsers": "دعوة مستخدمين",
+    "invite": "دعوة",
+    "inviteByEmail": "دعوة عبر البريد الإلكتروني",
+    "inviteByLink": "دعوة عبر الرابط",
+    "inviteByLinkDescription": "شارك هذا الرابط لدعوة المستخدمين للانضمام إلى فريقك.",
+    "inviteByEmailDescription": "أدخل عناوين البريد الإلكتروني لدعوة المستخدمين مباشرة."
   },
   "organization": {
     "name": "KlaraFlow",
