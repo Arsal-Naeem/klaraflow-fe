@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { NavMain } from "@/components/blocks/Sidebar/components/nav-main";
+import { usePathname } from "next/navigation";
 import { NavUser } from "@/components/blocks/Sidebar/components/nav-user";
 import { TeamSwitcher } from "@/components/blocks/Sidebar/components/team-switcher";
 import { NavFooter } from "@/components/blocks/Sidebar/components/nav-footer";
@@ -98,8 +99,9 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
   const { isRTL } = useLanguageNavigation();
-  const sidebarSide = isRTL ? 'right' : 'left';
+  const sidebarSide = isRTL ? "right" : "left";
 
   return (
     <Sidebar collapsible="icon" side={sidebarSide} {...props}>
@@ -107,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data.navMain} activeUrl={pathname} />
       </SidebarContent>
       <SidebarFooter>
         <NavFooter />

@@ -30,27 +30,31 @@ import {
 
 export function NavMain({
   items,
+  activeUrl,
 }: {
   items: {
     title: string;
     url: string;
     icon?: LucideIcon;
-    isActive?: boolean;
     items?: {
       title: string;
       url: string;
     }[];
   }[];
+  activeUrl?: string;
 }) {
   const t = useTranslations("navigation");
   const { locale } = useLanguageNavigation();
   const { state, setOpen } = useSidebar();
   const isArabic = locale === "ar";
   const [openItems, setOpenItems] = useState<Record<string, boolean>>(() => {
-    // Initialize with items that should be open by default
+    // Initialize with items that should be open by default or if a subitem is active
     const initialState: Record<string, boolean> = {};
     items.forEach((item) => {
-      if (item.isActive) {
+      if (item.url === activeUrl) {
+        initialState[item.title] = true;
+      }
+      if (item.items && item.items.some((sub) => sub.url === activeUrl)) {
         initialState[item.title] = true;
       }
     });
@@ -83,63 +87,80 @@ export function NavMain({
     <SidebarGroup>
       {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            {item.items && item.items.length > 0 ? (
-              <Collapsible
-                open={openItems[item.title] || false}
-                onOpenChange={() => toggleItem(item.title)}
-                className="group/collapsible"
-              >
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    tooltip={getTranslatedTitle(item.title)}
-                    className="cursor-pointer"
-                  >
+        {items.map((item) => {
+          return (
+            <SidebarMenuItem key={item.title}>
+              {item.items && item.items.length > 0 ? (
+                <Collapsible
+                  open={openItems[item.title] || false}
+                  onOpenChange={() => toggleItem(item.title)}
+                  className="group/collapsible"
+                >
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      tooltip={getTranslatedTitle(item.title)}
+                      className="cursor-pointer"
+                    >
+                      {item.icon && <item.icon />}
+                      <span>{getTranslatedTitle(item.title)}</span>
+                      {openItems[item.title] ? (
+                        <ChevronDown
+                          className={`transition-transform duration-200 ${
+                            isArabic ? "mr-auto" : "ml-auto"
+                          }`}
+                        />
+                      ) : isArabic ? (
+                        <ChevronLeft className="mr-auto transition-transform duration-200" />
+                      ) : (
+                        <ChevronRight className="ml-auto transition-transform duration-200" />
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub
+                      className={isArabic ? "border-r" : "border-l"}
+                    >
+                      {item.items.map((subItem) => {
+                        const isSubActive = subItem.url === activeUrl;
+                        return (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton asChild>
+                              <Link
+                                href={subItem.url}
+                                className={
+                                  isSubActive
+                                    ? "text-primary font-semibold bg-accent"
+                                    : ""
+                                }
+                              >
+                                <span>{getTranslatedTitle(subItem.title)}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        );
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </Collapsible>
+              ) : (
+                <SidebarMenuButton
+                  tooltip={getTranslatedTitle(item.title)}
+                  asChild
+                  className={
+                    item.url === activeUrl
+                      ? "text-primary font-semibold bg-accent"
+                      : ""
+                  }
+                >
+                  <Link href={item.url}>
                     {item.icon && <item.icon />}
                     <span>{getTranslatedTitle(item.title)}</span>
-                    {openItems[item.title] ? (
-                      <ChevronDown
-                        className={`transition-transform duration-200 ${
-                          isArabic ? "mr-auto" : "ml-auto"
-                        }`}
-                      />
-                    ) : isArabic ? (
-                      <ChevronLeft className="mr-auto transition-transform duration-200" />
-                    ) : (
-                      <ChevronRight className="ml-auto transition-transform duration-200" />
-                    )}
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <SidebarMenuSub
-                    className={isArabic ? "border-r" : "border-l"}
-                  >
-                    {item.items.map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild>
-                          <Link href={subItem.url}>
-                            <span>{getTranslatedTitle(subItem.title)}</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </Collapsible>
-            ) : (
-              <SidebarMenuButton
-                tooltip={getTranslatedTitle(item.title)}
-                asChild
-              >
-                <Link href={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{getTranslatedTitle(item.title)}</span>
-                </Link>
-              </SidebarMenuButton>
-            )}
-          </SidebarMenuItem>
-        ))}
+                  </Link>
+                </SidebarMenuButton>
+              )}
+            </SidebarMenuItem>
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );
