@@ -25,7 +25,7 @@ export function Providers({ children }: ProvidersProps) {
       })
   );
   const pathname = usePathname();
-  const hideSidebar = ["/login", "/signup", "/register"].includes(pathname);
+  const hideSidebar = ["/login", "/forgot-password", "/reset-password", "/signup", "/register"].includes(pathname);
 
   return (
     <QueryClientProvider client={queryClient}>

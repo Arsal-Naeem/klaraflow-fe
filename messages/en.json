@@ -109,5 +109,37 @@
     "serverError": "Internal server error",
     "networkError": "Network connection error",
     "validationError": "Validation failed"
+  },
+  "login": {
+    "title": "Sign in",
+    "loginViaOTP": "Login via OTP",
+    "loginViaPassword": "Login via Password",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Login"
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "sendEmailFailed": "Failed to send reset email. Please try again.",
+    "invalidPin": "Please enter a valid 6-digit pin.",
+    "pinFailed": "Failed to verify pin. Please try again.",
+    "subtitleEmail": "Enter your email to receive a password reset link.",
+    "subtitlePin": "Enter the 6-digit pin sent to your email.",
+    "pinPlaceholder": "Enter 6-digit pin",
+    "verifying": "Verifying pin...",
+    "sendCodeButton": "Send Code",
+    "verifyButton": "Verify Code"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "subtitle": "Enter your new password below.",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "resetButton": "Reset Password",
+    "resetSuccessButton": "Reset Password",
+    "passwordsDoNotMatch": "Passwords do not match.",
+    "resetFailed": "Failed to reset password. Please try again.",
+    "resetSuccessMessage": "Password reset successful! Redirecting..."
   }
 }
