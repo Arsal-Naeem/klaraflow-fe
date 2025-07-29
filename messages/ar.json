@@ -34,7 +34,8 @@
     "departments": "الأقسام",
     "reports": "التقارير",
     "organizationSettings": "إعدادات المؤسسة",
-    "profileSettings": "إعدادات الملف الشخصي"
+    "profileSettings": "إعدادات الملف الشخصي",
+    "addEmployee": "إضافة موظف"
   },
   "navigation": {
     "dashboard": "لوحة التحكم",
@@ -146,5 +147,11 @@
     "resetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
     "resetSuccessMessage": "تم إعادة تعيين كلمة المرور بنجاح! جارٍ التوجيه...",
     "resetFailed": "فشل في إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى."
+  },
+  "addEmployee": {
+    "mandatory": "إلزامي",
+    "personal": "شخصي",
+    "work": "عمل",
+    "payStructure": "هيكل الأجر"
   }
 }

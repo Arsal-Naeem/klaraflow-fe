@@ -6,16 +6,24 @@ type RowProps = {
   gutter?: number | [number, number];
   className?: string;
   children: React.ReactNode;
+  reverse?: boolean;
 };
 
-export const Row = ({ gutter = 0, className = "", children }: RowProps) => {
+export const Row = ({
+  gutter = 0,
+  className = "",
+  reverse = false,
+  children,
+}: RowProps) => {
   const [gutterX, gutterY] = Array.isArray(gutter)
     ? [gutter[0], gutter[1]]
     : [gutter, gutter];
 
   return (
     <div
-      className={`flex flex-wrap ${className}`}
+      className={`flex flex-wrap ${
+        reverse ? "flex-row-reverse" : ""
+      } ${className}`}
       style={{
         marginLeft: -(gutterX / 2),
         marginRight: -(gutterX / 2),
@@ -38,12 +46,12 @@ export const Row = ({ gutter = 0, className = "", children }: RowProps) => {
   );
 };
 
-
 type ColProps = {
   span?: number;
   gutter?: number | [number, number];
   className?: string;
   children: React.ReactNode;
+  order?: number;
 };
 
 export const Col = ({
@@ -51,6 +59,7 @@ export const Col = ({
   gutter = 0,
   className = "",
   children,
+  order,
 }: ColProps) => {
   const widthPercent = (span / 12) * 100;
   const [gutterX, gutterY] = Array.isArray(gutter)
@@ -66,11 +75,10 @@ export const Col = ({
         paddingRight: gutterX / 2,
         paddingTop: gutterY / 2,
         paddingBottom: gutterY / 2,
+        order, // 👈 apply flex order if given
       }}
     >
       {children}
     </div>
   );
 };
-
-
