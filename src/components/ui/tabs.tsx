@@ -5,29 +5,44 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 import { cn } from "@/utils/helpers";
 
-function Tabs({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+type Direction = 'ltr' | 'rtl';
+interface TabsProps extends React.ComponentProps<typeof TabsPrimitive.Root> {
+  dir?: Direction;
+}
+
+function Tabs({ className, dir, ...props }: TabsProps) {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
       className={cn("flex flex-col gap-2", className)}
+      dir={dir}
       {...props}
     />
   );
 }
 
-function TabsList({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) {
+interface TabsListProps extends React.ComponentProps<typeof TabsPrimitive.List> {
+  dir?: Direction;
+}
+
+function TabsList({ className, dir, ...props }: TabsListProps) {
+  // Scroll direction for RTL
+  const scrollStyle: React.CSSProperties = dir === 'rtl'
+    ? { direction: 'rtl', scrollbarWidth: 'none', msOverflowStyle: 'none' }
+    : { scrollbarWidth: 'none', msOverflowStyle: 'none' };
   return (
-    <div className="w-full border-b overflow-y-hidden overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted-foreground">
+    <div
+      className="w-full border-b overflow-y-hidden overflow-x-auto hide-scrollbar"
+      style={scrollStyle}
+      dir={dir}
+    >
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
       <TabsPrimitive.List
         data-slot="tabs-list"
         className={cn(
-          "min-w-fit whitespace-nowrap text-muted-foreground inline-flex h-9 items-center justify-start gap-4 ",
+          "min-w-fit whitespace-nowrap text-muted-foreground inline-flex h-9 items-center justify-start gap-4",
           className
         )}
         {...props}
@@ -85,12 +100,13 @@ type TabItem = {
 interface TabsWithListProps extends React.ComponentProps<typeof Tabs> {
   tabList: TabItem[];
   defaultValue?: string;
+  dir?: Direction;
 }
 
-function TabsWithList({ tabList, defaultValue, ...props }: TabsWithListProps) {
+function TabsWithList({ tabList, defaultValue, dir, ...props }: TabsWithListProps) {
   return (
-    <Tabs defaultValue={defaultValue ?? tabList[0]?.value} {...props}>
-      <TabsList>
+    <Tabs defaultValue={defaultValue ?? tabList[0]?.value} dir={dir} {...props}>
+      <TabsList dir={dir}>
         {tabList.map((tab) => (
           <TabsTrigger
             key={tab.value}

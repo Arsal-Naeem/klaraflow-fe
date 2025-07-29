@@ -10,10 +10,12 @@ import PersonalCard from "./compnents/PersonalCard";
 import WorkCard from "./compnents/WorkCard";
 import PayStructureCard from "./compnents/PayStructureCard";
 import ProfileCard from "./compnents/ProfileCard";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 
 export default function Page() {
   const isMobile = useIsMobile();
   const t = useTranslations("addEmployee");
+  const { isRTL } = useLanguageNavigation();
 
   const breadcrumbItems = [
     { name: "Company" },
@@ -51,7 +53,7 @@ export default function Page() {
           <ProfileCard />
         </Col>
         <Col span={isMobile ? 12 : 9} order={isMobile ? 1 : 2}>
-          <TabsWithList tabList={tabList} defaultValue="mandatory" />
+          <TabsWithList tabList={tabList} defaultValue="mandatory" dir={isRTL ? "rtl" : "ltr"} />
         </Col>
       </Row>
     </FullPageLayout>
