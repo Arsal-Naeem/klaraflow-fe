@@ -5,12 +5,12 @@ import { Col, Row } from "@/components/ui/grid";
 import { TabsWithList } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslations } from "next-intl";
-import MandatoryCard from "./compnents/MandatoryCard";
 import PersonalCard from "./compnents/PersonalCard";
 import WorkCard from "./compnents/WorkCard";
 import PayStructureCard from "./compnents/PayStructureCard";
 import ProfileCard from "./compnents/ProfileCard";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
+import { MandatoryCard } from "./compnents/MandatoryCard";
 
 export default function Page() {
   const isMobile = useIsMobile();

@@ -157,3 +157,7 @@
 [dir="rtl"] .text-right {
   text-align: left;
 }
+
+body {
+  overflow-x: hidden;
+}
