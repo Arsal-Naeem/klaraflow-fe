@@ -65,7 +65,7 @@ function TabsTrigger({
         "text-foreground dark:text-muted-foreground border-b-2 border-transparent",
 
         // Active state
-        "data-[state=active]:text-accent dark:data-[state=active]:text-accent data-[state=active]:border-b-accent",
+        "data-[state=active]:text-accent-font dark:data-[state=active]:text-accent-font data-[state=active]:border-b-accent-font",
 
         className
       )}
