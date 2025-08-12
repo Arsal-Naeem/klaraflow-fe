@@ -152,6 +152,56 @@
     "mandatory": "إلزامي",
     "personal": "شخصي",
     "work": "عمل",
-    "payStructure": "هيكل الأجر"
+    "payStructure": "هيكل الأجر",
+    "mandatoryForm": {
+      "empId": "معرّف الموظف",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "gender": "الجنس",
+      "userRole": "دور المستخدم",
+      "designation": "المسمى الوظيفي",
+      "department": "القسم",
+      "dateOfBirth": "تاريخ الميلاد",
+      "placeholders": {
+        "empId": "أدخل معرّف الموظف",
+        "firstName": "أدخل الاسم الأول",
+        "lastName": "أدخل اسم العائلة",
+        "email": "أدخل البريد الإلكتروني",
+        "phone": "أدخل رقم الهاتف",
+        "gender": "اختر الجنس",
+        "userRole": "اختر دور المستخدم",
+        "designation": "اختر المسمى الوظيفي",
+        "department": "اختر القسم",
+        "dateOfBirth": "اختر تاريخ الميلاد"
+      }
+    },
+    "workForm": {
+      "jobType": "نوع الوظيفة",
+      "hiringDate": "تاريخ التوظيف",
+      "onboardingTemplate": "قالب الانضمام",
+      "reportTo": "التقارير إلى",
+      "grade": "الدرجة",
+      "probationPeriod": "فترة التجربة",
+      "placeholders": {
+        "jobType": "اختر نوع الوظيفة",
+        "hiringDate": "اختر تاريخ التوظيف",
+        "onboardingTemplate": "اختر القالب",
+        "reportTo": "اختر المدير",
+        "grade": "أدخل الدرجة",
+        "probationPeriod": "اختر الفترة"
+      }
+    },  
+    "personalForm": {
+      "dob": "تاريخ الميلاد",
+      "maritalStatus": "الحالة الاجتماعية",
+      "nationality": "الجنسية",
+      "placeholders": {
+        "dob": "اختر تاريخ الميلاد",
+        "maritalStatus": "اختر الحالة الاجتماعية",
+        "nationality": "اختر الجنسية"
+      }
+    }
   }
 }

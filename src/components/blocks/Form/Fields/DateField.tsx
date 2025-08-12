@@ -23,6 +23,7 @@ type DateFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: FieldPath<T>;
   label: string;
+  placeholder: string;
   disabled?: boolean;
   className?: string;
   required?: boolean;
@@ -34,6 +35,7 @@ export function DateField<T extends FieldValues>({
   control,
   name,
   label,
+  placeholder,
   disabled = false,
   className = "",
   required = false,
@@ -70,7 +72,7 @@ export function DateField<T extends FieldValues>({
                   >
                     {field.value
                       ? dayjs(field.value).format("MMM D, YYYY")
-                      : "Pick a date"}
+                      : placeholder || "Pick a date"}
                     <CalendarIcon className="text-muted-foreground h-4 w-4" />
                   </Button>
                 </PopoverTrigger>

@@ -44,6 +44,7 @@ export default function Page() {
   const t = useTranslations("addEmployee");
   const { isRTL } = useLanguageNavigation();
 
+  const [tabValue, setTabValue] = useState("mandatory");
   const [isLoading, setIsLoading] = useState(false);
 
   const breadcrumbItems = [
@@ -90,17 +91,17 @@ export default function Page() {
     {
       name: t("mandatory"),
       value: "mandatory",
-      content: <MandatoryCard form={form} />,
+      content: <MandatoryCard form={form} setTabValue={setTabValue} />,
     },
     {
       name: t("work"),
       value: "work",
-      content: <WorkCard form={form} />,
+      content: <WorkCard form={form} setTabValue={setTabValue} />,
     },
     {
       name: t("personal"),
       value: "personal",
-      content: <PersonalCard form={form} />,
+      content: <PersonalCard form={form} setTabValue={setTabValue} />,
     },
   ];
 
@@ -119,6 +120,8 @@ export default function Page() {
             <TabsWithList
               tabList={tabList}
               defaultValue="mandatory"
+              value={tabValue}
+              onValueChange={setTabValue}
               dir={isRTL ? "rtl" : "ltr"}
             />
           </FormBuilder>

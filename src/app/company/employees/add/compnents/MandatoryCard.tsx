@@ -33,13 +33,32 @@ const departmentOptions = [
   { value: "03", label: "Marketing" },
 ];
 
-export function MandatoryCard({ form }: { form?: any }) {
+export function MandatoryCard({
+  form,
+  setTabValue,
+}: {
+  form?: any;
+  setTabValue: (value: string) => void;
+}) {
   const t = useTranslations("addEmployee");
   const tCommon = useTranslations("common");
+  const tMandatory = useTranslations("addEmployee.mandatoryForm");
+  const tPlaceholders = useTranslations(
+    "addEmployee.mandatoryForm.placeholders"
+  );
 
-  const handleNext = () => {
-    const formData = form.getValues();
-    console.log("Form submitted:", formData);
+  const handleNext = async () => {
+    const valid = await form.trigger([
+      "empId",
+      "firstName",
+      "lastName",
+      "email",
+      "gender",
+      "userRole",
+    ]);
+    if (valid && setTabValue) {
+      setTabValue("work");
+    }
   };
 
   return (
@@ -52,72 +71,72 @@ export function MandatoryCard({ form }: { form?: any }) {
           <TextField
             control={form.control}
             name="empId"
-            label="Employee ID"
-            placeholder="Enter your employee ID"
+            label={tMandatory("empId")}
+            placeholder={tPlaceholders("empId")}
             required
             className="w-full"
           />
           <TextField
             control={form.control}
             name="firstName"
-            label="First Name"
-            placeholder="Enter your first name"
+            label={tMandatory("firstName")}
+            placeholder={tPlaceholders("firstName")}
             required
             className="w-full"
           />
           <TextField
             control={form.control}
             name="lastName"
-            label="Last Name"
-            placeholder="Enter your last name"
+            label={tMandatory("lastName")}
+            placeholder={tPlaceholders("lastName")}
             required
             className="w-full"
           />
           <TextField
             control={form.control}
             name="email"
-            label="Email"
+            label={tMandatory("email")}
             type="email"
-            placeholder="your@email.com"
+            placeholder={tPlaceholders("email")}
             required
             className="w-full"
           />
           <TextField
             control={form.control}
             name="phone"
-            label="Phone"
+            label={tMandatory("phone")}
             type="tel"
-            placeholder="+1 (555) 123-4567"
+            placeholder={tPlaceholders("phone")}
             className="w-full"
           />
           <SelectField
             control={form.control}
             name="gender"
-            label="Gender"
-            placeholder="Select Gender"
+            label={tMandatory("gender")}
+            placeholder={tPlaceholders("gender")}
             options={genderOptions}
             required
           />
           <SelectField
             control={form.control}
             name="userRole"
-            label="User Role"
-            placeholder="Select User Role"
+            label={tMandatory("userRole")}
+            placeholder={tPlaceholders("userRole")}
             options={userRolesOption}
             required
           />
           <SelectField
             control={form.control}
             name="designation"
-            label="Designation"
-            placeholder="Select Designation"
+            label={tMandatory("designation")}
+            placeholder={tPlaceholders("designation")}
             options={designationOptions}
           />
           <SelectField
             control={form.control}
             name="department"
-            label="Department"
-            placeholder="Select Department"
+            label={tMandatory("department")}
+            placeholder={tPlaceholders("department")}
             options={departmentOptions}
           />
         </div>

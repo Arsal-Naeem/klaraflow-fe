@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
 import { SelectField } from "@/components/blocks/Form/Fields/SelectField";
 import { useTranslations } from "next-intl";
@@ -22,17 +17,22 @@ const nationalityOptions = [
   { value: "emirati", label: "Emirati" },
 ];
 
-export function PersonalCard({ form }: { form?: any }) {
+export function PersonalCard({
+  form,
+  setTabValue,
+}: {
+  form?: any;
+  setTabValue: (value: string) => void;
+}) {
   const t = useTranslations("addEmployee");
   const tCommon = useTranslations("common");
+  const tPersonal = useTranslations("addEmployee.personalForm");
+  const tPlaceholders = useTranslations("addEmployee.personalForm.placeholders");
 
-  const handleCancel = () => {
-    console.log("Cancel clicked");
-  };
-
-  const handleNext = () => {
-    const formData = form.getValues();
-    console.log("Form submitted:", formData);
+  const handleBack = () => {
+    if (setTabValue) {
+      setTabValue("work");
+    }
   };
   return (
     <Card>
@@ -44,32 +44,33 @@ export function PersonalCard({ form }: { form?: any }) {
           <DateField
             control={form?.control}
             name="dob"
-            label="Date of Birth"
+            label={tPersonal("dob")}
+            placeholder={tPlaceholders("dob")}
             className="w-full"
           />
           <SelectField
             control={form?.control}
             name="maritalStatus"
-            label="Marital Status"
-            placeholder="Select Marital Status"
+            label={tPersonal("maritalStatus")}
+            placeholder={tPlaceholders("maritalStatus")}
             options={maritalStatusOptions}
             className="w-full"
           />
           <SelectField
             control={form?.control}
             name="nationality"
-            label="Nationality"
-            placeholder="Select Nationality"
+            label={tPersonal("nationality")}
+            placeholder={tPlaceholders("nationality")}
             options={nationalityOptions}
             className="w-full"
           />
         </div>
 
         <div className="mt-8 flex justify-end gap-2">
-          <Button variant={"outline"} onClick={handleCancel}>
+          <Button variant={"outline"} onClick={handleBack}>
             {tCommon("back")}
           </Button>
-          <Button variant={"accent"} onClick={handleNext}>
+          <Button variant={"accent"} type="submit">
             {tCommon("save")}
           </Button>
         </div>

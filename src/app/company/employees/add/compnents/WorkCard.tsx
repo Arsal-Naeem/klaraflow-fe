@@ -1,10 +1,4 @@
-
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { SelectField } from "@/components/blocks/Form/Fields/SelectField";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
 import { TextField } from "@/components/blocks/Form/Fields/TextField";
@@ -35,17 +29,36 @@ const probationPeriodOptions = [
   { value: "6", label: "6 Months" },
 ];
 
-export function WorkCard({ form }: { form?: any }) {
+export function WorkCard({
+  form,
+  setTabValue,
+}: {
+  form?: any;
+  setTabValue: (value: string) => void;
+}) {
   const t = useTranslations("addEmployee");
   const tCommon = useTranslations("common");
+  const tWork = useTranslations("addEmployee.workForm");
+  const tPlaceholders = useTranslations("addEmployee.workForm.placeholders");
 
-  const handleCancel = () => {
-    console.log("Cancel clicked");
+  const handleBack = () => {
+    if (setTabValue) {
+      setTabValue("mandatory");
+    }
   };
 
-  const handleNext = () => {
-    const formData = form?.getValues();
-    console.log("Form submitted:", formData);
+  const handleNext = async () => {
+    const valid = await form.trigger([
+      "jobType",
+      "hiringDate",
+      "onboardingTemplate",
+      "reportTo",
+      "grade",
+      "probationPeriod",
+    ]);
+    if (valid && setTabValue) {
+      setTabValue("personal");
+    }
   };
 
   return (
@@ -58,52 +71,53 @@ export function WorkCard({ form }: { form?: any }) {
           <SelectField
             control={form?.control}
             name="jobType"
-            label="Job Type"
-            placeholder="Select Job Type"
+            label={tWork("jobType")}
+            placeholder={tPlaceholders("jobType")}
             options={jobTypeOptions}
             className="w-full"
           />
           <DateField
             control={form?.control}
             name="hiringDate"
-            label="Hiring Date"
+            label={tWork("hiringDate")}
+            placeholder={tPlaceholders("hiringDate")}
             className="w-full"
           />
           <SelectField
             control={form?.control}
             name="onboardingTemplate"
-            label="Onboarding Template"
-            placeholder="Select Template"
+            label={tWork("onboardingTemplate")}
+            placeholder={tPlaceholders("onboardingTemplate")}
             options={onboardingTemplateOptions}
             className="w-full"
           />
           <SelectField
             control={form?.control}
             name="reportTo"
-            label="Report To"
-            placeholder="Select Manager"
+            label={tWork("reportTo")}
+            placeholder={tPlaceholders("reportTo")}
             options={reportToOptions}
             className="w-full"
           />
           <TextField
             control={form?.control}
             name="grade"
-            label="Grade"
-            placeholder="Enter Grade"
+            label={tWork("grade")}
+            placeholder={tPlaceholders("grade")}
             className="w-full"
           />
           <SelectField
             control={form?.control}
             name="probationPeriod"
-            label="Probation Period"
-            placeholder="Select Period"
+            label={tWork("probationPeriod")}
+            placeholder={tPlaceholders("probationPeriod")}
             options={probationPeriodOptions}
             className="w-full"
           />
         </div>
 
         <div className="mt-8 flex justify-end gap-2">
-          <Button variant={"outline"} onClick={handleCancel}>
+          <Button variant={"outline"} onClick={handleBack}>
             {tCommon("back")}
           </Button>
           <Button variant={"accent"} onClick={handleNext}>
