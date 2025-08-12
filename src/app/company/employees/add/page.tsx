@@ -77,14 +77,54 @@ export default function Page() {
     },
   });
 
-  const handleSubmit = () => {
-    const formData = form.getValues();
+  const handleSubmit = async () => {
     setIsLoading(true);
+    
+    try {
+      const formData = form.getValues();
+      
+      const validation = addEmployeeSchema.safeParse(formData);
+      
+      // If validation fails, switching the tabs
+      if (!validation.success) {
+        const firstError = validation.error.issues[0];
+        const fieldName = firstError.path[0] as string;
+        
+        const mandatoryFields = ["empId", "firstName", "lastName", "email", "gender", "userRole"];
+        const workFields = ["designation", "department", "jobType", "hiringDate", "onboardingTemplate", "reportTo", "grade", "probationPeriod"];
+        const personalFields = ["dateOfBirth", "maritialStatus", "nationality"];
+        
+        let targetTab = "mandatory";
+        
+        if (mandatoryFields.includes(fieldName)) {
+          targetTab = "mandatory";
+        } else if (workFields.includes(fieldName)) {
+          targetTab = "work";
+        } else if (personalFields.includes(fieldName)) {
+          targetTab = "personal";
+        }
+        
+        await form.trigger();
+        
+        if (targetTab !== tabValue) {
+          setTabValue(targetTab);
+        }
+        
+        setIsLoading(false);
+        return;
+      }
 
-    setTimeout(() => {
+      // If validation passes, proceed with form submission
+      setTimeout(() => {
+        setIsLoading(false);
+        console.log("Form submitted successfully:", formData);
+        // Here you would typically call your API to save the employee data
+      }, 1000);
+      
+    } catch (error) {
+      console.error("Form submission error:", error);
       setIsLoading(false);
-      console.log("Form submitted from main:", formData);
-    }, 1000);
+    }
   };
 
   const tabList = [
@@ -101,7 +141,7 @@ export default function Page() {
     {
       name: t("personal"),
       value: "personal",
-      content: <PersonalCard form={form} setTabValue={setTabValue} />,
+      content: <PersonalCard form={form} setTabValue={setTabValue}  onSubmit={handleSubmit} />,
     },
   ];
 

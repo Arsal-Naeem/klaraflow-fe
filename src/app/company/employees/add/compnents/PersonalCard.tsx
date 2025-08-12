@@ -20,9 +20,11 @@ const nationalityOptions = [
 export function PersonalCard({
   form,
   setTabValue,
+  onSubmit,
 }: {
   form?: any;
   setTabValue: (value: string) => void;
+  onSubmit?: () => Promise<void>;
 }) {
   const t = useTranslations("addEmployee");
   const tCommon = useTranslations("common");
@@ -34,6 +36,25 @@ export function PersonalCard({
       setTabValue("work");
     }
   };
+
+  const handleSave = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    if (form?.formState?.isSubmitting) {
+      return;
+    }
+    
+    if (onSubmit) {
+      try {
+        await onSubmit();
+      } catch (error) {
+        console.error("Error during form submission:", error);
+      }
+    }
+  };
   return (
     <Card>
       <CardHeader>
@@ -43,14 +64,14 @@ export function PersonalCard({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <DateField
             control={form?.control}
-            name="dob"
+            name="dateOfBirth"
             label={tPersonal("dob")}
             placeholder={tPlaceholders("dob")}
             className="w-full"
           />
           <SelectField
             control={form?.control}
-            name="maritalStatus"
+            name="maritialStatus"
             label={tPersonal("maritalStatus")}
             placeholder={tPlaceholders("maritalStatus")}
             options={maritalStatusOptions}
@@ -70,8 +91,13 @@ export function PersonalCard({
           <Button variant={"outline"} onClick={handleBack}>
             {tCommon("back")}
           </Button>
-          <Button variant={"accent"} type="submit">
-            {tCommon("save")}
+          <Button 
+            variant={"accent"} 
+            type="button"
+            onClick={handleSave}
+            disabled={form?.formState?.isSubmitting}
+          >
+            {form?.formState?.isSubmitting ? "Saving..." : tCommon("save")}
           </Button>
         </div>
       </CardContent>
