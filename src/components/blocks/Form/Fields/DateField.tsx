@@ -17,7 +17,11 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/utils/helpers";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { CalendarIcon } from "lucide-react";
+
+// Configure dayjs to use UTC
+dayjs.extend(utc);
 
 type DateFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -48,10 +52,10 @@ export function DateField<T extends FieldValues>({
       name={name}
       render={({ field }) => {
         const selectedDate = field.value
-          ? dayjs(field.value).toDate()
+          ? dayjs.utc(field.value).toDate()
           : undefined;
-        const minDate = min ? dayjs(min).toDate() : undefined;
-        const maxDate = max ? dayjs(max).toDate() : undefined;
+        const minDate = min ? dayjs.utc(min).toDate() : undefined;
+        const maxDate = max ? dayjs.utc(max).toDate() : undefined;
 
         return (
           <FormItem className={className}>
@@ -71,7 +75,7 @@ export function DateField<T extends FieldValues>({
                     )}
                   >
                     {field.value
-                      ? dayjs(field.value).format("MMM D, YYYY")
+                      ? dayjs.utc(field.value).format("DD-MM-YYYY")
                       : placeholder || "Pick a date"}
                     <CalendarIcon className="text-muted-foreground h-4 w-4" />
                   </Button>
@@ -82,7 +86,11 @@ export function DateField<T extends FieldValues>({
                     selected={selectedDate}
                     onSelect={(date) => {
                       if (date) {
-                        field.onChange(dayjs(date).format("YYYY-MM-DD"));
+                        const year = date.getFullYear();
+                        const month = date.getMonth();
+                        const day = date.getDate();
+                        const utcDate = dayjs.utc(`${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                        field.onChange(utcDate.toISOString());
                       }
                     }}
                     disabled={(date) => {
