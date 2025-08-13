@@ -1,29 +1,28 @@
-// Simple toast utility - can be replaced with a more sophisticated solution later
+import { toast as sonnerToast } from 'sonner';
+
+const gradientStyle = {
+  background: "linear-gradient(90deg, #ff2394 0%, #280595 100%)",
+  color: "white",
+};
+
+// Toast utility using Sonner for better UX
 export const toast = {
   success: (message: string) => {
-    console.log('✅ Success:', message);
-    // For now using console.log, can be replaced with actual toast implementation
-    if (typeof window !== 'undefined') {
-      alert(`Success: ${message}`);
-    }
+    sonnerToast.success(message, { style: gradientStyle });
   },
   error: (message: string) => {
-    console.error('❌ Error:', message);
-    // For now using console.error, can be replaced with actual toast implementation
-    if (typeof window !== 'undefined') {
-      alert(`Error: ${message}`);
-    }
+    sonnerToast.error(message);
   },
   info: (message: string) => {
-    console.log('ℹ️ Info:', message);
-    if (typeof window !== 'undefined') {
-      alert(`Info: ${message}`);
-    }
+    sonnerToast.info(message);
   },
   warning: (message: string) => {
-    console.warn('⚠️ Warning:', message);
-    if (typeof window !== 'undefined') {
-      alert(`Warning: ${message}`);
-    }
+    sonnerToast.warning(message);
+  },
+  loading: (message: string) => {
+    return sonnerToast.loading(message);
+  },
+  dismiss: (toastId?: string | number) => {
+    sonnerToast.dismiss(toastId);
   },
 };
