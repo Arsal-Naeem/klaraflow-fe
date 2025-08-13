@@ -149,7 +149,7 @@ export default function Page() {
     <FullPageLayout breadcrumbItems={breadcrumbItems}>
       <Row gutter={10}>
         <Col span={isDesktop ? 3 : 12} order={isDesktop ? 1 : 2}>
-          <ProfileCard />
+          <ProfileCard form={form} />
         </Col>
         <Col span={isDesktop ? 9 : 12} order={isDesktop ? 2 : 1}>
           <FormBuilder

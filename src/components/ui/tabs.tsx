@@ -59,7 +59,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "cursor-pointer inline-flex h-[calc(100%+1px)] flex-shrink-0 items-center justify-center gap-1.5 px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow,border-color] focus-visible:outline-ring focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "cursor-pointer inline-flex h-[calc(100%+1px)] flex-shrink-0 items-center justify-center gap-1.5 px-2 py-1 text-sm font-bold whitespace-nowrap transition-[color,box-shadow,border-color] focus-visible:outline-ring focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 
         // Default state
         "text-foreground dark:text-muted-foreground border-b-2 border-transparent",
