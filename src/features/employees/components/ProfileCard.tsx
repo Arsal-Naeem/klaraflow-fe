@@ -14,7 +14,7 @@ const designationOptions = [
 export default function ProfileCard({ form }: { form?: any }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profilePicUrl, setProfilePicUrl] = useState<string>("");
-  
+
   // Watch form values for real-time updates
   const watchedValues = useWatch({
     control: form?.control,
@@ -47,14 +47,14 @@ export default function ProfileCard({ form }: { form?: any }) {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file.');
+      if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image file.");
         return;
       }
 
       // Validate file size (e.g., max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be less than 5MB.');
+        alert("File size must be less than 5MB.");
         return;
       }
 
@@ -63,10 +63,10 @@ export default function ProfileCard({ form }: { form?: any }) {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setProfilePicUrl(result);
-        
+
         // Set the file in form for API submission
         if (form?.setValue) {
-          form.setValue('profilePic', file);
+          form.setValue("profilePic", file);
         }
       };
       reader.readAsDataURL(file);
@@ -76,7 +76,10 @@ export default function ProfileCard({ form }: { form?: any }) {
   return (
     <Card className="lg:mt-11">
       <CardContent className="flex flex-col items-center py-8">
-        <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+        <div
+          className="relative group cursor-pointer"
+          onClick={handleAvatarClick}
+        >
           <Avatar className="w-30 h-30 mb-2">
             <AvatarImage
               src={employee.avatarUrl}
@@ -91,11 +94,11 @@ export default function ProfileCard({ form }: { form?: any }) {
             </AvatarFallback>
           </Avatar>
           {/* Overlay with camera icon on hover */}
-          <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,#ff2394_0%,#280595_100%)] w-30 h-30 bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
             <Camera className="w-8 h-8 text-white" />
           </div>
         </div>
-        
+
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
@@ -104,7 +107,7 @@ export default function ProfileCard({ form }: { form?: any }) {
           onChange={handleFileChange}
           className="hidden"
         />
-        
+
         <div className="text-muted-foreground text-sm font-bold mt-2">
           {employee.empId}
         </div>

@@ -28,6 +28,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-accent-font: var(--accent-font);
+  --accent-gradient: var(--accent-gradient);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -95,7 +96,8 @@
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --accent: #7a00d7; /* culprit */
-  --accent-font: #DDB2FF;
+  --accent-font: #ddb2ff;
+  --accent-gradient: linear-gradient(90deg, #ff2394 0%, #280595 100%);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
