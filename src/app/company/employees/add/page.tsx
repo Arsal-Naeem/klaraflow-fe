@@ -3,7 +3,7 @@ import FullPageLayout from "@/components/layouts/FullPageLayout/FullPageLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Col, Row } from "@/components/ui/grid";
 import { TabsWithList } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsDesktop } from "@/hooks/use-mobile";
 import { useTranslations } from "next-intl";
 import { PersonalCard } from "./compnents/PersonalCard";
 import { WorkCard } from "./compnents/WorkCard";
@@ -40,7 +40,7 @@ const addEmployeeSchema = z.object({
 type addEmployeeData = z.infer<typeof addEmployeeSchema>;
 
 export default function Page() {
-  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
   const t = useTranslations("addEmployee");
   const { isRTL } = useLanguageNavigation();
 
@@ -148,10 +148,10 @@ export default function Page() {
   return (
     <FullPageLayout breadcrumbItems={breadcrumbItems}>
       <Row gutter={10}>
-        <Col span={isMobile ? 12 : 3} order={isMobile ? 2 : 1}>
+        <Col span={isDesktop ? 3 : 12} order={isDesktop ? 1 : 2}>
           <ProfileCard />
         </Col>
-        <Col span={isMobile ? 12 : 9} order={isMobile ? 1 : 2}>
+        <Col span={isDesktop ? 9 : 12} order={isDesktop ? 2 : 1}>
           <FormBuilder
             form={form}
             onSubmit={handleSubmit}
