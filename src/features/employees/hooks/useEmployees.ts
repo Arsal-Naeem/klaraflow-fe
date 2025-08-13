@@ -46,10 +46,29 @@ export function useCreateEmployee() {
     mutationFn: (employeeData: CreateEmployeeRequest) =>
       employeesService.createEmployee(employeeData),
     onSuccess: (newEmployee) => {
-      // Invalidate and refetch employees list
       queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
       
-      // Add the new employee to the cache
+      queryClient.setQueryData(employeeKeys.detail(newEmployee.id), newEmployee);
+      
+      toast.success('Employee created successfully!');
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || 'Failed to create employee';
+      toast.error(message);
+    },
+  });
+}
+
+// Hook to create employee with files (for profile picture uploads)
+export function useCreateEmployeeWithFiles() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData: FormData) =>
+      employeesService.createEmployeeWithFiles(formData),
+    onSuccess: (newEmployee) => {
+      queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
+
       queryClient.setQueryData(employeeKeys.detail(newEmployee.id), newEmployee);
       
       toast.success('Employee created successfully!');

@@ -9,11 +9,13 @@ import { WorkCard } from "../../../../features/employees/components/WorkCard";
 import ProfileCard from "../../../../features/employees/components/ProfileCard";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 import { MandatoryCard } from "../../../../features/employees/components/MandatoryCard";
+import { useCreateEmployee, useCreateEmployeeWithFiles } from "../../../../features/employees/hooks/useEmployees";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormBuilder } from "@/components/blocks/Form/form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const addEmployeeSchema = z.object({
   empId: z.string().min(1, "Employee ID is required"),
@@ -34,6 +36,7 @@ const addEmployeeSchema = z.object({
   dateOfBirth: z.string().optional(),
   maritialStatus: z.string().optional(),
   nationality: z.string().optional(),
+  profilePic: z.instanceof(File).optional(),
 });
 
 type addEmployeeData = z.infer<typeof addEmployeeSchema>;
@@ -42,9 +45,27 @@ export default function Page() {
   const isDesktop = useIsDesktop();
   const t = useTranslations("addEmployee");
   const { isRTL } = useLanguageNavigation();
+  const router = useRouter();
 
   const [tabValue, setTabValue] = useState("mandatory");
-  const [isLoading, setIsLoading] = useState(false);
+  
+  // Use React Query hooks for mutations
+  const createEmployee = useCreateEmployee();
+  const createEmployeeWithFiles = useCreateEmployeeWithFiles();
+
+  // Handle successful employee creation
+  const handleSuccess = () => {
+    form.reset();
+    setTabValue("mandatory");
+    router.push('/company/employees');
+  };
+
+  // Add success callbacks to mutations
+  useEffect(() => {
+    if (createEmployee.isSuccess || createEmployeeWithFiles.isSuccess) {
+      handleSuccess();
+    }
+  }, [createEmployee.isSuccess, createEmployeeWithFiles.isSuccess]);
 
   const breadcrumbItems = [
     { name: "Company" },
@@ -73,12 +94,11 @@ export default function Page() {
       dateOfBirth: "",
       maritialStatus: "",
       nationality: "",
+      profilePic: undefined,
     },
   });
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    
     try {
       const formData = form.getValues();
       
@@ -109,20 +129,38 @@ export default function Page() {
           setTabValue(targetTab);
         }
         
-        setIsLoading(false);
         return;
       }
 
       // If validation passes, proceed with form submission
-      setTimeout(() => {
-        setIsLoading(false);
-        console.log("Form submitted successfully:", formData);
-        // Here you would typically call your API to save the employee data
-      }, 1000);
+      if (formData.profilePic) {
+        const apiFormData = new FormData();
+        
+        // Append all form fields with proper mapping
+        Object.entries(formData).forEach(([key, value]) => {
+          if (key === 'profilePic' && value instanceof File) {
+            apiFormData.append('profilePic', value);
+          } else if (value !== undefined && value !== '') {
+            apiFormData.append(key, value as string);
+          }
+        });
+        
+        createEmployeeWithFiles.mutate(apiFormData);
+      } else {
+        const { profilePic, hiringDate, designation, ...restData } = formData;
+        
+        // const mappedData = {
+        //   ...restData,
+        //   hireDate: hiringDate || '',
+        //   position: designation || '',
+        //   department: formData.department || '', // Ensure department is provided
+        // };
+        
+        createEmployee.mutate(formData);
+      }
       
     } catch (error) {
       console.error("Form submission error:", error);
-      setIsLoading(false);
     }
   };
 
@@ -140,7 +178,12 @@ export default function Page() {
     {
       name: t("personal"),
       value: "personal",
-      content: <PersonalCard form={form} setTabValue={setTabValue}  onSubmit={handleSubmit} />,
+      content: <PersonalCard 
+        form={form} 
+        setTabValue={setTabValue} 
+        onSubmit={handleSubmit} 
+        isLoading={createEmployee.isPending || createEmployeeWithFiles.isPending}
+      />,
     },
   ];
 

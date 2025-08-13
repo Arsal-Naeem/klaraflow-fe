@@ -21,10 +21,12 @@ export function PersonalCard({
   form,
   setTabValue,
   onSubmit,
+  isLoading,
 }: {
   form?: any;
   setTabValue: (value: string) => void;
   onSubmit?: () => Promise<void>;
+  isLoading?: boolean;
 }) {
   const t = useTranslations("addEmployee");
   const tCommon = useTranslations("common");
@@ -95,9 +97,9 @@ export function PersonalCard({
             variant={"accent"} 
             type="button"
             onClick={handleSave}
-            disabled={form?.formState?.isSubmitting}
+            disabled={isLoading || form?.formState?.isSubmitting}
           >
-            {form?.formState?.isSubmitting ? "Saving..." : tCommon("save")}
+            {(isLoading || form?.formState?.isSubmitting) ? "Saving..." : tCommon("save")}
           </Button>
         </div>
       </CardContent>
