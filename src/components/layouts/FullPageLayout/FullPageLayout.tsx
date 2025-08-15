@@ -10,10 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useI18n } from "@/hooks/use-i18n";
 import { normalizeTranslationKey } from "@/utils/helpers";
 
@@ -90,7 +87,11 @@ export default function FullPageLayout({
           </Breadcrumb>
         </div>
       </header>
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-8">{children}</div>
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 md:px-8">
+          {children}
+        </div>
+      </div>
     </SidebarInset>
   );
 }

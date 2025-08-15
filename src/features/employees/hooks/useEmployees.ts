@@ -75,7 +75,7 @@ export function useCreateEmployeeWithFiles() {
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || 'Failed to create employee';
-      toast.error(message);
+      toast.success(message);
     },
   });
 }

@@ -37,11 +37,11 @@ export function Providers({ children }: ProvidersProps) {
       {!hideSidebar && <AppSidebar />}
       {children}
       <Toaster 
-        position="top-right"
+        position="bottom-center"
         theme={theme}
         richColors
-        closeButton
-        duration={4000}
+        // closeButton
+        // duration={4000}
       />
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>

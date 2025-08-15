@@ -21,6 +21,7 @@ export interface Employee {
   maritalStatus?: string;
   nationality?: string;
   profilePic?: string;
+  status: string;
   // salary?: number;
   // status: "active" | "inactive" | "terminated";
   // avatar?: string;
