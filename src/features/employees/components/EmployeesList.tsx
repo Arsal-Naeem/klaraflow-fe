@@ -55,7 +55,7 @@ export function EmployeesList({
               className="cursor-pointer odd:bg-muted/20"
               onClick={() => router.push(`/company/employees/${employee.id}`)}
             >
-              <TableCell className="text-center font-medium">
+              <TableCell className="text-xs text-center font-medium">
                 {employee.empId}
               </TableCell>
               <TableCell className="font-medium">
@@ -63,12 +63,12 @@ export function EmployeesList({
                   style={{ display: "flex", gap: "12px", alignItems: "center" }}
                 >
                   <span className="relative">
-                    <Avatar className="w-12 h-12">
+                    <Avatar className="w-10 h-10">
                       <AvatarImage
                         src={employee.profilePic}
                         alt={employee.firstName + " " + employee.lastName}
                       />
-                      <AvatarFallback className="text-lg">
+                      <AvatarFallback className="text-sm">
                         {(employee.firstName + " " + employee.lastName)
                           .split(" ")
                           .map((n) => n[0])
@@ -78,7 +78,7 @@ export function EmployeesList({
                     </Avatar>
                   </span>
                   <div>
-                    <div>
+                    <div className="text-xs">
                       {employee.firstName} {employee.lastName}
                     </div>
                     <div className="text-muted-foreground text-xs">
@@ -87,15 +87,15 @@ export function EmployeesList({
                   </div>
                 </div>
               </TableCell>
-              <TableCell>{employee.department}</TableCell>
-              <TableCell>{employee.email}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-xs">{employee.department}</TableCell>
+              <TableCell className="text-xs">{employee.email}</TableCell>
+              <TableCell className="text-xs text-center">
                 {employee.phone || "-"}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-xs text-center">
                 {new Date(employee.hiringDate as string).toLocaleDateString()}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-xs text-center">
                 <Badge variant={getStatusVariant(employee.status) as any}>
                   {employee.status.toUpperCase()}
                 </Badge>

@@ -23,11 +23,29 @@ import { EmployeesGrid } from "@/features/employees/components/EmployeesGrid";
 
 type ViewType = "card" | "table";
 
+const designationOptions = [
+  { value: "01", label: "Developer" },
+  { value: "02", label: "Designer" },
+  { value: "03", label: "Manager" },
+];
+
+const departmentOptions = [
+  { value: "01", label: "Engineering" },
+  { value: "02", label: "Design" },
+  { value: "03", label: "Marketing" },
+];
+
 export default function Page() {
   const breadcrumbItems = [{ name: "Company" }, { name: "Employees" }];
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [viewType, setViewType] = useState<ViewType>("card");
+  const [selectedDesignation, setSelectedDesignation] = useState<
+    string | undefined
+  >(undefined);
+  const [selectedDepartment, setSelectedDepartment] = useState<
+    string | undefined
+  >(undefined);
 
   const isLoading = false; // Replace with actual loading state
   const error = null; // Replace with actual error state
@@ -179,7 +197,7 @@ export default function Page() {
         </div>
 
         {/* Search and View Toggle */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
@@ -191,6 +209,45 @@ export default function Page() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Designation select */}
+            <Select
+              value={selectedDesignation ?? ""}
+              onValueChange={(value: string) =>
+                setSelectedDesignation(value || undefined)
+              }
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Designation" />
+              </SelectTrigger>
+              <SelectContent>
+                {designationOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Department select */}
+            <Select
+              value={selectedDepartment ?? ""}
+              onValueChange={(value: string) =>
+                setSelectedDepartment(value || undefined)
+              }
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Department" />
+              </SelectTrigger>
+              <SelectContent>
+                {departmentOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* View type select */}
             <Select
               value={viewType}
               onValueChange={(value: ViewType) => setViewType(value)}
