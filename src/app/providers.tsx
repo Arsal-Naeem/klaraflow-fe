@@ -33,6 +33,7 @@ export function Providers({ children }: ProvidersProps) {
       "/reset-password",
       "/signup",
       "/register",
+      "/onboarding"
     ].includes(pathname) || pathname.startsWith("/invite/");
 
   return (

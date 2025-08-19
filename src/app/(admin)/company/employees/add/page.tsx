@@ -4,18 +4,19 @@ import { Col, Row } from "@/components/ui/grid";
 import { TabsWithList } from "@/components/ui/tabs";
 import { useIsDesktop } from "@/hooks/use-mobile";
 import { useTranslations } from "next-intl";
-import { PersonalCard } from "../../../../features/employees/components/PersonalCard";
-import { WorkCard } from "../../../../features/employees/components/WorkCard";
-import ProfileCard from "../../../../features/employees/components/ProfileCard";
-import { useLanguageNavigation } from "@/hooks/use-language-navigation";
-import { MandatoryCard } from "../../../../features/employees/components/MandatoryCard";
-import { useCreateEmployee, useCreateEmployeeWithFiles } from "../../../../features/employees/hooks/useEmployees";
+
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormBuilder } from "@/components/blocks/Form/form";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
+import { useCreateEmployee, useCreateEmployeeWithFiles } from "@/features/employees";
+import { MandatoryCard } from "@/features/employees/components/MandatoryCard";
+import { WorkCard } from "@/features/employees/components/WorkCard";
+import { PersonalCard } from "@/features/employees/components/PersonalCard";
+import ProfileCard from "@/features/employees/components/ProfileCard";
 
 const addEmployeeSchema = z.object({
   empId: z.string().min(1, "Employee ID is required"),
