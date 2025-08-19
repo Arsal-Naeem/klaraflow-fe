@@ -3,64 +3,72 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Form } from "@/components/ui/form";
+import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { useTranslations } from "next-intl";
 import { LanguageToggle } from "@/components/blocks/Sidebar/components/language-toggle";
+import { useForgotPassword, useVerifyResetPin } from "@/features/authentication";
+import { Loader2 } from "lucide-react";
 
-function sendResetEmail(email: string) {
-  // Dummy async function to simulate sending email
-  return new Promise((resolve) => setTimeout(resolve, 1000));
-}
+// Form schemas
+const forgotPasswordEmailSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
 
-function verifyPin(pin: string) {
-  // Dummy async function to simulate verifying pin
-  return new Promise((resolve) => setTimeout(resolve, 1000));
-}
+const verifyPinSchema = z.object({
+  pin: z.string().min(6, "Pin must be 6 digits").max(6, "Pin must be 6 digits"),
+});
+
+type ForgotPasswordEmailData = z.infer<typeof forgotPasswordEmailSchema>;
+type VerifyPinData = z.infer<typeof verifyPinSchema>;
 
 export default function ForgetPasswordPage() {
   const t = useTranslations("forgotPassword");
   const tCommon = useTranslations("common");
   const [step, setStep] = React.useState<"email" | "pin">("email");
-  const [email, setEmail] = React.useState("");
-  const [pin, setPin] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState("");
+  const [userEmail, setUserEmail] = React.useState("");
   const router = useRouter();
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      await sendResetEmail(email);
-      setStep("pin");
-    } catch {
-      setError(t("sendEmailFailed", { default: "Failed to send reset email. Try again." }));
-    } finally {
-      setLoading(false);
-    }
+  // Mutations
+  const forgotPassword = useForgotPassword();
+  const verifyResetPin = useVerifyResetPin();
+
+  // Forms
+  const emailForm = useForm<ForgotPasswordEmailData>({
+    resolver: zodResolver(forgotPasswordEmailSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const pinForm = useForm<VerifyPinData>({
+    resolver: zodResolver(verifyPinSchema),
+    defaultValues: {
+      pin: "",
+    },
+  });
+
+  // Handlers
+  const handleEmailSubmit = async (data: ForgotPasswordEmailData) => {
+    forgotPassword.mutate(data, {
+      onSuccess: () => {
+        setUserEmail(data.email);
+        setStep("pin");
+      },
+    });
   };
 
-  const handlePinSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    if (!/^\d{6}$/.test(pin)) {
-      setError(t("invalidPin", { default: "Please enter a valid 6-digit pin." }));
-      setLoading(false);
-      return;
-    }
-    try {
-      await verifyPin(pin);
-      router.push("/reset-password");
-    } catch {
-      setError(t("pinFailed", { default: "Invalid pin. Try again." }));
-    } finally {
-      setLoading(false);
-    }
+  const handlePinSubmit = async (data: VerifyPinData) => {
+    verifyResetPin.mutate({
+      email: userEmail,
+      pin: data.pin,
+    });
   };
 
   return (
@@ -80,40 +88,74 @@ export default function ForgetPasswordPage() {
           </CardHeader>
           <CardContent>
             {step === "email" ? (
-              <form className="flex flex-col gap-4" onSubmit={handleEmailSubmit}>
-                <Input
-                  type="email"
-                  placeholder={tCommon("email")}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoFocus
-                  disabled={loading}
-                />
-                <Button type="submit" className="mt-2 w-full bg-accent hover:bg-accent text-primary" disabled={loading}>
-                  {loading ? tCommon("loading") : t("sendCodeButton", { default: "Send Code" })}
-                </Button>
-              </form>
+              <Form {...emailForm}>
+                <form onSubmit={emailForm.handleSubmit(handleEmailSubmit)} className="flex flex-col gap-4">
+                  <TextField
+                    control={emailForm.control}
+                    name="email"
+                    type="email"
+                    label="Email"
+                    placeholder={tCommon("email")}
+                    required
+                    disabled={forgotPassword.isPending}
+                  />
+                  <Button 
+                    type="submit" 
+                    className="mt-2 w-full bg-accent hover:bg-accent text-primary" 
+                    disabled={forgotPassword.isPending}
+                  >
+                    {forgotPassword.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {tCommon("loading")}
+                      </>
+                    ) : (
+                      t("sendCodeButton", { default: "Send Code" })
+                    )}
+                  </Button>
+                </form>
+              </Form>
             ) : (
-              <form className="flex flex-col gap-4" onSubmit={handlePinSubmit}>
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="\d{6}"
-                  maxLength={6}
-                  placeholder={t("pinPlaceholder", { default: "6-digit code" })}
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                  required
-                  autoFocus
-                  disabled={loading}
-                />
-                <Button type="submit" className="mt-2 w-full bg-accent hover:bg-accent text-primary" disabled={loading}>
-                  {loading ? t("verifying", { default: "Verifying..." }) : t("verifyButton", { default: "Verify Code" })}
-                </Button>
-              </form>
+              <Form {...pinForm}>
+                <form onSubmit={pinForm.handleSubmit(handlePinSubmit)} className="flex flex-col gap-4">
+                  <TextField
+                    control={pinForm.control}
+                    name="pin"
+                    type="text"
+                    label=""
+                    placeholder={t("pinPlaceholder", { default: "6-digit code" })}
+                    required
+                    disabled={verifyResetPin.isPending}
+                    className="text-center tracking-widest"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => setStep("email")}
+                      disabled={verifyResetPin.isPending}
+                    >
+                      {tCommon("back")}
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      className="flex-1 bg-accent hover:bg-accent text-primary"
+                      disabled={verifyResetPin.isPending}
+                    >
+                      {verifyResetPin.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {t("verifying", { default: "Verifying..." })}
+                        </>
+                      ) : (
+                        t("verifyButton", { default: "Verify Code" })
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             )}
-            {error && <div className="text-destructive text-sm mt-2 text-center">{error}</div>}
           </CardContent>
           <CardFooter />
         </Card>

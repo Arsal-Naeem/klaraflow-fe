@@ -38,7 +38,7 @@ export function Providers({ children }: ProvidersProps) {
       {children}
       <Toaster 
         position="bottom-center"
-        theme={theme}
+        // theme={theme}
         richColors
         // closeButton
         // duration={4000}

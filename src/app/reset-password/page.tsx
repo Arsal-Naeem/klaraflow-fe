@@ -2,46 +2,66 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Form } from "@/components/ui/form";
+import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { useTranslations } from "next-intl";
 import { LanguageToggle } from "@/components/blocks/Sidebar/components/language-toggle";
+import { useResetPassword } from "@/features/authentication";
+import { Loader2 } from "lucide-react";
+
+// Form schema
+const resetPasswordSchema = z.object({
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordPage() {
   const t = useTranslations("resetPassword");
   const tCommon = useTranslations("common");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState("");
-  const [success, setSuccess] = React.useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (password.length < 6) {
-      setError(tCommon("forms.validation.minLength", { min: 6 }));
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError(t("passwordsDoNotMatch", { default: "Passwords do not match." }));
-      return;
-    }
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccess(true);
-      setTimeout(() => router.push("/"), 1500);
-    } catch {
-      setError(t("resetFailed", { default: "Failed to reset password. Try again." }));
-    } finally {
-      setLoading(false);
-    }
+  // Redirect if no token
+  // React.useEffect(() => {
+  //   if (!token) {
+  //     router.push("/forgot-password");
+  //   }
+  // }, [token, router]);
+
+  // Mutations
+  const resetPassword = useResetPassword();
+
+  // Form
+  const form = useForm<ResetPasswordData>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  // Handler
+  const handleSubmit = async (data: ResetPasswordData) => {
+    if (!token) return;
+    
+    resetPassword.mutate({
+      token,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+    });
   };
 
   return (
@@ -57,36 +77,42 @@ export default function ResetPasswordPage() {
             <Separator />
           </CardHeader>
           <CardContent>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-              <Input
-                type="password"
-                placeholder={t("newPassword", { default: "New Password" })}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                autoFocus
-                disabled={loading || success}
-              />
-              <Input
-                type="password"
-                placeholder={t("confirmPassword", { default: "Confirm Password" })}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                minLength={6}
-                disabled={loading || success}
-              />
-              <Button type="submit" className="mt-2 w-full bg-accent hover:bg-accent text-primary" disabled={loading || success}>
-                {loading
-                  ? tCommon("loading")
-                  : success
-                  ? t("resetSuccessButton", { default: "Password Reset!" })
-                  : t("resetButton", { default: "Reset Password" })}
-              </Button>
-            </form>
-            {error && <div className="text-destructive text-sm mt-2 text-center">{error}</div>}
-            {success && <div className="text-green-600 text-sm mt-2 text-center">{t("resetSuccessMessage", { default: "Password reset successful! Redirecting..." })}</div>}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+                <TextField
+                  control={form.control}
+                  name="password"
+                  type="password"
+                  label="New Password"
+                  placeholder={t("newPassword", { default: "New Password" })}
+                  required
+                  disabled={resetPassword.isPending}
+                />
+                <TextField
+                  control={form.control}
+                  name="confirmPassword"
+                  type="password"
+                  label="Confirm Password"
+                  placeholder={t("confirmPassword", { default: "Confirm Password" })}
+                  required
+                  disabled={resetPassword.isPending}
+                />
+                <Button 
+                  type="submit" 
+                  className="mt-2 w-full bg-accent hover:bg-accent text-primary" 
+                  disabled={resetPassword.isPending}
+                >
+                  {resetPassword.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t("resetting", { default: "Resetting..." })}
+                    </>
+                  ) : (
+                    t("resetButton", { default: "Reset Password" })
+                  )}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
           <CardFooter />
         </Card>

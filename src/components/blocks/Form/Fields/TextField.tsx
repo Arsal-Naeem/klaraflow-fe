@@ -1,28 +1,38 @@
-import { Control, FieldPath, FieldValues } from "react-hook-form"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Control, FieldPath, FieldValues } from "react-hook-form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 type TextFieldProps<T extends FieldValues> = {
-  control: Control<T>
-  name: FieldPath<T>
-  label: string
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
-  placeholder?: string
-  disabled?: boolean
-  className?: string
-  required?: boolean
-}
+  control: Control<T>;
+  name: FieldPath<T>;
+  label: string;
+  type?: "text" | "email" | "password" | "number" | "tel" | "url";
+  placeholder?: string;
+  disabled?: boolean;
+  className?: string;
+  required?: boolean;
+};
 
-export function TextField<T extends FieldValues>({ 
-  control, 
-  name, 
-  label, 
-  type = 'text', 
+export function TextField<T extends FieldValues>({
+  control,
+  name,
+  label,
+  type = "text",
   placeholder,
   disabled = false,
   className = "",
-  required = false
+  required = false,
 }: TextFieldProps<T>) {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <FormField
       control={control}
@@ -34,16 +44,31 @@ export function TextField<T extends FieldValues>({
             {required && <span className="text-red-500 ml-1">*</span>}
           </FormLabel>
           <FormControl>
-            <Input 
-              type={type} 
-              placeholder={placeholder} 
-              disabled={disabled}
-              {...field} 
-            />
+            <div className="relative">
+              <Input
+                type={type === "password" && showPassword ? "text" : type}
+                placeholder={placeholder}
+                disabled={disabled}
+                {...field}
+              />
+              {type === "password" && (
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-primary/20 hover:text-primary/50"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              )}
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
       )}
     />
-  )
+  );
 }

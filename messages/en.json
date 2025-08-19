@@ -118,7 +118,14 @@
     "email": "Email",
     "password": "Password",
     "forgotPassword": "Forgot Password?",
-    "loginButton": "Login"
+    "loginButton": "Login",
+    "loggingIn": "Logging in...",
+    "sendOtp": "Send OTP",
+    "sendingOtp": "Sending OTP...",
+    "enterOtp": "Enter OTP",
+    "verifyOtp": "Verify OTP",
+    "verifying": "Verifying...",
+    "back": "Back"
   },
   "forgotPassword": {
     "title": "Forgot Password",
@@ -138,6 +145,7 @@
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
     "resetButton": "Reset Password",
+    "resetting": "Resetting...",
     "resetSuccessButton": "Reset Password",
     "passwordsDoNotMatch": "Passwords do not match.",
     "resetFailed": "Failed to reset password. Please try again.",

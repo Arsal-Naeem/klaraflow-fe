@@ -2,6 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Card,
   CardHeader,
@@ -9,21 +12,102 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Form } from "@/components/ui/form";
+import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { useTranslations } from "next-intl";
+import { 
+  useLoginWithPassword, 
+  useSendOtp, 
+  useVerifyOtp 
+} from "@/features/authentication";
+import { Loader2 } from "lucide-react";
 
 const TABS = [
   { key: "email", label: "loginViaPassword" },
   { key: "otp", label: "loginViaOTP" },
 ];
 
+// Form schemas
+const loginWithPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+const sendOtpSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+const verifyOtpSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  otp: z.string().min(4, "OTP must be at least 4 characters"),
+});
+
+type LoginWithPasswordData = z.infer<typeof loginWithPasswordSchema>;
+type SendOtpData = z.infer<typeof sendOtpSchema>;
+type VerifyOtpData = z.infer<typeof verifyOtpSchema>;
+
 export default function LoginPage() {
   const t = useTranslations("login");
   const [tab, setTab] = React.useState("email");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [otpSent, setOtpSent] = React.useState(false);
+
+  // Mutations
+  const loginWithPassword = useLoginWithPassword();
+  const sendOtp = useSendOtp();
+  const verifyOtp = useVerifyOtp();
+
+  // Forms
+  const passwordForm = useForm<LoginWithPasswordData>({
+    resolver: zodResolver(loginWithPasswordSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const otpSendForm = useForm<SendOtpData>({
+    resolver: zodResolver(sendOtpSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const otpVerifyForm = useForm<VerifyOtpData>({
+    resolver: zodResolver(verifyOtpSchema),
+    defaultValues: {
+      email: "",
+      otp: "",
+    },
+  });
+
+  // Handlers
+  const handlePasswordLogin = async (data: LoginWithPasswordData) => {
+    loginWithPassword.mutate(data);
+  };
+
+  const handleSendOtp = async (data: SendOtpData) => {
+    sendOtp.mutate(data, {
+      onSuccess: () => {
+        setOtpSent(true);
+        otpVerifyForm.setValue("email", data.email);
+      },
+    });
+  };
+
+  const handleVerifyOtp = async (data: VerifyOtpData) => {
+    verifyOtp.mutate(data);
+  };
+
+  const handleTabChange = (newTab: string) => {
+    setTab(newTab);
+    setOtpSent(false);
+    // Reset forms when switching tabs
+    passwordForm.reset();
+    otpSendForm.reset();
+    otpVerifyForm.reset();
+  };
 
   return (
     <div
@@ -48,7 +132,8 @@ export default function LoginPage() {
                   variant={tab === currentTab.key ? "accent" : "outline"}
                   size="sm"
                   className="rounded-full px-4 w-full xs:w-full sm:w-auto"
-                  onClick={() => setTab(currentTab.key)}
+                  onClick={() => handleTabChange(currentTab.key)}
+                  disabled={loginWithPassword.isPending || sendOtp.isPending || verifyOtp.isPending}
                 >
                   {t(currentTab.label)}
                 </Button>
@@ -58,46 +143,122 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             {tab === "email" ? (
-              <form className="flex flex-col gap-4">
-                <Input
-                  type="email"
-                  placeholder={t("email")}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoFocus
-                />
-                <Input
-                  type="password"
-                  placeholder={t("password")}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <Button
-                  type="submit"
-                  className="mt-2 w-full bg-accent hover:bg-accent text-primary"
-                >
-                  {t("loginButton")}
-                </Button>
-              </form>
+              <Form {...passwordForm}>
+                <form onSubmit={passwordForm.handleSubmit(handlePasswordLogin)} className="flex flex-col gap-4">
+                  <TextField
+                    control={passwordForm.control}
+                    name="email"
+                    type="email"
+                    label="Email"
+                    placeholder={t("email")}
+                    required
+                    disabled={loginWithPassword.isPending}
+                  />
+                  <TextField
+                    control={passwordForm.control}
+                    name="password"
+                    type="password"
+                    label="Password"
+                    placeholder={t("password")}
+                    required
+                    disabled={loginWithPassword.isPending}
+                  />
+                  <Button
+                    type="submit"
+                    className="mt-2 w-full bg-accent hover:bg-accent text-primary"
+                    disabled={loginWithPassword.isPending}
+                  >
+                    {loginWithPassword.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t("loggingIn")}
+                      </>
+                    ) : (
+                      t("loginButton")
+                    )}
+                  </Button>
+                </form>
+              </Form>
             ) : (
-              <form className="flex flex-col gap-4">
-                <Input
-                  type="email"
-                  placeholder={t("email")}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoFocus
-                />
-                <Button
-                  type="submit"
-                  className="mt-2 w-full bg-accent hover:bg-accent text-primar"
-                >
-                  {t("loginButton")}
-                </Button>
-              </form>
+              <>
+                {!otpSent ? (
+                  <Form {...otpSendForm}>
+                    <form onSubmit={otpSendForm.handleSubmit(handleSendOtp)} className="flex flex-col gap-4">
+                      <TextField
+                        control={otpSendForm.control}
+                        name="email"
+                        type="email"
+                        label=""
+                        placeholder={t("email")}
+                        required
+                        disabled={sendOtp.isPending}
+                      />
+                      <Button
+                        type="submit"
+                        className="mt-2 w-full bg-accent hover:bg-accent text-primary"
+                        disabled={sendOtp.isPending}
+                      >
+                        {sendOtp.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {t("sendingOtp")}
+                          </>
+                        ) : (
+                          t("sendOtp")
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                ) : (
+                  <Form {...otpVerifyForm}>
+                    <form onSubmit={otpVerifyForm.handleSubmit(handleVerifyOtp)} className="flex flex-col gap-4">
+                      <TextField
+                        control={otpVerifyForm.control}
+                        name="email"
+                        type="email"
+                        label=""
+                        placeholder={t("email")}
+                        required
+                        disabled
+                      />
+                      <TextField
+                        control={otpVerifyForm.control}
+                        name="otp"
+                        type="text"
+                        label=""
+                        placeholder={t("enterOtp")}
+                        required
+                        disabled={verifyOtp.isPending}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => setOtpSent(false)}
+                          disabled={verifyOtp.isPending}
+                        >
+                          {t("back")}
+                        </Button>
+                        <Button
+                          type="submit"
+                          className="flex-1 bg-accent hover:bg-accent text-primary"
+                          disabled={verifyOtp.isPending}
+                        >
+                          {verifyOtp.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              {t("verifying")}
+                            </>
+                          ) : (
+                            t("verifyOtp")
+                          )}
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                )}
+              </>
             )}
             <div className="text-right mt-3">
               <Link
