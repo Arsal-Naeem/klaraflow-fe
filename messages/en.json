@@ -151,6 +151,18 @@
     "resetFailed": "Failed to reset password. Please try again.",
     "resetSuccessMessage": "Password reset successful! Redirecting..."
   },
+  "activateAccount": {
+    "title": "Activate Your Account",
+    "subtitle": "Welcome to KlaraFlow! Set up your password to complete activation.",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "activateButton": "Activate Account",
+    "activating": "Activating...",
+    "passwordsDoNotMatch": "Passwords do not match.",
+    "activationFailed": "Failed to activate account. Please try again.",
+    "activationSuccessMessage": "Account activated successfully! Redirecting...",
+    "invalidToken": "Invalid or expired invitation link."
+  },
   "addEmployee": {
     "mandatory": "Mandatory",
     "personal": "Personal",

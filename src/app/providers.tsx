@@ -8,7 +8,6 @@ import { StoreHydration } from "@/lib/store-hydration";
 import { InitialLoader } from "@/components/ui/fullpage-loader";
 import { AppSidebar } from "@/components/blocks/Sidebar/app-sidebar";
 import { usePathname } from "next/navigation";
-import { useTheme } from "@/stores/theme-store";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -27,8 +26,14 @@ export function Providers({ children }: ProvidersProps) {
       })
   );
   const pathname = usePathname();
-  const { theme } = useTheme();
-  const hideSidebar = ["/login", "/forgot-password", "/reset-password", "/signup", "/register"].includes(pathname);
+  const hideSidebar =
+    [
+      "/login",
+      "/forgot-password",
+      "/reset-password",
+      "/signup",
+      "/register",
+    ].includes(pathname) || pathname.startsWith("/invite/");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -36,7 +41,7 @@ export function Providers({ children }: ProvidersProps) {
       <InitialLoader />
       {!hideSidebar && <AppSidebar />}
       {children}
-      <Toaster 
+      <Toaster
         position="bottom-center"
         // theme={theme}
         richColors

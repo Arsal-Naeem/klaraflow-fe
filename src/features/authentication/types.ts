@@ -51,6 +51,12 @@ export interface ResetPasswordRequest {
   confirmPassword: string;
 }
 
+export interface ActivateAccountRequest {
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
+
 // API Response types
 export interface ApiResponse<T> {
   success: boolean;

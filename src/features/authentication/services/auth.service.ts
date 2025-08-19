@@ -7,6 +7,7 @@ import {
   VerifyOtpRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
+  ActivateAccountRequest,
   User,
   ApiResponse,
 } from "../types";
@@ -43,7 +44,9 @@ export const authService = {
   },
 
   // POST - Forgot password
-  async forgotPassword(data: ForgotPasswordRequest): Promise<{ message: string }> {
+  async forgotPassword(
+    data: ForgotPasswordRequest
+  ): Promise<{ message: string }> {
     const response = await api.post<ApiResponse<{ message: string }>>(
       `${AUTH_BASE_URL}/forgot-password`,
       data
@@ -52,18 +55,31 @@ export const authService = {
   },
 
   // POST - Verify reset pin/code
-  async verifyResetPin(data: { email: string; pin: string }): Promise<{ token: string; message: string }> {
-    const response = await api.post<ApiResponse<{ token: string; message: string }>>(
-      `${AUTH_BASE_URL}/verify-reset-pin`,
+  async verifyResetPin(data: {
+    email: string;
+    pin: string;
+  }): Promise<{ token: string; message: string }> {
+    const response = await api.post<
+      ApiResponse<{ token: string; message: string }>
+    >(`${AUTH_BASE_URL}/verify-reset-pin`, data);
+    return response.data.data;
+  },
+
+  // POST - Reset password
+  async resetPassword(
+    data: ResetPasswordRequest
+  ): Promise<{ message: string }> {
+    const response = await api.post<ApiResponse<{ message: string }>>(
+      `${AUTH_BASE_URL}/reset-password`,
       data
     );
     return response.data.data;
   },
 
-  // POST - Reset password
-  async resetPassword(data: ResetPasswordRequest): Promise<{ message: string }> {
-    const response = await api.post<ApiResponse<{ message: string }>>(
-      `${AUTH_BASE_URL}/reset-password`,
+  // POST - Activate account with invitation token
+  async activateAccount(data: ActivateAccountRequest): Promise<LoginResponse> {
+    const response = await api.post<ApiResponse<LoginResponse>>(
+      `${AUTH_BASE_URL}/activate`,
       data
     );
     return response.data.data;
@@ -76,7 +92,9 @@ export const authService = {
 
   // GET - Get current user profile
   async getProfile(): Promise<User> {
-    const response = await api.get<ApiResponse<User>>(`${AUTH_BASE_URL}/profile`);
+    const response = await api.get<ApiResponse<User>>(
+      `${AUTH_BASE_URL}/profile`
+    );
     return response.data.data;
   },
 

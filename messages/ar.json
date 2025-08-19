@@ -156,6 +156,18 @@
     "resetSuccessMessage": "تم إعادة تعيين كلمة المرور بنجاح! جارٍ التوجيه...",
     "resetFailed": "فشل في إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى."
   },
+  "activateAccount": {
+    "title": "تفعيل حسابك",
+    "subtitle": "مرحباً بك في KlaraFlow! قم بإعداد كلمة المرور لإكمال التفعيل.",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "activateButton": "تفعيل الحساب",
+    "activating": "جاري التفعيل...",
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة.",
+    "activationFailed": "فشل في تفعيل الحساب. يرجى المحاولة مرة أخرى.",
+    "activationSuccessMessage": "تم تفعيل الحساب بنجاح! جارٍ التوجيه...",
+    "invalidToken": "رابط الدعوة غير صحيح أو منتهي الصلاحية."
+  },
   "addEmployee": {
     "mandatory": "إلزامي",
     "personal": "شخصي",
