@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 
 type TextFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -32,6 +33,7 @@ export function TextField<T extends FieldValues>({
   required = false,
 }: TextFieldProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
+  const { isRTL } = useLanguageNavigation();
 
   return (
     <FormField
@@ -55,7 +57,7 @@ export function TextField<T extends FieldValues>({
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-primary/20 hover:text-primary/50"
+                  className={`cursor-pointer absolute ${isRTL ? "left-3" : "right-3"} top-1/2 -translate-y-1/2 text-primary/20 hover:text-primary/50`}
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />

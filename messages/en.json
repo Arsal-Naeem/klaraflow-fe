@@ -152,8 +152,7 @@
     "resetSuccessMessage": "Password reset successful! Redirecting..."
   },
   "activateAccount": {
-    "title": "Activate Your Account",
-    "subtitle": "Welcome to KlaraFlow! Set up your password to complete activation.",
+    "headerExtras": "Welcome to KlaraFlow! Set up your password to complete activation.",
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "activateButton": "Activate Account",

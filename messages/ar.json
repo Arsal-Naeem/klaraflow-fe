@@ -157,8 +157,7 @@
     "resetFailed": "فشل في إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى."
   },
   "activateAccount": {
-    "title": "تفعيل حسابك",
-    "subtitle": "مرحباً بك في KlaraFlow! قم بإعداد كلمة المرور لإكمال التفعيل.",
+    "headerExtras": "مرحباً بك في KlaraFlow! قم بإعداد كلمة المرور لإكمال التفعيل.",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
     "activateButton": "تفعيل الحساب",
