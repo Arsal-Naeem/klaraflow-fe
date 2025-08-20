@@ -63,16 +63,20 @@ const DocumentSettings = () => {
         {
           label: "First Name",
           type: "text",
+          placeholder: "Enter your first name",
           required: true,
         },
         {
           label: "Last Name",
           type: "text",
+          placeholder: "Enter your last name",
           required: true,
         },
         {
           label: "Issue Date",
           type: "date",
+          placeholder: "Select issue date",
+          description: "The date when the ID was issued",
           required: false,
         },
         {
