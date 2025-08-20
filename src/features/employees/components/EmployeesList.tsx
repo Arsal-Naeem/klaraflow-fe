@@ -52,7 +52,7 @@ export function EmployeesList({
           {employees?.map((employee) => (
             <TableRow
               key={employee.id}
-              className="cursor-pointer odd:bg-muted/20"
+              className="cursor-pointer odd:bg-muted/20 hover:bg-muted/50"
               onClick={() => router.push(`/company/employees/${employee.id}`)}
             >
               <TableCell className="text-xs text-center font-medium">
