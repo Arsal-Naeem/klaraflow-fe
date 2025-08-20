@@ -59,6 +59,16 @@
     "language": "اللغة",
     "theme": "المظهر"
   },
+  "settings": {
+    "menu": {
+      "employeeSettings": "إعدادات الموظف"
+    },
+    "tabs": {
+      "departments": "الأقسام",
+      "designations": "المسميات الوظيفية",
+      "documents": "المستندات"
+    }
+  },
   "theme": {
     "light": "فاتح",
     "dark": "داكن",
@@ -211,7 +221,7 @@
         "grade": "أدخل الدرجة",
         "probationPeriod": "اختر الفترة"
       }
-    },  
+    },
     "personalForm": {
       "dob": "تاريخ الميلاد",
       "maritalStatus": "الحالة الاجتماعية",

@@ -1,0 +1,28 @@
+import DepartmentSettings from "@/features/departments/components/DepartmentSettings";
+import DocumentSettings from "@/features/documents/components/DocumentSettings";
+import DesignationSettings from "@/features/employees/components/DesignationSettings";
+import { UsersRound } from "lucide-react";
+
+export const settingsMenuItems = [
+  {
+    label: "employeeSettings",
+    icon: <UsersRound />,
+    tabs: [
+      {
+        key: 1,
+        label: "departments",
+        content: <DepartmentSettings />,
+      },
+      {
+        key: 2,
+        label: "designations",
+        content: <DesignationSettings />,
+      },
+      {
+        key: 3,
+        label: "documents",
+        content: <DocumentSettings />,
+      },
+    ],
+  },
+];

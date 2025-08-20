@@ -55,6 +55,16 @@
     "language": "Language",
     "theme": "Theme"
   },
+  "settings": {
+    "menu": {
+      "employeeSettings": "Employee Settings"
+    },
+    "tabs": {
+      "departments": "Departments",
+      "designations": "Designations",
+      "documents": "Documents"
+    }
+  },
   "theme": {
     "light": "Light",
     "dark": "Dark",
