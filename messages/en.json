@@ -173,7 +173,7 @@
       "lastName": "Last Name",
       "email": "Email",
       "phone": "Phone",
-      "gender": "gender",
+      "gender": "Gender",
       "userRole": "User Role",
       "designation": "Designation",
       "department": "Department",
@@ -197,7 +197,7 @@
       "onboardingTemplate": "Onboarding Template",
       "reportTo": "Report To",
       "grade": "Grade",
-      "probationPeriod": "probationPeriod",
+      "probationPeriod": "Probation Period",
       "placeholders": {
         "jobType": "Select Job Type",
         "hiringDate": "Select Hiring Date",
