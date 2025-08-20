@@ -36,7 +36,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
 
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
@@ -239,7 +239,7 @@ const OnboardingPage = () => {
       title: "Setup IT Equipment",
       description:
         "Collect laptop, phone and other IT equipment from IT department",
-      completed: true,
+      completed: false,
     },
     {
       id: "todo3",
@@ -307,7 +307,7 @@ const OnboardingPage = () => {
                 Step {currentStep} of {steps.length}
               </span>
               <span>
-                {Math.round((currentStep / steps.length) * 100)}% Complete
+                {Math.round((currentStep / (steps.length-1)) * 100)}% Complete
               </span>
             </div>
           </div>
@@ -374,7 +374,6 @@ const OnboardingPage = () => {
               documents={displayDocuments}
               onUpload={handleDocumentUpload}
               onNext={() => handleNextStep(3)}
-              onPrevious={() => handleNextStep(1)}
               isLoading={isLoading}
             />
           )}
@@ -384,7 +383,6 @@ const OnboardingPage = () => {
               todos={displayTodos}
               onToggleTodo={handleTodoToggle}
               onNext={handleFinalSubmission}
-              onPrevious={() => handleNextStep(2)}
               isLoading={isLoading}
             />
           )}

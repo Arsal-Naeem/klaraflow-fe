@@ -9,7 +9,6 @@ interface TodoListStepProps {
   todos: TodoItem[];
   onToggleTodo: (id: string, completed: boolean) => void;
   onNext: () => void;
-  onPrevious: () => void;
   isLoading?: boolean;
 }
 
@@ -17,7 +16,6 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
   todos,
   onToggleTodo,
   onNext,
-  onPrevious,
   isLoading = false,
 }) => {
   const completedCount = todos.filter((todo) => todo.completed).length;
@@ -97,25 +95,20 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
         ))}
       </div>
 
-      {/* Navigation */}
-      <div className="flex justify-end gap-2 pt-6">
-        <Button onClick={onPrevious} variant="outline" disabled={isLoading}>
-          Previous
-        </Button>
-
-        <Button
-          onClick={onNext}
-          variant="accent"
-          disabled={!canProceed || isLoading}
-          className={canProceed ? "bg-green-600 hover:bg-green-700" : ""}
-        >
-          Next
-        </Button>
-      </div>
-
-      {!canProceed && (
+      {!canProceed ? (
         <div className="text-center text-sm text-red-600 bg-red-50 p-3 rounded-lg">
           Please complete all required tasks to proceed to submission.
+        </div>
+      ) : (
+        <div className="flex justify-end gap-2 pt-6">
+          <Button
+            onClick={onNext}
+            variant="accent"
+            disabled={ isLoading}
+            className={canProceed ? "bg-green-600 hover:bg-green-700" : ""}
+          >
+            Next
+          </Button>
         </div>
       )}
     </div>

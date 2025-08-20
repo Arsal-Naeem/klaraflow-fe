@@ -9,7 +9,6 @@ interface DocumentUploadStepProps {
   documents: OnboardingDocument[];
   onUpload: (document: DocumentUpload) => void;
   onNext: () => void;
-  onPrevious: () => void;
   isLoading?: boolean;
 }
 
@@ -17,7 +16,6 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
   documents,
   onUpload,
   onNext,
-  onPrevious,
   isLoading = false,
 }) => {
   const requiredDocuments = documents.filter((doc) => doc.required);
@@ -118,25 +116,20 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         </div>
       )}
 
-      {/* Navigation */}
-      <div className="flex justify-end gap-2 pt-6">
-        <Button onClick={onPrevious} variant="outline" disabled={isLoading}>
-          Previous
-        </Button>
-
-        <Button
-          onClick={onNext}
-          variant="accent"
-          disabled={!canProceed || isLoading}
-          className={canProceed ? "bg-green-600 hover:bg-green-700" : ""}
-        >
-          Next
-        </Button>
-      </div>
-
-      {!canProceed && (
+      {!canProceed ? (
         <div className="text-center text-sm text-red-600 bg-red-50 p-3 rounded-lg">
           Please upload all required documents to proceed to the next step.
+        </div>
+      ) : (
+        <div className="flex justify-end gap-2 pt-6">
+          <Button
+            onClick={onNext}
+            variant="accent"
+            disabled={!canProceed || isLoading}
+            className={canProceed ? "bg-green-600 hover:bg-green-700" : ""}
+          >
+            Next
+          </Button>
         </div>
       )}
     </div>
