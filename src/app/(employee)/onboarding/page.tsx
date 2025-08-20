@@ -36,7 +36,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(4);
 
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
@@ -298,7 +298,7 @@ const OnboardingPage = () => {
         <CardContent>
           <div className="mb-8">
             <Progress
-              value={(currentStep / steps.length) * 100}
+              value={Math.round(((currentStep-1) / (steps.length-1)) * 100)}
               className="h-2"
               indicatorClassName="bg-[linear-gradient(90deg,#280595_0%,#ff2394_100%)]"
             />
@@ -307,7 +307,7 @@ const OnboardingPage = () => {
                 Step {currentStep} of {steps.length}
               </span>
               <span>
-                {Math.round((currentStep / (steps.length-1)) * 100)}% Complete
+                {Math.round(((currentStep-1) / (steps.length-1)) * 100)}% Complete
               </span>
             </div>
           </div>
