@@ -62,7 +62,8 @@
     "tabs": {
       "departments": "Departments",
       "designations": "Designations",
-      "documents": "Documents"
+      "documents": "Documents",
+      "onboarding": "Onboarding"
     }
   },
   "theme": {

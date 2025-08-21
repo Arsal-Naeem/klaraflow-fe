@@ -1,6 +1,7 @@
 import DepartmentSettings from "@/features/departments/components/DepartmentSettings";
 import DocumentSettings from "@/features/documents/components/DocumentSettings";
 import DesignationSettings from "@/features/employees/components/DesignationSettings";
+import OnboardingTemplateSettings from "@/features/onboarding/components/OnboardingTemplateSettings";
 import { UsersRound } from "lucide-react";
 
 export const settingsMenuItems = [
@@ -23,6 +24,11 @@ export const settingsMenuItems = [
         label: "documents",
         content: <DocumentSettings />,
       },
+      {
+        key: 4,
+        label: "onboarding",
+        content: <OnboardingTemplateSettings />,
+      }
     ],
   },
 ];

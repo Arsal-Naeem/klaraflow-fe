@@ -15,10 +15,10 @@ import {
   CheckCircle,
   Edit3,
 } from "lucide-react";
-import { OnboardingData } from "../types";
+import { Employee } from "@/features/employees";
 
 interface DataReviewStepProps {
-  data: OnboardingData;
+  data: Employee;
   onApprove: () => void;
   onRequestChange: () => void;
   isLoading?: boolean;

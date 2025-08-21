@@ -8,6 +8,7 @@ export interface DocumentField {
 }
 
 export interface DocumentTemplate {
+  id: string;
   name: string;
   fields: DocumentField[];
 }

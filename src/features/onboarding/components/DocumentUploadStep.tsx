@@ -41,7 +41,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
                 document.uploaded && "text-green-800 dark:text-green-300"
               }`}
             >
-              {document.label}
+              {document.name}
             </p>
 
             <MoreVertical size={14} className="cursor-pointer" />

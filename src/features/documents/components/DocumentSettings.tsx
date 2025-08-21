@@ -38,6 +38,7 @@ const DocumentSettings = () => {
 
   const MockDocumentsTemplate: DocumentTemplate[] = [
     {
+      id: "1",
       name: "Education Certidicate",
       fields: [
         {
@@ -61,6 +62,7 @@ const DocumentSettings = () => {
       ],
     },
     {
+      id: "2",
       name: "Emirates ID Card",
       fields: [
         {

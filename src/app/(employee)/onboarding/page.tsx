@@ -31,6 +31,7 @@ import {
   OnboardingApproval,
   DocumentUpload,
   OnboardingSubmission,
+  OnboardingDocument,
 } from "@/features/onboarding/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -181,6 +182,7 @@ const OnboardingPage = () => {
   };
 
   const mockOnboardingData = {
+    id: "ONB001",
     empId: "EMP001",
     firstName: "John",
     lastName: "Doe",
@@ -203,27 +205,80 @@ const OnboardingPage = () => {
     status: "pending",
   };
 
-  const mockDocuments = [
+  const mockDocuments: OnboardingDocument[] = [
     {
-      id: "doc1",
-      type: "passport",
-      label: "Passport",
-      required: true,
-      uploaded: true,
-    },
-    {
-      id: "doc2",
-      type: "visa",
-      label: "Work Visa",
-      required: true,
+      id: "1",
+      name: "Education Certidicate",
+      fields: [
+        {
+          label: "Title",
+          type: "text",
+          required: true,
+          width: "full",
+        },
+        {
+          label: "Attach your document",
+          type: "file",
+          required: false,
+          width: "full",
+        },
+        {
+          label: "Description",
+          type: "textarea",
+          required: false,
+          width: "full",
+        },
+      ],
       uploaded: false,
+      required: true,
     },
     {
-      id: "doc4",
-      type: "contract",
-      label: "Employment Contract",
+      id: "2",
+      name: "Emirates ID Card",
+      fields: [
+        {
+          label: "First Name",
+          type: "text",
+          placeholder: "Enter your first name",
+          required: true,
+          width: "half",
+        },
+        {
+          label: "Last Name",
+          type: "text",
+          placeholder: "Enter your last name",
+          required: true,
+          width: "half",
+        },
+        {
+          label: "Issue Date",
+          type: "date",
+          placeholder: "Select issue date",
+          description: "The date when the ID was issued",
+          required: false,
+          width: "half",
+        },
+        {
+          label: "Expiry Date",
+          type: "date",
+          required: false,
+          width: "half",
+        },
+        {
+          label: "Front Side",
+          type: "file",
+          required: true,
+          width: "half",
+        },
+        {
+          label: "Back Side",
+          type: "file",
+          required: true,
+          width: "half",
+        },
+      ],
+      uploaded: false,
       required: false,
-      uploaded: false,
     },
   ];
 
@@ -298,7 +353,7 @@ const OnboardingPage = () => {
         <CardContent>
           <div className="mb-8">
             <Progress
-              value={Math.round(((currentStep-1) / (steps.length-1)) * 100)}
+              value={Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}
               className="h-2"
               indicatorClassName="bg-[linear-gradient(90deg,#280595_0%,#ff2394_100%)]"
             />
@@ -307,7 +362,8 @@ const OnboardingPage = () => {
                 Step {currentStep} of {steps.length}
               </span>
               <span>
-                {Math.round(((currentStep-1) / (steps.length-1)) * 100)}% Complete
+                {Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}%
+                Complete
               </span>
             </div>
           </div>

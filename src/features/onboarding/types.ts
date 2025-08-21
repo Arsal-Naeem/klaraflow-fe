@@ -1,51 +1,32 @@
-// Onboarding related types and interfaces
+import { DocumentTemplate } from "../documents/types";
 
-export interface OnboardingData {
-  empId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  gender: string;
-  userRole: string;
-  designation?: string;
-  department?: string;
-  jobType?: string;
-  hiringDate?: string;
-  onboardingTemplate?: string;
-  reportTo?: string;
-  grade?: string;
-  probationPeriod?: string;
-  dateOfBirth?: string;
-  maritalStatus?: string;
-  nationality?: string;
-  profilePic?: string;
-  status: string;
-}
-
-export interface DocumentUpload {
-  type: 'passport' | 'visa' | 'identity_card' | 'contract' | 'other';
-  file: File;
-  label: string;
-}
-
-export interface OnboardingDocument {
-  id: string;
-  type: string;
-  label: string;
-  url?: string;
-  required: boolean;
-  uploaded: boolean;
-  uploadedAt?: string;
-}
-
+// should stay similar
 export interface TodoItem {
   id: string;
   title: string;
   description: string;
-  completed: boolean;
+  completed?: boolean;
 }
 
+export interface OnboardingDocument extends DocumentTemplate {
+  required: boolean;
+  uploaded: boolean;
+}
+
+export interface OnboardingTemplate {
+  id?: string;
+  name: string;
+  todos: TodoItem[];
+  requiredDocuments: string[];
+  optionalDocuments: string[];
+}
+
+// You can change these as per you need
+export interface DocumentUpload {
+  type: "passport" | "visa" | "identity_card" | "contract" | "other";
+  file: File;
+  label: string;
+}
 export interface OnboardingStep {
   id: number;
   title: string;
@@ -57,19 +38,19 @@ export interface OnboardingStep {
 export interface OnboardingStatus {
   currentStep: number;
   totalSteps: number;
-  status: 'pending' | 'in_progress' | 'completed' | 'rejected';
+  status: "pending" | "in_progress" | "completed" | "rejected";
   steps: OnboardingStep[];
 }
 
 export interface OnboardingApproval {
-  action: 'approve' | 'request_change';
+  action: "approve" | "request_change";
   comments?: string;
 }
 
 export interface OnboardingSubmission {
   documents: DocumentUpload[];
   todoItems: string[]; // IDs of completed todo items
-  status: 'submitted';
+  status: "submitted";
 }
 
 // API Response types

@@ -2,13 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/utils/toast';
 import { onboardingService } from '../services';
 import {
-  OnboardingData,
-  OnboardingStatus,
   OnboardingApproval,
   OnboardingSubmission,
-  TodoItem,
-  OnboardingDocument,
-  DocumentUpload,
 } from '../types';
 
 // Query keys for better cache management

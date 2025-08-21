@@ -1,6 +1,5 @@
 import api from "@/lib/api";
 import {
-  OnboardingData,
   OnboardingStatus,
   OnboardingApproval,
   OnboardingSubmission,
@@ -8,18 +7,19 @@ import {
   OnboardingDocument,
   ApiResponse,
 } from "../types";
+import { Employee } from "@/features/employees";
 
 // Onboarding API endpoints
 const ONBOARDING_BASE_URL = "/onboarding";
 
 export const onboardingService = {
   // GET - Fetch employee onboarding data
-  async getOnboardingData(employeeId?: string): Promise<OnboardingData> {
+  async getOnboardingData(employeeId?: string): Promise<Employee> {
     const endpoint = employeeId 
       ? `${ONBOARDING_BASE_URL}/${employeeId}/data`
       : `${ONBOARDING_BASE_URL}/my-data`;
     
-    const response = await api.get<ApiResponse<OnboardingData>>(endpoint);
+    const response = await api.get<ApiResponse<Employee>>(endpoint);
     return response.data.data;
   },
 
