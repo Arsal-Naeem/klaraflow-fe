@@ -12,7 +12,7 @@ import { TextareaField } from "@/components/blocks/Form/Fields/TextareaField";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
 import { FileField } from "@/components/blocks/Form/Fields/FileField";
 import { Eye, FileText } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { DocumentField } from "../types";
 
@@ -37,6 +37,17 @@ const DocumentFormPreview = ({
       return acc;
     }, {} as Record<string, any>),
   });
+
+  // Reset form whenever dialog opens or fields change
+  useEffect(() => {
+    if (isOpen) {
+      const defaultValues = fields.reduce((acc, field, index) => {
+        acc[`field_${index}`] = "";
+        return acc;
+      }, {} as Record<string, any>);
+      previewForm.reset(defaultValues);
+    }
+  }, [isOpen, fields, previewForm]);
 
   const handlePreviewSubmit = (data: any) => {
     console.log("Preview form data:", data);

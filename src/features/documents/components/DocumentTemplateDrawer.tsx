@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -277,7 +277,7 @@ function SortableFieldItem({
                   control={form.control}
                   name={`fields.${index}.required`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-6">
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-4">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
@@ -424,6 +424,31 @@ const DocumentTemplateDrawer = ({
     control: form.control,
     name: "fields",
   });
+
+  // Reset form when drawer opens or template changes
+  useEffect(() => {
+    if (isOpen) {
+      const defaultValues = {
+        name: template?.name || "",
+        fields: template?.fields?.map((field) => ({
+          ...field,
+          width: field?.width || "full", // Provide default for existing templates
+        })) || [
+          {
+            label: "",
+            type: "text",
+            placeholder: "",
+            description: "",
+            required: false,
+            width: "full",
+          },
+        ],
+      };
+      form.reset(defaultValues);
+      setCollapsedFields({});
+      setPreviewCollapsedState({});
+    }
+  }, [isOpen, template, form]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
