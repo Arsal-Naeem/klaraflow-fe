@@ -13,10 +13,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 import { useCreateEmployee, useCreateEmployeeWithFiles } from "@/features/employees";
-import { MandatoryCard } from "@/features/employees/components/MandatoryCard";
-import { WorkCard } from "@/features/employees/components/WorkCard";
-import { PersonalCard } from "@/features/employees/components/PersonalCard";
-import ProfileCard from "@/features/employees/components/ProfileCard";
+import { MandatoryCard } from "@/features/employees/components/addEmployeeCards/MandatoryCard";
+import { WorkCard } from "@/features/employees/components/addEmployeeCards/WorkCard";
+import { PersonalCard } from "@/features/employees/components/addEmployeeCards/PersonalCard";
+import ProfileCard from "@/features/employees/components/addEmployeeCards/ProfileCard";
 
 const addEmployeeSchema = z.object({
   empId: z.string().min(1, "Employee ID is required"),

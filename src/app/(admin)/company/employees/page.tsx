@@ -17,9 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { EmployeesGrid } from "@/features/employees/components/employeesViews/EmployeesGrid";
+import { EmployeesList } from "@/features/employees/components/employeesViews/EmployeesList";
 
-import { EmployeesList } from "@/features/employees/components/EmployeesList";
-import { EmployeesGrid } from "@/features/employees/components/EmployeesGrid";
 
 type ViewType = "card" | "table";
 

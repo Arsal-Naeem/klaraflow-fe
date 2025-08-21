@@ -60,7 +60,7 @@ import {
   X,
 } from "lucide-react";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
-import { OnboardingTemplate, TodoItem } from "../types";
+import { OnboardingTemplate, TodoItem } from "../../types";
 import { DocumentTemplate } from "@/features/documents/types";
 
 interface TemplateFormData {

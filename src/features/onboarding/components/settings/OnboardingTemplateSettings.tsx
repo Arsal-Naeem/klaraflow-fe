@@ -24,7 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import OnboardingTemplateDrawer from "./OnboardingTemplateDrawer";
-import { OnboardingTemplate } from "../types";
+import { OnboardingTemplate } from "../../types";
 
 const OnboardingTemplateSettings = () => {
   const [openDropdowns, setOpenDropdowns] = useState<{

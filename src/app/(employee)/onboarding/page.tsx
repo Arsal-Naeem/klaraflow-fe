@@ -13,7 +13,7 @@ import {
   DocumentUploadStep,
   TodoListStep,
   SubmissionStep,
-} from "@/features/onboarding/components";
+} from "@/features/onboarding/components/onboardingSteps";
 
 import {
   useOnboardingData,
@@ -37,7 +37,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(4);
+  const [currentStep, setCurrentStep] = useState(2);
 
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
