@@ -43,7 +43,6 @@ import {
   GripVertical,
   ChevronDown,
   ChevronRight,
-  Eye,
 } from "lucide-react";
 import {
   DndContext,
@@ -62,9 +61,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import {
-  useSortable,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import DocumentFormPreview from "./DocumentFormPreview";
 
@@ -108,18 +105,18 @@ function SortableFieldItem({
     transform,
     transition,
     isDragging: isItemDragging,
-  } = useSortable({ 
+  } = useSortable({
     id: field.id,
     transition: {
       duration: 150,
-      easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
     },
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    visibility: isItemDragging ? 'hidden' : 'visible',
+    visibility: isItemDragging ? "hidden" : "visible",
   } as React.CSSProperties;
 
   return (
@@ -130,7 +127,11 @@ function SortableFieldItem({
       >
         <Card className="relative py-0">
           <CollapsibleTrigger asChild>
-            <CardHeader className={`py-3 transition-colors ${!isDragging ? 'cursor-pointer' : 'cursor-default'}`}>
+            <CardHeader
+              className={`py-3 transition-colors ${
+                !isDragging ? "cursor-pointer" : "cursor-default"
+              }`}
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {collapsedFields[index] ? (
@@ -187,10 +188,7 @@ function SortableFieldItem({
                     <FormItem>
                       <FormLabel>Field Label</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter field label..."
-                          {...field}
-                        />
+                        <Input placeholder="Enter field label..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -215,10 +213,7 @@ function SortableFieldItem({
                         </FormControl>
                         <SelectContent>
                           {fieldTypeOptions.map((option) => (
-                            <SelectItem
-                              key={option.value}
-                              value={option.value}
-                            >
+                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))}
@@ -237,9 +232,7 @@ function SortableFieldItem({
                   name={`fields.${index}.placeholder`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Placeholder (Optional)
-                      </FormLabel>
+                      <FormLabel>Placeholder (Optional)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter placeholder text..."
@@ -251,6 +244,34 @@ function SortableFieldItem({
                   )}
                 />
 
+                {/* Field Width */}
+                <FormField
+                  control={form.control}
+                  name={`fields.${index}.width`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Field Width</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select field width" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="half">Half Width</SelectItem>
+                          <SelectItem value="full">Full Width</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Required Field */}
                 <FormField
                   control={form.control}
@@ -280,9 +301,7 @@ function SortableFieldItem({
                 name={`fields.${index}.description`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Field Description (Optional)
-                    </FormLabel>
+                    <FormLabel>Field Description (Optional)</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Enter field description..."
@@ -306,7 +325,15 @@ function SortableFieldItem({
   );
 }
 
-function DragOverlayItem({ field, index, form }: { field: DocumentField & { id: string }, index: number, form: any }) {
+function DragOverlayItem({
+  field,
+  index,
+  form,
+}: {
+  field: DocumentField & { id: string };
+  index: number;
+  form: any;
+}) {
   return (
     <Card className="relative py-0 opacity-95 shadow-lg">
       <CardHeader className="py-3">
@@ -377,13 +404,17 @@ const DocumentTemplateDrawer = ({
   const form = useForm<TemplateFormData>({
     defaultValues: {
       name: template?.name || "",
-      fields: template?.fields || [
+      fields: template?.fields?.map((field) => ({
+        ...field,
+        width: field?.width || "full", // Provide default for existing templates
+      })) || [
         {
           label: "",
           type: "text",
           placeholder: "",
           description: "",
           required: false,
+          width: "full",
         },
       ],
     },
@@ -414,6 +445,7 @@ const DocumentTemplateDrawer = ({
       placeholder: "",
       description: "",
       required: false,
+      width: "half",
     });
   };
 
@@ -471,7 +503,7 @@ const DocumentTemplateDrawer = ({
       if (activeIndex !== -1 && overIndex !== -1) {
         // Use react-hook-form's move function to reorder fields
         move(activeIndex, overIndex);
-        
+
         // Update the preview collapsed state to follow the moved fields
         setPreviewCollapsedState((prev) => {
           const newState: { [key: number]: boolean } = {};
@@ -480,18 +512,18 @@ const DocumentTemplateDrawer = ({
             activeIndex,
             overIndex
           );
-          
+
           newOrder.forEach((oldIndex, newIndex) => {
             if (prev[oldIndex] !== undefined) {
               newState[newIndex] = prev[oldIndex];
             }
           });
-          
+
           return newState;
         });
       }
     }
-    
+
     // Restore the collapsed state (either original or updated if moved)
     setCollapsedFields(previewCollapsedState);
   };
@@ -588,8 +620,8 @@ const DocumentTemplateDrawer = ({
                   <DragOverlay>
                     {activeId ? (
                       <DragOverlayItem
-                        field={fields.find(f => f.id === activeId)!}
-                        index={fields.findIndex(f => f.id === activeId)}
+                        field={fields.find((f) => f.id === activeId)!}
+                        index={fields.findIndex((f) => f.id === activeId)}
                         form={form}
                       />
                     ) : null}
@@ -607,7 +639,10 @@ const DocumentTemplateDrawer = ({
                   <Plus className="h-4 w-4 mr-1" />
                   Add Field
                 </Button>
-                <DocumentFormPreview form={form} templateName={form.watch("name") || "Document Template"} />
+                <DocumentFormPreview
+                  form={form}
+                  templateName={form.watch("name") || "Document Template"}
+                />
               </div>
 
               {/* Form Actions */}

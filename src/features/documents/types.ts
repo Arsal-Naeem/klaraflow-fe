@@ -4,6 +4,7 @@ export interface DocumentField {
   placeholder?: string;
   description?: string;
   required: boolean;
+  width: "half" | "full";
 }
 
 export interface DocumentTemplate {

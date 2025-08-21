@@ -53,9 +53,9 @@ const DocumentFormPreview = ({
             key={index}
             control={previewForm.control}
             name={fieldName}
-            label={field.label}
-            placeholder={field.placeholder}
-            required={field.required}
+            label={field?.label}
+            placeholder={field?.placeholder}
+            required={field?.required}
             className="w-full"
           />
         );
@@ -65,9 +65,9 @@ const DocumentFormPreview = ({
             key={index}
             control={previewForm.control}
             name={fieldName}
-            label={field.label}
-            placeholder={field.placeholder}
-            required={field.required}
+            label={field?.label}
+            placeholder={field?.placeholder}
+            required={field?.required}
             rows={4}
             className="w-full"
           />
@@ -79,8 +79,8 @@ const DocumentFormPreview = ({
             control={previewForm.control}
             name={fieldName}
             label={field.label}
-            placeholder={field.placeholder || "Select date"}
-            required={field.required}
+            placeholder={field?.placeholder || "Select date"}
+            required={field?.required}
             className="w-full"
           />
         );
@@ -90,9 +90,9 @@ const DocumentFormPreview = ({
             key={index}
             control={previewForm.control}
             name={fieldName}
-            label={field.label}
-            placeholder={field.placeholder || "Choose file"}
-            required={field.required}
+            label={field?.label}
+            placeholder={field?.placeholder || "Choose file"}
+            required={field?.required}
             className="w-full"
           />
         );
@@ -132,15 +132,15 @@ const DocumentFormPreview = ({
                   <div
                     key={index}
                     className={
-                      field.type === "textarea" || field.type === "file"
+                      field?.width === "full"
                         ? "md:col-span-2"
                         : ""
                     }
                   >
                     {renderField(field, index)}
-                    {field.description && (
+                    {field?.description && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {field.description}
+                        {field?.description}
                       </p>
                     )}
                   </div>
@@ -164,7 +164,7 @@ const DocumentFormPreview = ({
           <Button variant="outline" onClick={() => setIsOpen(false)}>
             Close Preview
           </Button>
-          {fields.length > 0 && (
+          {/* {fields.length > 0 && (
             <Button
               variant="accent"
               onClick={() => {
@@ -175,7 +175,7 @@ const DocumentFormPreview = ({
             >
               Test Submit
             </Button>
-          )}
+          )} */}
         </DialogFooter>
       </DialogContent>
     </Dialog>
