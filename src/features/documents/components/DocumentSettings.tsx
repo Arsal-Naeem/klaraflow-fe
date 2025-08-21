@@ -111,7 +111,7 @@ const DocumentSettings = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Document Settings</CardTitle>
+        <CardTitle>Document Templates</CardTitle>
         <CardAction>
           <DocumentTemplateDrawer isEdit={false} />
         </CardAction>
