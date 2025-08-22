@@ -58,10 +58,13 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
     const handleDocumentSubmit = async (data: Record<string, any>) => {
       console.log("Document form submitted:", data);
 
-      // Mark document as uploaded and call the update callback
+      // Update document status to uploaded and store the form data
       if (handleDocumentUpdate) {
         await handleDocumentUpdate(document.id, data);
       }
+      
+      // Mark document as uploaded in the UI (you might want to manage this state properly)
+      document.uploaded = true;
     };
 
     const handleDocumentDelete = async (documentId: string) => {

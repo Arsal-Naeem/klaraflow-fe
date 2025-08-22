@@ -23,8 +23,10 @@ import { TextareaField } from "@/components/blocks/Form/Fields/TextareaField";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
 import { FileField } from "@/components/blocks/Form/Fields/FileField";
 import { FileText } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { DocumentTemplate, DocumentField } from "../types";
 import { useUploadDocument } from "../../onboarding/hooks/useOnboarding";
 
@@ -51,16 +53,55 @@ const DocumentDrawer = ({
   // Get the fields from the template
   const fields: DocumentField[] = template.fields || [];
 
+  // Create dynamic validation schema based on template fields
+  const validationSchema = useMemo(() => {
+    const schemaFields: Record<string, z.ZodTypeAny> = {};
+    
+    fields.forEach((field, index) => {
+      const fieldKey = `field_${index}`;
+      
+      if (field.type === 'file') {
+        // File validation
+        if (field.required) {
+          schemaFields[fieldKey] = z.instanceof(FileList).refine(
+            (files) => files && files.length > 0,
+            `${field.label} is required`
+          );
+        } else {
+          schemaFields[fieldKey] = z.instanceof(FileList).optional().nullable();
+        }
+      } else if (field.type === 'text' || field.type === 'textarea') {
+        // Text field validation
+        if (field.required) {
+          schemaFields[fieldKey] = z.string().min(1, `${field.label} is required`);
+        } else {
+          schemaFields[fieldKey] = z.string().optional();
+        }
+      } else if (field.type === 'date') {
+        // Date field validation
+        if (field.required) {
+          schemaFields[fieldKey] = z.string().min(1, `${field.label} is required`);
+        } else {
+          schemaFields[fieldKey] = z.string().optional();
+        }
+      }
+    });
+    
+    return z.object(schemaFields);
+  }, [fields]);
+
   // Create a form with default values and validation rules based on template fields
   const getDefaultValues = () => {
     return fields.reduce((acc, field, index) => {
+      // Use consistent field naming pattern
       const fieldKey = `field_${index}`;
-      acc[fieldKey] = initialData[fieldKey] || "";
+      acc[fieldKey] = initialData[fieldKey] || (field.type === 'file' ? null : "");
       return acc;
     }, {} as Record<string, any>);
   };
 
   const form = useForm({
+    resolver: zodResolver(validationSchema),
     defaultValues: getDefaultValues(),
     mode: "onChange", // Enable validation on change
   });
@@ -73,19 +114,44 @@ const DocumentDrawer = ({
     }
   }, [isOpen, fields, initialData, form]);
 
+  const prepareFormData = (data: Record<string, any>) => {
+    const preparedData: Record<string, any> = {};
+    
+    fields.forEach((field, index) => {
+      const fieldKey = `field_${index}`;
+      const value = data[fieldKey];
+      
+      if (field.type === 'file') {
+        // Handle file fields - get the first file if it's a FileList
+        if (value && value.length > 0) {
+          preparedData[fieldKey] = value[0]; // Take the first file
+        }
+      } else if (value !== null && value !== undefined && value !== "") {
+        // Handle other field types
+        preparedData[fieldKey] = value;
+      }
+    });
+    
+    return preparedData;
+  };
+
   const handleSubmit = async (data: any) => {
     try {
-      console.log("Submitting document with data:", data);
+      console.log("Raw form data:", data);
+      
+      // Prepare form data with proper field handling
+      const preparedData = prepareFormData(data);
+      console.log("Prepared form data:", preparedData);
 
-      // Call the upload API with all the form data
+      // Call the upload API with the prepared form data
       await uploadDocument.mutateAsync({
         type: template.id,
-        documentData: data,
+        documentData: preparedData,
         label: template.name,
       });
 
-      // Call the onSubmit callback with the form data
-      await onSubmit(data);
+      // Call the onSubmit callback with the prepared form data
+      await onSubmit(preparedData);
 
       setIsOpen(false);
     } catch (error) {
@@ -95,75 +161,59 @@ const DocumentDrawer = ({
   };
 
   const handleFormSubmit = async () => {
-    console.log("Form submit clicked");
-    const isValid = await form.trigger(); // Trigger validation
-    console.log("Form is valid:", isValid);
-    console.log("Form errors:", form.formState.errors);
+    try {
+      console.log("Form submit clicked");
+      
+      // Validate the form using the validation schema
+      const isValid = await form.trigger();
+      console.log("Form is valid:", isValid);
+      console.log("Form errors:", form.formState.errors);
 
-    if (isValid) {
-      const formData = form.getValues();
-      console.log("Form data:", formData);
-      await handleSubmit(formData);
+      if (isValid) {
+        const formData = form.getValues();
+        console.log("Form data:", formData);
+        
+        // Validate against schema before submission
+        const validation = validationSchema.safeParse(formData);
+        
+        if (!validation.success) {
+          console.error("Schema validation failed:", validation.error);
+          return;
+        }
+        
+        await handleSubmit(formData);
+      }
+    } catch (error) {
+      console.error("Form validation error:", error);
     }
   };
 
   const renderField = (field: DocumentField, index: number) => {
     const fieldName = `field_${index}`;
-    const rules = field.required
-      ? {
-          required: `${field.label} is required`,
-        }
-      : {};
 
     switch (field.type) {
       case "text":
         return (
-          <FormField
+          <TextField
             key={index}
             control={form.control}
             name={fieldName}
-            rules={rules}
-            render={({ field: formField }) => (
-              <FormItem className="w-full">
-                <FormLabel>
-                  {field?.label}
-                  {field?.required && (
-                    <span className="text-red-500 ml-1">*</span>
-                  )}
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder={field?.placeholder} {...formField} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={field.label}
+            placeholder={field.placeholder}
+            required={field.required}
+            className="w-full"
           />
         );
       case "textarea":
         return (
-          <FormField
+          <TextareaField
             key={index}
             control={form.control}
             name={fieldName}
-            rules={rules}
-            render={({ field: formField }) => (
-              <FormItem className="w-full">
-                <FormLabel>
-                  {field?.label}
-                  {field?.required && (
-                    <span className="text-red-500 ml-1">*</span>
-                  )}
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder={field?.placeholder}
-                    rows={4}
-                    {...formField}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={field.label}
+            placeholder={field.placeholder}
+            required={field.required}
+            className="w-full"
           />
         );
       case "date":
@@ -173,8 +223,8 @@ const DocumentDrawer = ({
             control={form.control}
             name={fieldName}
             label={field.label}
-            placeholder={field?.placeholder || "Select date"}
-            required={field?.required}
+            placeholder={field.placeholder || "Select date"}
+            required={field.required}
             className="w-full"
           />
         );
@@ -184,9 +234,10 @@ const DocumentDrawer = ({
             key={index}
             control={form.control}
             name={fieldName}
-            label={field?.label}
-            placeholder={field?.placeholder || "Choose file"}
-            required={field?.required}
+            label={field.label}
+            placeholder={field.placeholder || "Choose file"}
+            required={field.required}
+            accept="*/*"
             className="w-full"
           />
         );

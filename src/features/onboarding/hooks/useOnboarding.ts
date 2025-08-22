@@ -60,8 +60,9 @@ export function useUploadDocument() {
   return useMutation({
     mutationFn: ({ type, documentData, label }: { type: string; documentData: Record<string, any>; label: string }) =>
       onboardingService.uploadDocument(type, documentData, label),
-    onSuccess: () => {
+    onSuccess: (uploadedDocument) => {
       queryClient.invalidateQueries({ queryKey: onboardingKeys.documents() });
+      queryClient.invalidateQueries({ queryKey: onboardingKeys.status() });
       toast.success('Document uploaded successfully!');
     },
     onError: (error: any) => {
