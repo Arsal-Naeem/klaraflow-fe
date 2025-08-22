@@ -1,13 +1,21 @@
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogBody,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/ui/responsive-dialog";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TextField } from "@/components/blocks/Form/Fields/TextField";
@@ -68,17 +76,17 @@ const DocumentDrawer = ({
   const handleSubmit = async (data: any) => {
     try {
       console.log("Submitting document with data:", data);
-      
+
       // Call the upload API with all the form data
       await uploadDocument.mutateAsync({
         type: template.id,
         documentData: data,
-        label: template.name
+        label: template.name,
       });
-      
+
       // Call the onSubmit callback with the form data
       await onSubmit(data);
-      
+
       setIsOpen(false);
     } catch (error) {
       console.error("Error submitting document:", error);
@@ -91,7 +99,7 @@ const DocumentDrawer = ({
     const isValid = await form.trigger(); // Trigger validation
     console.log("Form is valid:", isValid);
     console.log("Form errors:", form.formState.errors);
-    
+
     if (isValid) {
       const formData = form.getValues();
       console.log("Form data:", formData);
@@ -101,8 +109,8 @@ const DocumentDrawer = ({
 
   const renderField = (field: DocumentField, index: number) => {
     const fieldName = `field_${index}`;
-    const rules = field.required 
-      ? { 
+    const rules = field.required
+      ? {
           required: `${field.label} is required`,
         }
       : {};
@@ -119,13 +127,12 @@ const DocumentDrawer = ({
               <FormItem className="w-full">
                 <FormLabel>
                   {field?.label}
-                  {field?.required && <span className="text-red-500 ml-1">*</span>}
+                  {field?.required && (
+                    <span className="text-red-500 ml-1">*</span>
+                  )}
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder={field?.placeholder}
-                    {...formField}
-                  />
+                  <Input placeholder={field?.placeholder} {...formField} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -143,7 +150,9 @@ const DocumentDrawer = ({
               <FormItem className="w-full">
                 <FormLabel>
                   {field?.label}
-                  {field?.required && <span className="text-red-500 ml-1">*</span>}
+                  {field?.required && (
+                    <span className="text-red-500 ml-1">*</span>
+                  )}
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -187,19 +196,17 @@ const DocumentDrawer = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <ResponsiveDialog open={isOpen} onOpenChange={setIsOpen}>
+      <ResponsiveDialogTrigger asChild>{trigger}</ResponsiveDialogTrigger>
+      <ResponsiveDialogContent className="max-w-4xl">
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
             {mode === "edit" ? `Edit ${template.name}` : template.name}
-          </DialogTitle>
-        </DialogHeader>
+          </ResponsiveDialogTitle>
+        </ResponsiveDialogHeader>
 
-        <div className="py-4">
+        <ResponsiveDialogBody className="py-4">
           {fields.length > 0 ? (
             <Form {...form}>
               <form className="space-y-6" id="document-form">
@@ -207,11 +214,7 @@ const DocumentDrawer = ({
                   {fields.map((field, index) => (
                     <div
                       key={index}
-                      className={
-                        field?.width === "full"
-                          ? "md:col-span-2"
-                          : ""
-                      }
+                      className={field?.width === "full" ? "md:col-span-2" : ""}
                     >
                       {renderField(field, index)}
                       {field?.description && (
@@ -235,28 +238,31 @@ const DocumentDrawer = ({
               </p>
             </div>
           )}
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isLoading}>
-            Cancel
-          </Button>
-          {fields.length > 0 && (
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end mt-6 pt-4 border-t">
             <Button
-              onClick={handleFormSubmit}
-              disabled={isLoading || uploadDocument.isPending}
+              variant="outline"
+              onClick={() => setIsOpen(false)}
+              disabled={isLoading}
             >
-              {(isLoading || uploadDocument.isPending)
-                ? "Uploading..." 
-                : mode === "edit" 
-                  ? "Update" 
-                  : "Submit"
-              }
+              Cancel
             </Button>
-          )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            {fields.length > 0 && (
+              <Button
+                onClick={handleFormSubmit}
+                disabled={isLoading || uploadDocument.isPending}
+              >
+                {isLoading || uploadDocument.isPending
+                  ? "Uploading..."
+                  : mode === "edit"
+                  ? "Update"
+                  : "Submit"}
+              </Button>
+            )}
+          </div>
+        </ResponsiveDialogBody>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 };
 

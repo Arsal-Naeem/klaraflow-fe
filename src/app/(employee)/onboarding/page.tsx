@@ -83,12 +83,12 @@ const OnboardingPage = () => {
           required: false,
           width: "full",
         },
-        {
-          label: "Description",
-          type: "textarea",
-          required: false,
-          width: "full",
-        },
+        // {
+        //   label: "Description",
+        //   type: "textarea",
+        //   required: false,
+        //   width: "full",
+        // },
       ],
       uploaded: false,
       required: true,

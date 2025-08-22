@@ -166,3 +166,12 @@
 body {
   overflow-x: hidden;
 }
+
+*:focus {
+  outline: none !important;
+}
+
+*:focus-visible {
+  outline: 2px solid #6366f1; /* example: indigo-500 */
+  outline-offset: 2px;
+}
