@@ -1,53 +1,116 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { FileText, AlertCircle, MoreVertical } from "lucide-react";
-import { OnboardingDocument, DocumentUpload } from "../types";
+import { FileText, AlertCircle } from "lucide-react";
+import { OnboardingDocument } from "../../types";
+import DocumentDrawer from "../../../documents/components/DocumentDrawer";
+import {
+  useUpdateOnboardingStep,
+  useUploadDocument,
+} from "../../hooks/useOnboarding";
 
 interface DocumentUploadStepProps {
-  documents: OnboardingDocument[];
-  onUpload: (document: DocumentUpload) => void;
+  requiredDocuments: OnboardingDocument[];
+  optionalDocuments?: OnboardingDocument[];
   onNext: () => void;
-  isLoading?: boolean;
 }
 
 export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
-  documents,
-  onUpload,
+  requiredDocuments,
+  optionalDocuments = [],
   onNext,
-  isLoading = false,
 }) => {
-  const requiredDocuments = documents.filter((doc) => doc.required);
-  const optionalDocuments = documents.filter((doc) => !doc.required);
-  const uploadedCount = documents.filter((doc) => doc.uploaded).length;
+  const uploadDocument = useUploadDocument();
+  const updateStep = useUpdateOnboardingStep();
+
+  const [documentsData, setDocumentsData] = React.useState<
+    Record<string, Record<string, any>>
+  >({});
+
+  const uploadedCount = requiredDocuments.filter((doc) => doc.uploaded).length;
   const requiredUploadedCount = requiredDocuments.filter(
     (doc) => doc.uploaded
   ).length;
   const canProceed = requiredDocuments.every((doc) => doc.uploaded);
 
-  const DocumentCard = ({ document }: { document: OnboardingDocument }) => {
-    return (
-      <Card
-        className={`transition-all ${
-          document.uploaded &&
-          "border-green-600 bg-green-100 dark:bg-green-900/40"
-        } duration-200`}
-      >
-        <CardContent className=" ">
-          <div className="flex items-center justify-between">
-            <p
-              className={`text-sm font-semibold ${
-                document.uploaded && "text-green-800 dark:text-green-300"
-              }`}
-            >
-              {document.name}
-            </p>
+  const handleDocumentUpdate = async (
+    documentId: string,
+    data: Record<string, any>
+  ) => {
+    // Store the document data
+    setDocumentsData((prev) => ({
+      ...prev,
+      [documentId]: data,
+    }));
 
-            <MoreVertical size={14} className="cursor-pointer" />
-          </div>
-        </CardContent>
-      </Card>
+    try {
+      console.log("Document data saved for document:", documentId);
+    } catch (error) {
+      console.error("Failed to update document:", error);
+    }
+  };
+
+  const DocumentCard = ({ document }: { document: OnboardingDocument }) => {
+    // Get saved data for this document
+    const documentFormData = documentsData[document.id] || {};
+
+    const handleDocumentSubmit = async (data: Record<string, any>) => {
+      console.log("Document form submitted:", data);
+
+      // Mark document as uploaded and call the update callback
+      if (handleDocumentUpdate) {
+        await handleDocumentUpdate(document.id, data);
+      }
+    };
+
+    const handleDocumentDelete = async (documentId: string) => {
+      console.log("Document deleted:", documentId);
+
+      // Remove the document data
+      setDocumentsData((prev) => {
+        const newData = { ...prev };
+        delete newData[documentId];
+        return newData;
+      });
+
+      try {
+        // In a real implementation, you'd make an API call to delete the document
+        // await onboardingService.deleteDocument(documentId);
+        console.log("Document deleted:", documentId);
+      } catch (error) {
+        console.error("Failed to delete document:", error);
+      }
+    };
+
+    return (
+      <DocumentDrawer
+        template={document}
+        initialData={documentFormData}
+        mode={document.uploaded ? "edit" : "add"}
+        onSubmit={handleDocumentSubmit}
+        isLoading={updateStep.isPending || uploadDocument.isPending}
+        trigger={
+          <Card
+            className={`cursor-pointer transition-all ${
+              document.uploaded &&
+              "border-green-600 bg-green-100 dark:bg-green-900/40"
+            } duration-200`}
+          >
+            <CardContent className=" ">
+              <div className="flex items-center justify-between">
+                <p
+                  className={`text-sm font-semibold ${
+                    document.uploaded && "text-green-800 dark:text-green-300"
+                  }`}
+                >
+                  {document.name}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        }
+      />
     );
   };
 
@@ -66,11 +129,11 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         <CardContent className="p-4">
           <div className="flex items-center justify-end mb-2">
             <span className="text-sm text-gray-500">
-              {uploadedCount} of {documents.length} documents uploaded
+              {uploadedCount} of {requiredDocuments.length} documents uploaded
             </span>
           </div>
           <Progress
-            value={(uploadedCount / documents.length) * 100}
+            value={(uploadedCount / requiredDocuments.length) * 100}
             className="h-2"
           />
 
@@ -125,8 +188,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
           <Button
             onClick={onNext}
             variant="accent"
-            disabled={!canProceed || isLoading}
-            className={canProceed ? "bg-green-600 hover:bg-green-700" : ""}
+            disabled={updateStep.isPending}
           >
             Next
           </Button>

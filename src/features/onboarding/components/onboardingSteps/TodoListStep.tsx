@@ -3,23 +3,34 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { TodoItem } from "../types";
+import { TodoItem } from "../../types";
+import {
+  useUpdateOnboardingStep,
+  useUpdateTodoItem,
+} from "../../hooks/useOnboarding";
 
 interface TodoListStepProps {
   todos: TodoItem[];
-  onToggleTodo: (id: string, completed: boolean) => void;
   onNext: () => void;
-  isLoading?: boolean;
 }
 
 export const TodoListStep: React.FC<TodoListStepProps> = ({
   todos,
-  onToggleTodo,
   onNext,
-  isLoading = false,
 }) => {
+  const updateTodoItem = useUpdateTodoItem();
+  const updateStep = useUpdateOnboardingStep();
+
   const completedCount = todos.filter((todo) => todo.completed).length;
   const canProceed = todos.every((todo) => todo.completed);
+
+  const handleTodoToggle = async (id: string, completed: boolean) => {
+    try {
+      await updateTodoItem.mutateAsync({ id, completed });
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+    }
+  };
 
   const TodoCard = ({ todo }: { todo: TodoItem }) => {
     return (
@@ -34,7 +45,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
             <Checkbox
               checked={todo.completed}
               onCheckedChange={(checked) =>
-                onToggleTodo(todo.id, checked as boolean)
+                handleTodoToggle(todo.id, checked as boolean)
               }
               className="mt-1 cursor-pointer"
             />
@@ -104,7 +115,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
           <Button
             onClick={onNext}
             variant="accent"
-            disabled={ isLoading}
+            disabled={updateTodoItem?.isPending || updateStep.isPending}
             className={canProceed ? "bg-green-600 hover:bg-green-700" : ""}
           >
             Next

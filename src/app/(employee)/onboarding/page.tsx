@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,23 +17,12 @@ import {
 
 import {
   useOnboardingData,
-  useOnboardingStatus,
-  useSubmitApproval,
-  useRequiredDocuments,
-  useUploadDocument,
-  useTodoItems,
-  useUpdateTodoItem,
-  useSubmitOnboarding,
   useUpdateOnboardingStep,
 } from "@/features/onboarding/hooks/useOnboarding";
 
-import {
-  OnboardingApproval,
-  DocumentUpload,
-  OnboardingSubmission,
-  OnboardingDocument,
-} from "@/features/onboarding/types";
+import { OnboardingDocument } from "@/features/onboarding/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Employee } from "@/features/employees";
 
 const OnboardingPage = () => {
   const router = useRouter();
@@ -42,134 +31,6 @@ const OnboardingPage = () => {
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
     useOnboardingData();
-  const { data: onboardingStatus, isLoading: isLoadingStatus } =
-    useOnboardingStatus();
-  const { data: requiredDocuments = [], isLoading: isLoadingDocs } =
-    useRequiredDocuments();
-  const { data: todoItems = [], isLoading: isLoadingTodos } = useTodoItems();
-
-  // Mutations
-  const submitApproval = useSubmitApproval();
-  const uploadDocument = useUploadDocument();
-  const updateTodoItem = useUpdateTodoItem();
-  const submitOnboarding = useSubmitOnboarding();
-  const updateStep = useUpdateOnboardingStep();
-
-  // Update current step based on onboarding status
-  useEffect(() => {
-    if (onboardingStatus) {
-      setCurrentStep(onboardingStatus.currentStep);
-    }
-  }, [onboardingStatus]);
-
-  const steps = [
-    {
-      id: 1,
-      title: "Review Information",
-      icon: <User className="h-5 w-5" />,
-      completed: currentStep > 1,
-      current: currentStep === 1,
-    },
-    {
-      id: 2,
-      title: "Upload Documents",
-      icon: <FileText className="h-5 w-5" />,
-      completed: currentStep > 2,
-      current: currentStep === 2,
-    },
-    {
-      id: 3,
-      title: "Complete Tasks",
-      icon: <ListTodo className="h-5 w-5" />,
-      completed: currentStep > 3,
-      current: currentStep === 3,
-    },
-    {
-      id: 4,
-      title: "Submit Application",
-      icon: <Send className="h-5 w-5" />,
-      completed: currentStep > 4,
-      current: currentStep === 4,
-    },
-  ];
-
-  const handleApproveData = async () => {
-    const approval: OnboardingApproval = {
-      action: "approve",
-    };
-
-    try {
-      await submitApproval.mutateAsync(approval);
-      await updateStep.mutateAsync(2);
-      setCurrentStep(2);
-    } catch (error) {
-      console.error("Failed to approve data:", error);
-    }
-  };
-
-  const handleRequestChange = async () => {
-    const approval: OnboardingApproval = {
-      action: "request_change",
-      comments: "Employee requested changes to the provided information",
-    };
-
-    try {
-      await submitApproval.mutateAsync(approval);
-      // Show message about contacting HR
-      alert(
-        "Your request for changes has been submitted. HR will contact you shortly."
-      );
-    } catch (error) {
-      console.error("Failed to request changes:", error);
-    }
-  };
-
-  const handleDocumentUpload = async (document: DocumentUpload) => {
-    try {
-      await uploadDocument.mutateAsync({
-        type: document.type,
-        file: document.file,
-        label: document.label,
-      });
-    } catch (error) {
-      console.error("Failed to upload document:", error);
-    }
-  };
-
-  const handleTodoToggle = async (id: string, completed: boolean) => {
-    try {
-      await updateTodoItem.mutateAsync({ id, completed });
-    } catch (error) {
-      console.error("Failed to update todo:", error);
-    }
-  };
-
-  const handleNextStep = async (nextStep: number) => {
-    try {
-      await updateStep.mutateAsync(nextStep);
-      setCurrentStep(nextStep);
-    } catch (error) {
-      console.error("Failed to update step:", error);
-    }
-  };
-
-  const handleFinalSubmission = async () => {
-    const submission: OnboardingSubmission = {
-      documents: [], // Documents are already uploaded
-      todoItems: todoItems
-        .filter((todo) => todo.completed)
-        .map((todo) => todo.id),
-      status: "submitted",
-    };
-
-    try {
-      await submitOnboarding.mutateAsync(submission);
-      await updateStep.mutateAsync(4);
-      setCurrentStep(4);
-    } catch (error) {
-      console.error("Failed to submit onboarding:", error);
-    }
-  };
 
   // Mock data fallback for demonstration
   const mockCompanyData = {
@@ -310,17 +171,61 @@ const OnboardingPage = () => {
     },
   ];
 
-  const displayData = onboardingData || mockOnboardingData;
-  const displayDocuments =
-    requiredDocuments.length > 0 ? requiredDocuments : mockDocuments;
-  const displayTodos = todoItems.length > 0 ? todoItems : mockTodos;
+  // Mutations
+  const updateStep = useUpdateOnboardingStep();
 
-  const isLoading =
-    submitApproval.isPending ||
-    uploadDocument.isPending ||
-    updateTodoItem.isPending ||
-    submitOnboarding.isPending ||
-    updateStep.isPending;
+  // Update current step based on onboarding status
+  useEffect(() => {
+    if (onboardingData && onboardingData?.employeeData?.status === "active") {
+      router.push("/dashboard");
+    }
+    if (onboardingData && onboardingData?.currentStep) {
+      setCurrentStep(onboardingData.currentStep);
+    }
+  }, [onboardingData]);
+
+  const steps = useMemo(
+    () => [
+      {
+        id: 1,
+        title: "Review Information",
+        icon: <User className="h-5 w-5" />,
+        completed: currentStep > 1,
+        current: currentStep === 1,
+      },
+      {
+        id: 2,
+        title: "Upload Documents",
+        icon: <FileText className="h-5 w-5" />,
+        completed: currentStep > 2,
+        current: currentStep === 2,
+      },
+      {
+        id: 3,
+        title: "Complete Tasks",
+        icon: <ListTodo className="h-5 w-5" />,
+        completed: currentStep > 3,
+        current: currentStep === 3,
+      },
+      {
+        id: 4,
+        title: "Submit Application",
+        icon: <Send className="h-5 w-5" />,
+        completed: currentStep > 4,
+        current: currentStep === 4,
+      },
+    ],
+    [currentStep]
+  );
+
+  const handleNextStep = async (nextStep: number) => {
+    try {
+      await updateStep.mutateAsync(nextStep);
+      setCurrentStep(nextStep);
+    } catch (error) {
+      console.error("Failed to update step:", error);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 my-8 space-y-6">
@@ -418,28 +323,28 @@ const OnboardingPage = () => {
         <CardContent className="p-3 md:p-6">
           {currentStep === 1 && (
             <DataReviewStep
-              data={displayData}
-              onApprove={handleApproveData}
-              onRequestChange={handleRequestChange}
-              isLoading={isLoading}
+              data={
+                (onboardingData?.employeeData as Employee) || mockOnboardingData
+              }
             />
           )}
 
           {currentStep === 2 && (
             <DocumentUploadStep
-              documents={displayDocuments}
-              onUpload={handleDocumentUpload}
+              requiredDocuments={
+                onboardingData?.requiredDocuments || mockDocuments
+              }
+              optionalDocuments={
+                onboardingData?.optionalDocuments || mockDocuments
+              }
               onNext={() => handleNextStep(3)}
-              isLoading={isLoading}
             />
           )}
 
           {currentStep === 3 && (
             <TodoListStep
-              todos={displayTodos}
-              onToggleTodo={handleTodoToggle}
-              onNext={handleFinalSubmission}
-              isLoading={isLoading}
+              todos={onboardingData?.todos || mockTodos}
+              onNext={() => handleNextStep(4)}
             />
           )}
 

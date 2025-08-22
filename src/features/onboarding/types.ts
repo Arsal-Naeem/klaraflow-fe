@@ -1,4 +1,5 @@
 import { DocumentTemplate } from "../documents/types";
+import { Employee } from "../employees";
 
 // should stay similar
 export interface TodoItem {
@@ -19,6 +20,15 @@ export interface OnboardingTemplate {
   todos: TodoItem[];
   requiredDocuments: string[];
   optionalDocuments: string[];
+}
+
+export interface OnboardingData {
+  id?: string;
+  employeeData: Employee;
+  todos: TodoItem[];
+  requiredDocuments: OnboardingDocument[];
+  optionalDocuments: OnboardingDocument[];
+  currentStep: number;
 }
 
 // You can change these as per you need
@@ -45,12 +55,6 @@ export interface OnboardingStatus {
 export interface OnboardingApproval {
   action: "approve" | "request_change";
   comments?: string;
-}
-
-export interface OnboardingSubmission {
-  documents: DocumentUpload[];
-  todoItems: string[]; // IDs of completed todo items
-  status: "submitted";
 }
 
 // API Response types

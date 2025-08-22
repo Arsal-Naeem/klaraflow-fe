@@ -16,20 +16,17 @@ import {
   Edit3,
 } from "lucide-react";
 import { Employee } from "@/features/employees";
+import { OnboardingApproval } from "../../types";
+import {
+  useSubmitApproval,
+  useUpdateOnboardingStep,
+} from "../../hooks/useOnboarding";
 
 interface DataReviewStepProps {
   data: Employee;
-  onApprove: () => void;
-  onRequestChange: () => void;
-  isLoading?: boolean;
 }
 
-export const DataReviewStep: React.FC<DataReviewStepProps> = ({
-  data,
-  onApprove,
-  onRequestChange,
-  isLoading = false,
-}) => {
+export const DataReviewStep: React.FC<DataReviewStepProps> = ({ data }) => {
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
@@ -37,6 +34,40 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
   const formatDate = (dateString?: string) => {
     if (!dateString) return "Not specified";
     return new Date(dateString).toLocaleDateString();
+  };
+
+  // Mutations
+  const submitApproval = useSubmitApproval();
+  const updateStep = useUpdateOnboardingStep();
+
+  const handleApproveData = async () => {
+    const approval: OnboardingApproval = {
+      action: "approve",
+    };
+
+    try {
+      await submitApproval.mutateAsync(approval);
+      await updateStep.mutateAsync(2);
+    } catch (error) {
+      console.error("Failed to approve data:", error);
+    }
+  };
+
+  const handleRequestChange = async () => {
+    const approval: OnboardingApproval = {
+      action: "request_change",
+      comments: "Employee requested changes to the provided information",
+    };
+
+    try {
+      await submitApproval.mutateAsync(approval);
+      // Show message about contacting HR
+      alert(
+        "Your request for changes has been submitted. HR will contact you shortly."
+      );
+    } catch (error) {
+      console.error("Failed to request changes:", error);
+    }
   };
 
   return (
@@ -169,7 +200,9 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
             </div>
 
             <div>
-              <label className="text-sm font-medium text-muted-foreground">Grade</label>
+              <label className="text-sm font-medium text-muted-foreground">
+                Grade
+              </label>
               <p className="font-semibold">{data.grade || "Not specified"}</p>
             </div>
 
@@ -232,8 +265,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-end">
         <Button
-          onClick={onRequestChange}
-          disabled={isLoading}
+          onClick={handleApproveData}
+          disabled={submitApproval.isPending || updateStep.isPending}
           variant="outline"
           size="lg"
           className="order-2 sm:order-1"
@@ -242,8 +275,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
         </Button>
 
         <Button
-          onClick={onApprove}
-          disabled={isLoading}
+          onClick={handleRequestChange}
+          disabled={submitApproval.isPending || updateStep.isPending}
           variant="accent"
           size="lg"
           className="order-1 sm:order-2"

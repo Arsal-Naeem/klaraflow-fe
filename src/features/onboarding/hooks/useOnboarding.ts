@@ -3,7 +3,6 @@ import { toast } from '@/utils/toast';
 import { onboardingService } from '../services';
 import {
   OnboardingApproval,
-  OnboardingSubmission,
 } from '../types';
 
 // Query keys for better cache management
@@ -13,6 +12,7 @@ export const onboardingKeys = {
   status: () => [...onboardingKeys.all, 'status'] as const,
   documents: () => [...onboardingKeys.all, 'documents'] as const,
   todos: () => [...onboardingKeys.all, 'todos'] as const,
+  template: () => [...onboardingKeys.all, 'template'] as const,
 };
 
 // Hook to fetch onboarding data
@@ -53,22 +53,13 @@ export function useSubmitApproval() {
   });
 }
 
-// Hook to fetch required documents
-export function useRequiredDocuments() {
-  return useQuery({
-    queryKey: onboardingKeys.documents(),
-    queryFn: () => onboardingService.getRequiredDocuments(),
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-}
-
 // Hook to upload document
 export function useUploadDocument() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ type, file, label }: { type: string; file: File; label: string }) =>
-      onboardingService.uploadDocument(type, file, label),
+    mutationFn: ({ type, documentData, label }: { type: string; documentData: Record<string, any>; label: string }) =>
+      onboardingService.uploadDocument(type, documentData, label),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: onboardingKeys.documents() });
       toast.success('Document uploaded successfully!');
@@ -77,15 +68,6 @@ export function useUploadDocument() {
       const message = error.response?.data?.message || 'Failed to upload document';
       toast.error(message);
     },
-  });
-}
-
-// Hook to fetch todo items
-export function useTodoItems() {
-  return useQuery({
-    queryKey: onboardingKeys.todos(),
-    queryFn: () => onboardingService.getTodoItems(),
-    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 }
 
@@ -101,24 +83,6 @@ export function useUpdateTodoItem() {
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || 'Failed to update todo item';
-      toast.error(message);
-    },
-  });
-}
-
-// Hook to submit final onboarding
-export function useSubmitOnboarding() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (submission: OnboardingSubmission) =>
-      onboardingService.submitOnboarding(submission),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.status() });
-      toast.success('Onboarding submitted successfully!');
-    },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || 'Failed to submit onboarding';
       toast.error(message);
     },
   });
