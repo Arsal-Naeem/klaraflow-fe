@@ -15,6 +15,14 @@ import { Eye, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { DocumentField } from "../types";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogBody,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/ui/responsive-dialog";
 
 interface DocumentFormPreviewProps {
   form: any;
@@ -113,8 +121,8 @@ const DocumentFormPreview = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <ResponsiveDialog open={isOpen} onOpenChange={setIsOpen}>
+      <ResponsiveDialogTrigger asChild>
         <Button
           type="button"
           variant="outline"
@@ -123,30 +131,22 @@ const DocumentFormPreview = ({
           <Eye className="h-4 w-4 mr-1" />
           Preview
         </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {templateName}
-          </DialogTitle>
-          {/* <DialogDescription>
-            This is how the document form will appear to users when they fill it
-            out.
-          </DialogDescription> */}
-        </DialogHeader>
+      </ResponsiveDialogTrigger>
+      <ResponsiveDialogContent className="max-w-4xl">
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle className="flex items-center gap-2">
+            {templateName} (preview)
+          </ResponsiveDialogTitle>
+        </ResponsiveDialogHeader>
 
-        <div className="py-4">
+        <ResponsiveDialogBody className="py-4">
           {fields.length > 0 ? (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {fields.map((field, index) => (
                   <div
                     key={index}
-                    className={
-                      field?.width === "full"
-                        ? "md:col-span-2"
-                        : ""
-                    }
+                    className={field?.width === "full" ? "md:col-span-2" : ""}
                   >
                     {renderField(field, index)}
                     {field?.description && (
@@ -169,13 +169,12 @@ const DocumentFormPreview = ({
               </p>
             </div>
           )}
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
-            Close Preview
-          </Button>
-          {/* {fields.length > 0 && (
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end mt-6 pt-4 border-t">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Close Preview
+            </Button>
+            {/* {fields.length > 0 && (
             <Button
               variant="accent"
               onClick={() => {
@@ -187,9 +186,10 @@ const DocumentFormPreview = ({
               Test Submit
             </Button>
           )} */}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </div>
+        </ResponsiveDialogBody>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 };
 
