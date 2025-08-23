@@ -91,28 +91,27 @@ const DocumentDrawer = ({
   }, [fields]);
 
   // Create a form with default values and validation rules based on template fields
-  const getDefaultValues = () => {
+  const getDefaultValues = useMemo(() => {
     return fields.reduce((acc, field, index) => {
       // Use consistent field naming pattern
       const fieldKey = `field_${index}`;
       acc[fieldKey] = initialData[fieldKey] || (field.type === 'file' ? null : "");
       return acc;
     }, {} as Record<string, any>);
-  };
+  }, [fields, initialData]);
 
   const form = useForm({
     resolver: zodResolver(validationSchema),
-    defaultValues: getDefaultValues(),
-    mode: "onChange", // Enable validation on change
+    defaultValues: getDefaultValues,
+    mode: "onChange",
   });
 
-  // Reset form whenever dialog opens or template changes
+  // Reset form when dialog opens or data changes
   useEffect(() => {
     if (isOpen) {
-      const defaultValues = getDefaultValues();
-      form.reset(defaultValues);
+      form.reset(getDefaultValues);
     }
-  }, [isOpen, fields, initialData, form]);
+  }, [isOpen, getDefaultValues, form]);
 
   const prepareFormData = (data: Record<string, any>) => {
     const preparedData: Record<string, any> = {};
