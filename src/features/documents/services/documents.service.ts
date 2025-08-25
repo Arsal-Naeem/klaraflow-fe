@@ -19,20 +19,26 @@ export const documentService = {
     // Add employeeId
     formData.append("employeeId", employeeId);
 
-    // Add all fields
+    // Collect non-file fields in an object
+    const normalFields: Record<string, any> = {};
+
     payload.forEach((field) => {
       if (field.value instanceof File) {
+        // Files stay as binary
         formData.append(field.id, field.value);
       } else if (field.value instanceof Date) {
-        formData.append(field.id, field.value.toISOString());
+        normalFields[field.id] = field.value.toISOString();
       } else if (
         field.value !== null &&
         field.value !== undefined &&
         field.value !== ""
       ) {
-        formData.append(field.id, String(field.value));
+        normalFields[field.id] = field.value;
       }
     });
+
+    // Add JSON string of normal fields
+    formData.append("fields", JSON.stringify(normalFields));
 
     const response = await api.post<ApiResponse<DocumentUpload>>(
       `${DOCUMENT_BASE_URL}/upload/${docId}`,

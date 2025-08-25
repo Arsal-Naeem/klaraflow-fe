@@ -19,7 +19,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { DocumentTemplate, DocumentField } from "../types";
+import { DocumentTemplate, DocumentField, DocumentUploadField } from "../types";
 import { useUploadDocument } from "../hooks/useDocuments";
 
 interface DocumentDrawerProps {
@@ -52,7 +52,7 @@ const DocumentDrawer = ({
     const schemaFields: Record<string, z.ZodTypeAny> = {};
     
     fields.forEach((field, index) => {
-      const fieldKey = `field_${index}`;
+      const fieldKey = field.id || `field_${index}`;
       
       if (field.type === 'file') {
         // File validation
@@ -88,7 +88,7 @@ const DocumentDrawer = ({
   const getDefaultValues = useMemo(() => {
     return fields.reduce((acc, field, index) => {
       // Use consistent field naming pattern
-      const fieldKey = `field_${index}`;
+      const fieldKey = field.id || `field_${index}`;
       acc[fieldKey] = initialData[fieldKey] || (field.type === 'file' ? null : "");
       return acc;
     }, {} as Record<string, any>);
@@ -107,44 +107,57 @@ const DocumentDrawer = ({
     }
   }, [isOpen, getDefaultValues, form]);
 
-  const prepareFormData = (data: Record<string, any>) => {
-    const preparedData: Record<string, any> = {};
+  const prepareFormData = (data: Record<string, any>): DocumentUploadField[] => {
+    const payload: DocumentUploadField[] = [];
     
     fields.forEach((field, index) => {
-      const fieldKey = `field_${index}`;
+      const fieldKey = field.id || `field_${index}`;
       const value = data[fieldKey];
       
       if (field.type === 'file') {
         // Handle file fields - get the first file if it's a FileList
         if (value && value.length > 0) {
-          preparedData[fieldKey] = value[0]; // Take the first file
+          payload.push({
+            id: field.id || fieldKey,
+            value: value[0] // Take the first file
+          });
         }
       } else if (value !== null && value !== undefined && value !== "") {
         // Handle other field types
-        preparedData[fieldKey] = value;
+        let processedValue = value;
+        
+        // Convert date strings to Date objects if needed
+        if (field.type === 'date' && typeof value === 'string') {
+          processedValue = new Date(value);
+        }
+        
+        payload.push({
+          id: field.id || fieldKey,
+          value: processedValue
+        });
       }
     });
     
-    return preparedData;
+    return payload;
   };
 
   const handleSubmit = async (data: any) => {
     try {
       console.log("Raw form data:", data);
       
-      // Prepare form data with proper field handling
-      const preparedData = prepareFormData(data);
-      console.log("Prepared form data:", preparedData);
+      // Prepare form data to match DocumentUploadField[] structure
+      const payload = prepareFormData(data);
+      console.log("Prepared payload:", payload);
 
-      // Call the upload API with the prepared form data
+      // Call the upload API with the correct parameters
       await uploadDocument.mutateAsync({
         docId: template.id,
-        documentData: preparedData,
-        label: template.name,
+        employeeId: employeeId,
+        payload: payload,
       });
 
-      // Call the onSubmit callback with the prepared form data
-      await onSubmit(preparedData);
+      // Call the onSubmit callback with the original form data for backward compatibility
+      await onSubmit(data);
 
       setIsOpen(false);
     } catch (error) {
@@ -155,8 +168,6 @@ const DocumentDrawer = ({
 
   const handleFormSubmit = async () => {
     try {
-      console.log("Form submit clicked");
-      
       // Validate the form using the validation schema
       const isValid = await form.trigger();
       console.log("Form is valid:", isValid);
@@ -182,7 +193,7 @@ const DocumentDrawer = ({
   };
 
   const renderField = (field: DocumentField, index: number) => {
-    const fieldName = `field_${index}`;
+    const fieldName = field.id || `field_${index}`;
 
     switch (field.type) {
       case "text":

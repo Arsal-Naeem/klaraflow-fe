@@ -26,7 +26,7 @@ import { Employee } from "@/features/employees";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(2);
 
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
@@ -72,23 +72,26 @@ const OnboardingPage = () => {
       name: "Education Certidicate",
       fields: [
         {
+          id: "abc",
           label: "Title",
           type: "text",
           required: true,
           width: "full",
         },
         {
+          id: "def",
           label: "Attach your document",
           type: "file",
           required: false,
           width: "full",
         },
-        // {
-        //   label: "Description",
-        //   type: "textarea",
-        //   required: false,
-        //   width: "full",
-        // },
+        {
+          id: "ghi",
+          label: "Description",
+          type: "textarea",
+          required: false,
+          width: "full",
+        },
       ],
       uploaded: false,
       required: true,

@@ -88,6 +88,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
 
     return (
       <DocumentDrawer
+        employeeId="abc"
         template={document}
         initialData={documentFormData}
         mode={document.uploaded ? "edit" : "add"}
