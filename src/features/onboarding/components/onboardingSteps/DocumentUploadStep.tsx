@@ -7,8 +7,8 @@ import { OnboardingDocument } from "../../types";
 import DocumentDrawer from "../../../documents/components/DocumentDrawer";
 import {
   useUpdateOnboardingStep,
-  useUploadDocument,
 } from "../../hooks/useOnboarding";
+import { useUploadDocument } from "@/features/documents/hooks/useDocuments";
 
 interface DocumentUploadStepProps {
   requiredDocuments: OnboardingDocument[];

@@ -5,8 +5,8 @@ import {
   UpdateEmployeeRequest,
   EmployeesResponse,
   EmployeeFilters,
-  ApiResponse,
 } from "../types";
+import { ApiResponse } from "@/types/api.types";
 
 // Employee API endpoints
 const EMPLOYEES_BASE_URL = "/employees";

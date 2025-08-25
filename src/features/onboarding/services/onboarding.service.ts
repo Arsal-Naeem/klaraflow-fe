@@ -1,13 +1,11 @@
 import api from "@/lib/api";
 import {
   OnboardingStatus,
-  OnboardingApproval,
   TodoItem,
   OnboardingDocument,
-  ApiResponse,
   OnboardingData,
 } from "../types";
-import { Employee } from "@/features/employees";
+import { ApiResponse } from "@/types/api.types";
 
 // Onboarding API endpoints
 const ONBOARDING_BASE_URL = "/onboarding";
@@ -22,60 +20,6 @@ export const onboardingService = {
       : `${ONBOARDING_BASE_URL}/my-data`;
 
     const response = await api.get<ApiResponse<OnboardingData>>(endpoint);
-    return response.data.data;
-  },
-
-  // GET - Fetch onboarding status
-  async getOnboardingStatus(employeeId?: string): Promise<OnboardingStatus> {
-    const endpoint = employeeId
-      ? `${ONBOARDING_BASE_URL}/${employeeId}/status`
-      : `${ONBOARDING_BASE_URL}/my-status`;
-
-    const response = await api.get<ApiResponse<OnboardingStatus>>(endpoint);
-    return response.data.data;
-  },
-
-  // POST - Submit approval/rejection of onboarding data
-  async submitApproval(approval: OnboardingApproval): Promise<void> {
-    const response = await api.post<ApiResponse<void>>(
-      `${ONBOARDING_BASE_URL}/approve`,
-      approval
-    );
-    return response.data.data;
-  },
-
-  // POST - Upload document with form data
-  async uploadDocument(
-    documentType: string,
-    documentData: Record<string, any>,
-    label: string
-  ): Promise<OnboardingDocument> {
-    const formData = new FormData();
-
-    // Add basic document info
-    formData.append("type", documentType);
-    formData.append("label", label);
-
-    // Add all form fields to formData
-    Object.entries(documentData).forEach(([key, value]) => {
-      if (value instanceof File) {
-        // Handle file fields
-        formData.append(key, value);
-      } else if (value !== null && value !== undefined && value !== "") {
-        // Handle other field types (text, date, etc.)
-        formData.append(key, String(value));
-      }
-    });
-
-    const response = await api.post<ApiResponse<OnboardingDocument>>(
-      `${ONBOARDING_BASE_URL}/documents/upload`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
     return response.data.data;
   },
 

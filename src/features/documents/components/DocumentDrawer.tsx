@@ -3,21 +3,13 @@ import {
   ResponsiveDialog,
   ResponsiveDialogContent,
   ResponsiveDialogBody,
-  ResponsiveDialogFooter,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/ui/responsive-dialog";
 import {
   Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { TextareaField } from "@/components/blocks/Form/Fields/TextareaField";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
@@ -28,10 +20,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { DocumentTemplate, DocumentField } from "../types";
-import { useUploadDocument } from "../../onboarding/hooks/useOnboarding";
+import { useUploadDocument } from "../hooks/useDocuments";
 
 interface DocumentDrawerProps {
   template: DocumentTemplate;
+  employeeId: string;
   trigger: React.ReactNode;
   onSubmit: (data: Record<string, any>) => void | Promise<void>;
   isLoading?: boolean;
@@ -41,6 +34,7 @@ interface DocumentDrawerProps {
 
 const DocumentDrawer = ({
   template,
+  employeeId,
   trigger,
   onSubmit,
   isLoading = false,
@@ -144,7 +138,7 @@ const DocumentDrawer = ({
 
       // Call the upload API with the prepared form data
       await uploadDocument.mutateAsync({
-        type: template.id,
+        docId: template.id,
         documentData: preparedData,
         label: template.name,
       });

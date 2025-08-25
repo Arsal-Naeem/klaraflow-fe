@@ -6,7 +6,6 @@ import {
   CreateEmployeeRequest,
   UpdateEmployeeRequest,
   EmployeeFilters,
-  EmployeesResponse,
 } from '../types';
 
 // Query keys for better cache management

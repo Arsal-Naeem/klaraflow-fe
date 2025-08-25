@@ -31,12 +31,6 @@ export interface OnboardingData {
   currentStep: number;
 }
 
-// You can change these as per you need
-export interface DocumentUpload {
-  type: "passport" | "visa" | "identity_card" | "contract" | "other";
-  file: File;
-  label: string;
-}
 export interface OnboardingStep {
   id: number;
   title: string;
@@ -50,23 +44,4 @@ export interface OnboardingStatus {
   totalSteps: number;
   status: "pending" | "in_progress" | "completed" | "rejected";
   steps: OnboardingStep[];
-}
-
-export interface OnboardingApproval {
-  action: "approve" | "request_change";
-  comments?: string;
-}
-
-// API Response types
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  errors?: string[];
-}
-
-export interface ApiError {
-  message: string;
-  errors?: string[];
-  status?: number;
 }

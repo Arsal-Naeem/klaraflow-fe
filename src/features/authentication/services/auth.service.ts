@@ -9,8 +9,8 @@ import {
   ResetPasswordRequest,
   ActivateAccountRequest,
   User,
-  ApiResponse,
 } from "../types";
+import { ApiResponse } from "@/types/api.types";
 
 // Authentication API endpoints
 const AUTH_BASE_URL = "/auth";

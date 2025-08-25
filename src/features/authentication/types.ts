@@ -57,20 +57,6 @@ export interface ActivateAccountRequest {
   confirmPassword: string;
 }
 
-// API Response types
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  errors?: string[];
-}
-
-export interface ApiError {
-  message: string;
-  errors?: string[];
-  status?: number;
-}
-
 // Auth state
 export interface AuthState {
   user: User | null;

@@ -94,17 +94,3 @@ export interface EmployeeFilters {
   page?: number;
   limit?: number;
 }
-
-// API Response types
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  errors?: string[];
-}
-
-export interface ApiError {
-  message: string;
-  errors?: string[];
-  status?: number;
-}
