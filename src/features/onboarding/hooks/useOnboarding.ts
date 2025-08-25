@@ -1,15 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from '@/utils/toast';
-import { onboardingService } from '../services';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/utils/toast";
+import { onboardingService } from "../services";
 
 // Query keys for better cache management
 export const onboardingKeys = {
-  all: ['onboarding'] as const,
-  data: () => [...onboardingKeys.all, 'data'] as const,
-  status: () => [...onboardingKeys.all, 'status'] as const,
-  documents: () => [...onboardingKeys.all, 'documents'] as const,
-  todos: () => [...onboardingKeys.all, 'todos'] as const,
-  template: () => [...onboardingKeys.all, 'template'] as const,
+  all: ["onboarding"] as const,
+  data: () => [...onboardingKeys.all, "data"] as const,
+  documents: () => [...onboardingKeys.all, "documents"] as const,
+  todos: () => [...onboardingKeys.all, "todos"] as const,
+  template: () => [...onboardingKeys.all, "template"] as const,
 };
 
 // Hook to fetch onboarding data
@@ -33,7 +32,8 @@ export function useUpdateTodoItem() {
       queryClient.invalidateQueries({ queryKey: onboardingKeys.todos() });
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Failed to update todo item';
+      const message =
+        error.response?.data?.message || "Failed to update todo item";
       toast.error(message);
     },
   });
@@ -45,11 +45,11 @@ export function useUpdateOnboardingStep() {
 
   return useMutation({
     mutationFn: (step: number) => onboardingService.updateOnboardingStep(step),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.status() });
+    onSuccess: (data) => {
+      queryClient.setQueryData([...onboardingKeys.data()], data);
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Failed to update step';
+      const message = error.response?.data?.message || "Failed to update step";
       toast.error(message);
     },
   });

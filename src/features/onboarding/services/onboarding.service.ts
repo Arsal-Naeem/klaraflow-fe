@@ -1,8 +1,6 @@
 import api from "@/lib/api";
 import {
-  OnboardingStatus,
   TodoItem,
-  OnboardingDocument,
   OnboardingData,
 } from "../types";
 import { ApiResponse } from "@/types/api.types";
@@ -33,8 +31,8 @@ export const onboardingService = {
   },
 
   // PUT - Update onboarding step
-  async updateOnboardingStep(step: number): Promise<OnboardingStatus> {
-    const response = await api.put<ApiResponse<OnboardingStatus>>(
+  async updateOnboardingStep(step: number): Promise<OnboardingData> {
+    const response = await api.put<ApiResponse<OnboardingData>>(
       `${ONBOARDING_BASE_URL}/step`,
       { currentStep: step }
     );

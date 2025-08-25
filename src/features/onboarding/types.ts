@@ -30,18 +30,3 @@ export interface OnboardingData {
   optionalDocuments: OnboardingDocument[];
   currentStep: number;
 }
-
-export interface OnboardingStep {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-  current: boolean;
-}
-
-export interface OnboardingStatus {
-  currentStep: number;
-  totalSteps: number;
-  status: "pending" | "in_progress" | "completed" | "rejected";
-  steps: OnboardingStep[];
-}
