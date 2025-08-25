@@ -111,12 +111,12 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
           Please complete all required tasks to proceed to submission.
         </div>
       ) : (
-        <div className="flex justify-end gap-2 pt-6">
+        <div className="flex justify-end gap-2 pt-3">
           <Button
             onClick={onNext}
             variant="accent"
+            size={"lg"}
             disabled={updateTodoItem?.isPending || updateStep.isPending}
-            className={canProceed ? "bg-green-600 hover:bg-green-700" : ""}
           >
             Next
           </Button>

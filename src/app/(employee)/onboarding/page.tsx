@@ -26,7 +26,7 @@ import { Employee } from "@/features/employees";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(3);
 
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
@@ -228,7 +228,7 @@ const OnboardingPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 my-8 space-y-6">
+    <div className="max-w-6xl w-[900px] mx-auto px-4 my-8 space-y-6">
       {/* Header */}
       <div className="text-center flex flex-col items-center mb-8">
         <div className="flex-shrink-0 mb-4">
@@ -326,6 +326,7 @@ const OnboardingPage = () => {
               data={
                 (onboardingData?.employeeData as Employee) || mockOnboardingData
               }
+              onNext={() => handleNextStep(2)}
             />
           )}
 

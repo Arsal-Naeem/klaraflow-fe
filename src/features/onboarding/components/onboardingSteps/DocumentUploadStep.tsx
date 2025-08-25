@@ -187,10 +187,11 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
           Please upload all required documents to proceed to the next step.
         </div>
       ) : (
-        <div className="flex justify-end gap-2 pt-6">
+        <div className="flex justify-end gap-2 pt-3">
           <Button
             onClick={onNext}
             variant="accent"
+            size={"lg"}
             disabled={updateStep.isPending}
           >
             Next

@@ -1,10 +1,8 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  User,
   Mail,
   Phone,
   Calendar,
@@ -12,21 +10,19 @@ import {
   UserCheck,
   Clock,
   MapPin,
-  CheckCircle,
-  Edit3,
 } from "lucide-react";
 import { Employee } from "@/features/employees";
-import { OnboardingApproval } from "../../types";
-import {
-  useSubmitApproval,
-  useUpdateOnboardingStep,
-} from "../../hooks/useOnboarding";
+import { useUpdateOnboardingStep } from "../../hooks/useOnboarding";
 
 interface DataReviewStepProps {
   data: Employee;
+  onNext: () => void;
 }
 
-export const DataReviewStep: React.FC<DataReviewStepProps> = ({ data }) => {
+export const DataReviewStep: React.FC<DataReviewStepProps> = ({
+  data,
+  onNext,
+}) => {
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
@@ -37,38 +33,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({ data }) => {
   };
 
   // Mutations
-  const submitApproval = useSubmitApproval();
   const updateStep = useUpdateOnboardingStep();
-
-  const handleApproveData = async () => {
-    const approval: OnboardingApproval = {
-      action: "approve",
-    };
-
-    try {
-      await submitApproval.mutateAsync(approval);
-      await updateStep.mutateAsync(2);
-    } catch (error) {
-      console.error("Failed to approve data:", error);
-    }
-  };
-
-  const handleRequestChange = async () => {
-    const approval: OnboardingApproval = {
-      action: "request_change",
-      comments: "Employee requested changes to the provided information",
-    };
-
-    try {
-      await submitApproval.mutateAsync(approval);
-      // Show message about contacting HR
-      alert(
-        "Your request for changes has been submitted. HR will contact you shortly."
-      );
-    } catch (error) {
-      console.error("Failed to request changes:", error);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -260,35 +225,20 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({ data }) => {
         </CardContent>
       </Card>
 
-      <Separator />
-
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-end">
+      <div className="flex justify-end gap-2 pt-6">
         <Button
-          onClick={handleApproveData}
-          disabled={submitApproval.isPending || updateStep.isPending}
-          variant="outline"
-          size="lg"
-          className="order-2 sm:order-1"
-        >
-          <Edit3 /> <p>Request Changes</p>
-        </Button>
-
-        <Button
-          onClick={handleRequestChange}
-          disabled={submitApproval.isPending || updateStep.isPending}
+          onClick={onNext}
           variant="accent"
-          size="lg"
-          className="order-1 sm:order-2"
+          disabled={updateStep.isPending}
         >
-          <CheckCircle />
-          <p> Approve Information</p>
+          Next
         </Button>
       </div>
 
       <div className="text-center text-sm text-muted-foreground">
-        By approving, you confirm that all the information above is correct and
-        can proceed to the next step.
+        By pressing Next, you confirm that all the information above is correct
+        and can proceed to the next step.
       </div>
     </div>
   );
