@@ -59,10 +59,10 @@ import { getAvailableLocales } from "@/lib/i18n";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const t = useTranslations();
   const { theme, setTheme } = useTheme();
-  const { locale, changeLanguage, isPending } = useLanguageNavigation();
+  const { isRTL, locale, changeLanguage, isPending } = useLanguageNavigation();
 
   const tMain = useTranslations("onboarding");
   const tSteps = useTranslations("onboarding.steps.names");
@@ -283,8 +283,6 @@ const OnboardingPage = () => {
     flag: localeConfig.flag,
     nativeName: localeConfig.nativeName,
   }));
-
-  const isRTL = locale === "ar";
 
   return (
     <div className="max-w-6xl w-[900px] mx-auto px-4 my-8 space-y-6">

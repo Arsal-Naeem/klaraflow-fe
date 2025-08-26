@@ -38,6 +38,7 @@ import { Input } from "@/components/ui/input";
 import { SelectField } from "@/components/blocks/Form/Fields/SelectField";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
 import { useTranslations } from "next-intl";
+import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 
 const addEmployeeSchema = z.object({
   profilePic: z.instanceof(File).optional(),
@@ -88,6 +89,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
   const [selectedImageForCrop, setSelectedImageForCrop] = useState<string>("");
   const [isEditingBasic, setIsEditingBasic] = useState<boolean>(false);
   const [isEditingPersonal, setIsEditingPersonal] = useState<boolean>(false);
+
+  const { isRTL } = useLanguageNavigation();
 
   const t = useTranslations("onboarding.steps.step1");
   const tCommon = useTranslations("common");
@@ -342,7 +345,11 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 />
               </div>
               <div className="flex-1 w-full">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center md:text-left">
+                <div
+                  className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-center ${
+                    isRTL ? "md:text-right" : "md:text-left"
+                  }`}
+                >
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
                       {tBasic("empId")}
