@@ -211,21 +211,61 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
   // Mutations
   const updateStep = useUpdateOnboardingStep();
 
-  const handleSaveBasic = () => {
-    setIsEditingBasic(false);
-    // No API call as requested
+  const handleSaveBasic = async () => {
+    // Validate basic info fields
+    const basicFields: (keyof addEmployeeData)[] = [
+      "firstName",
+      "lastName",
+      "email",
+      "gender",
+    ];
+    const isValid = await form.trigger(basicFields);
+
+    if (isValid) {
+      setIsEditingBasic(false);
+      toast.success("Basic information saved successfully!");
+    } else {
+      toast.error("Please fix the validation errors before saving.");
+    }
   };
 
-  const handleSavePersonal = () => {
-    setIsEditingPersonal(false);
-    // No API call as requested
+  const handleSavePersonal = async () => {
+    // Validate personal info fields (these are optional, so we only validate if they have values)
+    const personalFields: (keyof addEmployeeData)[] = [
+      "dateOfBirth",
+      "maritialStatus",
+      "nationality",
+    ];
+    const isValid = await form.trigger(personalFields);
+
+    if (isValid) {
+      setIsEditingPersonal(false);
+      toast.success("Personal information saved successfully!");
+    } else {
+      toast.error("Please fix the validation errors before saving.");
+    }
   };
 
-  const handleNext = () => {
-    // Log the current form data
-    const formData = form.getValues();
-    console.log("Form data on next:", formData);
-    onNext();
+  const handleNext = async () => {
+    // Validate all required fields before proceeding
+    const requiredFields: (keyof addEmployeeData)[] = [
+      "firstName",
+      "lastName",
+      "email",
+      "gender",
+    ];
+    const isValid = await form.trigger(requiredFields);
+
+    if (isValid) {
+      // Log the current form data
+      const formData = form.getValues();
+      console.log("Form data on next:", formData);
+      onNext();
+    } else {
+      toast.error(
+        "Please fix all validation errors before proceeding to the next step."
+      );
+    }
   };
 
   return (
@@ -239,12 +279,12 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           </p>
         </div>
 
-        {/* Profile Section */}
+        {/* Basic Details */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User2 className="h-5 w-5" />
-              Basic Info
+              Basic Details
             </CardTitle>
             <CardAction>
               {isEditingBasic ? (
@@ -415,7 +455,9 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         <label className="text-sm font-medium text-muted-foreground">
                           Gender
                         </label>
-                        <p className="font-semibold">{gender || data.gender}</p>
+                        <p className="font-semibold capitalize">
+                          {gender || data.gender}
+                        </p>
                       </div>
                     </>
                   )}
@@ -508,7 +550,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     <label className="text-sm font-medium text-muted-foreground">
                       Marital Status
                     </label>
-                    <p className="font-semibold">
+                    <p className="font-semibold capitalize">
                       {maritialStatus || data.maritalStatus || "Not specified"}
                     </p>
                   </div>
@@ -517,7 +559,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     <label className="text-sm font-medium text-muted-foreground">
                       Nationality
                     </label>
-                    <p className="font-semibold">
+                    <p className="font-semibold capitalize">
                       {nationality || data.nationality || "Not specified"}
                     </p>
                   </div>
@@ -527,12 +569,12 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           </CardContent>
         </Card>
 
-        {/* Work Information */}
+        {/* Work Details */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building className="h-5 w-5" />
-              Work Information
+              Work Details
             </CardTitle>
           </CardHeader>
           <CardContent>
