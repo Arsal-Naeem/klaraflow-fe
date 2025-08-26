@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardAction,
@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Camera } from "lucide-react";
+import ImageCropModal from "@/components/shared/ImageCropModal";
+import { toast } from "@/utils/toast";
 import {
   Mail,
   Phone,
@@ -77,6 +80,11 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
   data,
   onNext,
 }) => {
+  // Profile picture update logic
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [profilePicUrl, setProfilePicUrl] = useState<string>("");
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const [selectedImageForCrop, setSelectedImageForCrop] = useState<string>("");
   const [isEditingBasic, setIsEditingBasic] = useState<boolean>(false);
   const [isEditingPersonal, setIsEditingPersonal] = useState<boolean>(false);
 
@@ -134,8 +142,62 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
         maritialStatus: data.maritalStatus || "",
         nationality: data.nationality || "",
       });
+      // Set initial profile pic URL from data
+      setProfilePicUrl(data.profilePic || "");
     }
   }, [data, form]);
+  // Avatar click handler
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // File input change handler
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select a valid image file.");
+        return;
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size must be less than 5MB.");
+        return;
+      }
+      // Create preview URL for cropping
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setSelectedImageForCrop(result);
+        setIsCropModalOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset file input
+    if (event.target) {
+      event.target.value = "";
+    }
+  };
+
+  // Crop complete handler
+  const handleCropComplete = (
+    croppedImageUrl: string,
+    croppedImageFile: File
+  ) => {
+    setProfilePicUrl(croppedImageUrl);
+    setIsCropModalOpen(false);
+    // Set the cropped file in form for API submission
+    if (form?.setValue) {
+      form.setValue("profilePic", croppedImageFile);
+    }
+  };
+
+  // Crop modal close handler
+  const handleCropModalClose = () => {
+    setIsCropModalOpen(false);
+    setSelectedImageForCrop("");
+  };
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -203,22 +265,30 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           <CardContent>
             <div className="flex flex-col md:flex-row items-center md:items-start gap-4 lg:gap-12">
               <div className="flex-shrink-0">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage
-                    src={data.profilePic}
-                    alt={`${firstName || data.firstName} ${
-                      lastName || data.lastName
-                    }`}
-                  />
-                  <AvatarFallback className="text-lg">
-                    {getInitials(
-                      firstName || data.firstName,
-                      lastName || data.lastName
-                    )}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage
+                      src={profilePicUrl || data.profilePic}
+                      alt={`${firstName || data.firstName} ${lastName || data.lastName}`}
+                    />
+                    <AvatarFallback className="text-lg">
+                      {getInitials(firstName || data.firstName, lastName || data.lastName)}
+                    </AvatarFallback>
+                  </Avatar>
+                  {/* Overlay with camera icon on hover */}
+                  <div className="absolute inset-0 bg-[linear-gradient(90deg,#ff2394_0%,#280595_100%)] h-24 w-24 bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                    <Camera className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
               </div>
-
               <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 text-center md:text-left">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
@@ -226,7 +296,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                   </label>
                   <p className="font-semibold">{data.empId}</p>
                 </div>
-
                 {isEditingBasic ? (
                   <>
                     <div>
@@ -244,7 +313,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         )}
                       />
                     </div>
-
                     <div>
                       <FormField
                         control={form.control}
@@ -260,7 +328,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         )}
                       />
                     </div>
-
                     <div>
                       <FormField
                         control={form.control}
@@ -276,7 +343,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         )}
                       />
                     </div>
-
                     <div>
                       <FormField
                         control={form.control}
@@ -292,7 +358,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         )}
                       />
                     </div>
-
                     <div>
                       <SelectField
                         control={form.control}
@@ -315,7 +380,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         {lastName || data.lastName}
                       </p>
                     </div>
-
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">
                         Email
@@ -325,7 +389,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         {email || data.email}
                       </p>
                     </div>
-
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">
                         Phone
@@ -335,7 +398,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         {phone || data.phone || "Not provided"}
                       </p>
                     </div>
-
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">
                         Gender
@@ -348,6 +410,14 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
             </div>
           </CardContent>
         </Card>
+        {/* Image Crop Modal */}
+        <ImageCropModal
+          isOpen={isCropModalOpen}
+          onClose={handleCropModalClose}
+          imageSrc={selectedImageForCrop}
+          onCropComplete={handleCropComplete}
+          aspectRatio={1}
+        />
 
         {/* Personal Details */}
         <Card>
