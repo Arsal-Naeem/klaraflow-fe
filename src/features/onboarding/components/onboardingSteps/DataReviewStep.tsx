@@ -437,7 +437,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     <>
                       <div>
                         <label className="text-sm font-medium text-muted-foreground">
-                          Full Name
+                          {tBasic("fullName")}
                         </label>
                         <p className="font-semibold">
                           {firstName || data.firstName}{" "}

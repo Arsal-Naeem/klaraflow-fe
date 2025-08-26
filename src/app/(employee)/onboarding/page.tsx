@@ -18,10 +18,6 @@ import {
   ListTodo,
   Send,
   Settings,
-  Globe,
-  Sun,
-  Moon,
-  Monitor,
 } from "lucide-react";
 
 // Import onboarding components and hooks
@@ -44,28 +40,24 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTranslations } from "next-intl";
-import { useTheme } from "@/stores/theme-store";
+import { LanguageToggle } from "@/components/blocks/Sidebar/components/language-toggle";
+import { ThemeToggle } from "@/components/blocks/Sidebar/components/theme-toggle";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
-import { getAvailableLocales } from "@/lib/i18n";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(1);
-  const t = useTranslations();
-  const { theme, setTheme } = useTheme();
-  const { isRTL, locale, changeLanguage, isPending } = useLanguageNavigation();
+  const { isRTL } = useLanguageNavigation();
 
-  const tMain = useTranslations("onboarding");
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const t = useTranslations("onboarding");
   const tSteps = useTranslations("onboarding.steps.names");
+  const tCommon = useTranslations("common");
 
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
@@ -269,21 +261,6 @@ const OnboardingPage = () => {
     }
   };
 
-  // Theme and language options
-  const themeOptions = [
-    { value: "light", label: t("theme.light"), icon: Sun },
-    { value: "dark", label: t("theme.dark"), icon: Moon },
-    { value: "system", label: t("theme.system"), icon: Monitor },
-  ];
-
-  const availableLocales = getAvailableLocales();
-  const languageOptions = availableLocales.map((localeConfig) => ({
-    value: localeConfig.locale,
-    label: t(`language.${localeConfig.locale === "en" ? "english" : "arabic"}`),
-    flag: localeConfig.flag,
-    nativeName: localeConfig.nativeName,
-  }));
-
   return (
     <div className="max-w-6xl w-[900px] mx-auto px-4 my-8 space-y-6">
       {/* Header */}
@@ -297,14 +274,14 @@ const OnboardingPage = () => {
             <AvatarFallback className="text-2xl">{"KF"}</AvatarFallback>
           </Avatar>
         </div>
-        <h1 className="text-3xl font-bold mb-2">{tMain("title")}</h1>
-        <p className="text-muted-foreground">{tMain("subtitle")}</p>
+        <h1 className="text-3xl font-bold mb-2">{t("title")}</h1>
+        <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       {/* Progress Stepper */}
       <Card>
         <CardHeader>
-          <CardTitle>{tMain("onboardingProgress")}</CardTitle>
+          <CardTitle>{t("onboardingProgress")}</CardTitle>
           <CardAction>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -312,90 +289,16 @@ const OnboardingPage = () => {
                   <Settings />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>Settings</DropdownMenuLabel>
+              <DropdownMenuContent
+                className="w-56"
+                align={isRTL ? "start" : "end"}
+              >
+                <DropdownMenuLabel className="text-left">
+                  {tCommon("settings")}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-
-                {/* Theme Toggle */}
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger
-                    className={`cursor-pointer ${
-                      isRTL ? "flex-row-reverse" : ""
-                    }`}
-                  >
-                    <Sun className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-                    {t("sidebar.theme")}
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    {themeOptions.map((option) => {
-                      const Icon = option.icon;
-                      return (
-                        <DropdownMenuItem
-                          key={option.value}
-                          onClick={() =>
-                            setTheme(
-                              option.value as "light" | "dark" | "system"
-                            )
-                          }
-                          className={`cursor-pointer ${
-                            theme === option.value ? "bg-accent" : ""
-                          } ${isRTL ? "flex-row-reverse" : ""}`}
-                        >
-                          <Icon className="h-4 w-4" />
-                          {option.label}
-                          {theme === option.value && (
-                            <div
-                              className={`h-2 w-2 rounded-full bg-primary ${
-                                isRTL ? "mr-auto" : "ml-auto"
-                              }`}
-                            />
-                          )}
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-
-                {/* Language Toggle */}
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger
-                    className={`cursor-pointer ${
-                      isRTL ? "flex-row-reverse" : ""
-                    }`}
-                  >
-                    <Globe className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
-                    {t("sidebar.language")}
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    {languageOptions.map((option) => (
-                      <DropdownMenuItem
-                        key={option.value}
-                        onClick={() => changeLanguage(option.value)}
-                        disabled={isPending}
-                        className={`cursor-pointer ${
-                          locale === option.value ? "bg-accent" : ""
-                        } ${isRTL ? "flex-row-reverse" : ""}`}
-                      >
-                        <span className={isRTL ? "ml-2" : "mr-2"}>
-                          {option.flag}
-                        </span>
-                        <div className="flex flex-col">
-                          <span className="text-sm">{option.label}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {option.nativeName}
-                          </span>
-                        </div>
-                        {locale === option.value && (
-                          <div
-                            className={`h-2 w-2 rounded-full bg-primary ${
-                              isRTL ? "mr-auto" : "ml-auto"
-                            }`}
-                          />
-                        )}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
+                <LanguageToggle />
+                <ThemeToggle />
               </DropdownMenuContent>
             </DropdownMenu>
           </CardAction>
@@ -411,11 +314,11 @@ const OnboardingPage = () => {
             />
             <div className="flex justify-between text-sm text-muted-foreground mt-2">
               <span>
-                {tMain("step")} {currentStep} {tMain("of")} {steps.length}
+                {t("step")} {currentStep} {t("of")} {steps.length}
               </span>
               <span>
                 {Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}%{" "}
-                {tMain("completed")}
+                {t("completed")}
               </span>
             </div>
           </div>
@@ -456,7 +359,7 @@ const OnboardingPage = () => {
 
                 {step.completed && (
                   <Badge className="bg-green-100 hover:bg-green-100 text-green-800 mt-2 mb-4 md:mb-0">
-                    {tMain("completed")}
+                    {t("completed")}
                   </Badge>
                 )}
               </div>

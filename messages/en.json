@@ -23,7 +23,8 @@
     "reset": "Reset",
     "email": "Email",
     "optional": "Optional",
-    "required": "Required"
+    "required": "Required",
+    "settings": "Settings"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -184,6 +185,7 @@
       "empId": "Employee ID",
       "firstName": "First Name",
       "lastName": "Last Name",
+      "fullName": "Full Name",
       "email": "Email",
       "phone": "Phone",
       "gender": "Gender",
