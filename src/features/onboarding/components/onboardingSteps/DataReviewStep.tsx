@@ -248,7 +248,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
             </CardTitle>
             <CardAction>
               {isEditingBasic ? (
-                <Button variant="outline" size="sm" onClick={handleSaveBasic}>
+                <Button variant="accent" size="sm" onClick={handleSaveBasic}>
                   Save
                 </Button>
               ) : (
@@ -265,14 +265,22 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           <CardContent>
             <div className="flex flex-col md:flex-row items-center md:items-start gap-4 lg:gap-12">
               <div className="flex-shrink-0">
-                <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+                <div
+                  className="relative group cursor-pointer"
+                  onClick={handleAvatarClick}
+                >
                   <Avatar className="h-24 w-24">
                     <AvatarImage
                       src={profilePicUrl || data.profilePic}
-                      alt={`${firstName || data.firstName} ${lastName || data.lastName}`}
+                      alt={`${firstName || data.firstName} ${
+                        lastName || data.lastName
+                      }`}
                     />
                     <AvatarFallback className="text-lg">
-                      {getInitials(firstName || data.firstName, lastName || data.lastName)}
+                      {getInitials(
+                        firstName || data.firstName,
+                        lastName || data.lastName
+                      )}
                     </AvatarFallback>
                   </Avatar>
                   {/* Overlay with camera icon on hover */}
@@ -289,123 +297,129 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                   className="hidden"
                 />
               </div>
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 text-center md:text-left">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Employee ID
-                  </label>
-                  <p className="font-semibold">{data.empId}</p>
+              <div className="flex-1 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center md:text-left">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Employee ID
+                    </label>
+                    <p className="font-semibold">{data.empId}</p>
+                  </div>
+                  {isEditingBasic ? (
+                    <>
+                      <div className="col-span-1">
+                        <FormField
+                          control={form.control}
+                          name="firstName"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>First Name</FormLabel>
+                              <FormControl>
+                                <Input {...field} className="w-full" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <FormField
+                          control={form.control}
+                          name="lastName"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>Last Name</FormLabel>
+                              <FormControl>
+                                <Input {...field} className="w-full" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="email"
+                                  {...field}
+                                  className="w-full"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <FormField
+                          control={form.control}
+                          name="phone"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>Phone</FormLabel>
+                              <FormControl>
+                                <Input {...field} className="w-full" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <SelectField
+                          control={form.control}
+                          name="gender"
+                          label="Gender"
+                          placeholder="Select gender"
+                          options={genderOptions}
+                          className="w-full"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Full Name
+                        </label>
+                        <p className="font-semibold">
+                          {firstName || data.firstName}{" "}
+                          {lastName || data.lastName}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Email
+                        </label>
+                        <p className="flex items-center gap-2 justify-center md:justify-start">
+                          <Mail className="h-4 w-4 text-gray-400 hidden lg:inline" />
+                          {email || data.email}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Phone
+                        </label>
+                        <p className="flex items-center gap-2 justify-center md:justify-start">
+                          <Phone className="h-4 w-4 text-gray-400 hidden lg:inline" />
+                          {phone || data.phone || "Not provided"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Gender
+                        </label>
+                        <p className="font-semibold">{gender || data.gender}</p>
+                      </div>
+                    </>
+                  )}
                 </div>
-                {isEditingBasic ? (
-                  <>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input type="email" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phone</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <SelectField
-                        control={form.control}
-                        name="gender"
-                        label="Gender"
-                        placeholder="Select gender"
-                        options={genderOptions}
-                        className="w-full"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">
-                        Full Name
-                      </label>
-                      <p className="font-semibold">
-                        {firstName || data.firstName}{" "}
-                        {lastName || data.lastName}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">
-                        Email
-                      </label>
-                      <p className="flex items-center gap-2 justify-center md:justify-start">
-                        <Mail className="h-4 w-4 text-gray-400 hidden lg:inline" />
-                        {email || data.email}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">
-                        Phone
-                      </label>
-                      <p className="flex items-center gap-2 justify-center md:justify-start">
-                        <Phone className="h-4 w-4 text-gray-400 hidden lg:inline" />
-                        {phone || data.phone || "Not provided"}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">
-                        Gender
-                      </label>
-                      <p className="font-semibold">{gender || data.gender}</p>
-                    </div>
-                  </>
-                )}
               </div>
             </div>
           </CardContent>
@@ -428,11 +442,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
             </CardTitle>
             <CardAction>
               {isEditingPersonal ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSavePersonal}
-                >
+                <Button variant="accent" size="sm" onClick={handleSavePersonal}>
                   Save
                 </Button>
               ) : (
