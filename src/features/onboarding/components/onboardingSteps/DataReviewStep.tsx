@@ -37,6 +37,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { SelectField } from "@/components/blocks/Form/Fields/SelectField";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
+import { useTranslations } from "next-intl";
 
 const addEmployeeSchema = z.object({
   profilePic: z.instanceof(File).optional(),
@@ -87,6 +88,12 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
   const [selectedImageForCrop, setSelectedImageForCrop] = useState<string>("");
   const [isEditingBasic, setIsEditingBasic] = useState<boolean>(false);
   const [isEditingPersonal, setIsEditingPersonal] = useState<boolean>(false);
+
+  const t = useTranslations("onboarding.steps.step1");
+  const tCommon = useTranslations("common");
+  const tBasic = useTranslations("addEmployee.mandatoryForm");
+  const tPersonal = useTranslations("addEmployee.personalForm");
+  const tWork = useTranslations("addEmployee.workForm");
 
   const form = useForm<addEmployeeData>({
     resolver: zodResolver(addEmployeeSchema),
@@ -272,11 +279,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
     <Form {...form}>
       <div className="space-y-6">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold mb-2">Review Your Information</h2>
-          <p className="text-sm text-muted-foreground">
-            Please review the information filled by HR. You can approve it or
-            request changes if needed.
-          </p>
+          <h2 className="text-2xl font-bold mb-2">{t("title")}</h2>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
 
         {/* Basic Details */}
@@ -284,12 +288,12 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User2 className="h-5 w-5" />
-              Basic Details
+              {t("basicDetails")}
             </CardTitle>
             <CardAction>
               {isEditingBasic ? (
                 <Button variant="accent" size="sm" onClick={handleSaveBasic}>
-                  Save
+                  {tCommon("save")}
                 </Button>
               ) : (
                 <Button
@@ -297,7 +301,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                   size="sm"
                   onClick={() => setIsEditingBasic(true)}
                 >
-                  Edit
+                  {tCommon("edit")}
                 </Button>
               )}
             </CardAction>
@@ -341,7 +345,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center md:text-left">
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
-                      Employee ID
+                      {tBasic("empId")}
                     </label>
                     <p className="font-semibold">{data.empId}</p>
                   </div>
@@ -353,7 +357,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                           name="firstName"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>First Name</FormLabel>
+                              <FormLabel>{tBasic("firstName")}</FormLabel>
                               <FormControl>
                                 <Input {...field} className="w-full" />
                               </FormControl>
@@ -368,7 +372,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                           name="lastName"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>Last Name</FormLabel>
+                              <FormLabel>{tBasic("lastName")}</FormLabel>
                               <FormControl>
                                 <Input {...field} className="w-full" />
                               </FormControl>
@@ -383,7 +387,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>Email</FormLabel>
+                              <FormLabel>{tBasic("email")}</FormLabel>
                               <FormControl>
                                 <Input
                                   type="email"
@@ -402,7 +406,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                           name="phone"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>Phone</FormLabel>
+                              <FormLabel>{tBasic("phone")}</FormLabel>
                               <FormControl>
                                 <Input {...field} className="w-full" />
                               </FormControl>
@@ -415,8 +419,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         <SelectField
                           control={form.control}
                           name="gender"
-                          label="Gender"
-                          placeholder="Select gender"
+                          label={tBasic("gender")}
+                          placeholder={tBasic("placeholders.gender")}
                           options={genderOptions}
                           className="w-full"
                         />
@@ -435,7 +439,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                       </div>
                       <div>
                         <label className="text-sm font-medium text-muted-foreground">
-                          Email
+                          {tBasic("email")}
                         </label>
                         <p className="flex items-center gap-2 justify-center md:justify-start">
                           <Mail className="h-4 w-4 text-gray-400 hidden lg:inline" />
@@ -444,7 +448,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                       </div>
                       <div>
                         <label className="text-sm font-medium text-muted-foreground">
-                          Phone
+                          {tBasic("phone")}
                         </label>
                         <p className="flex items-center gap-2 justify-center md:justify-start">
                           <Phone className="h-4 w-4 text-gray-400 hidden lg:inline" />
@@ -453,7 +457,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                       </div>
                       <div>
                         <label className="text-sm font-medium text-muted-foreground">
-                          Gender
+                          {tBasic("gender")}
                         </label>
                         <p className="font-semibold capitalize">
                           {gender || data.gender}
@@ -480,12 +484,12 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="h-5 w-5" />
-              Personal Details
+              {t("personalDetails")}
             </CardTitle>
             <CardAction>
               {isEditingPersonal ? (
                 <Button variant="accent" size="sm" onClick={handleSavePersonal}>
-                  Save
+                  {tCommon("save")}
                 </Button>
               ) : (
                 <Button
@@ -493,7 +497,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                   size="sm"
                   onClick={() => setIsEditingPersonal(true)}
                 >
-                  Edit
+                  {tCommon("edit")}
                 </Button>
               )}
             </CardAction>
@@ -506,8 +510,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     <DateField
                       control={form.control}
                       name="dateOfBirth"
-                      label="Date of Birth"
-                      placeholder="Select date of birth"
+                      label={tPersonal("dob")}
+                      placeholder={tPersonal("placeholders.dob")}
                       className="w-full"
                     />
                   </div>
@@ -516,8 +520,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     <SelectField
                       control={form.control}
                       name="maritialStatus"
-                      label="Marital Status"
-                      placeholder="Select marital status"
+                      label={tPersonal("maritalStatus")}
+                      placeholder={tPersonal("placeholders.maritalStatus")}
                       options={maritalStatusOptions}
                       className="w-full"
                     />
@@ -527,8 +531,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     <SelectField
                       control={form.control}
                       name="nationality"
-                      label="Nationality"
-                      placeholder="Select nationality"
+                      label={tPersonal("nationality")}
+                      placeholder={tPersonal("placeholders.nationality")}
                       options={nationalityOptions}
                       className="w-full"
                     />
@@ -538,7 +542,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 <>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
-                      Date of Birth
+                      {tPersonal("dob")}
                     </label>
                     <p className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
@@ -548,7 +552,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
-                      Marital Status
+                      {tPersonal("maritalStatus")}
                     </label>
                     <p className="font-semibold capitalize">
                       {maritialStatus || data.maritalStatus || "Not specified"}
@@ -557,7 +561,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
-                      Nationality
+                      {tPersonal("nationality")}
                     </label>
                     <p className="font-semibold capitalize">
                       {nationality || data.nationality || "Not specified"}
@@ -574,14 +578,14 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building className="h-5 w-5" />
-              Work Details
+              {t("workDetails")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Designation
+                  {tBasic("designation")}
                 </label>
                 <p className="font-semibold">
                   {data.designation || "Not specified"}
@@ -590,7 +594,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Department
+                  {tBasic("department")}
                 </label>
                 <p className="font-semibold">
                   {data.department || "Not specified"}
@@ -599,7 +603,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Job Type
+                  {tWork("jobType")}
                 </label>
                 <p className="font-semibold">
                   {data.jobType || "Not specified"}
@@ -608,7 +612,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Hiring Date
+                  {tWork("hiringDate")}
                 </label>
                 <p className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
@@ -618,7 +622,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Reports To
+                  {tWork("reportTo")}
                 </label>
                 <p className="flex items-center gap-2">
                   <UserCheck className="h-4 w-4 text-gray-400" />
@@ -628,14 +632,14 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Grade
+                  {tWork("grade")}
                 </label>
                 <p className="font-semibold">{data.grade || "Not specified"}</p>
               </div>
 
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
-                  Probation Period
+                  {tWork("probationPeriod")}
                 </label>
                 <p className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-gray-400" />
@@ -653,13 +657,12 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
             variant="accent"
             disabled={updateStep.isPending}
           >
-            Next
+            {tCommon("next")}
           </Button>
         </div>
 
         <div className="text-center text-sm text-muted-foreground">
-          By pressing Next, you confirm that all the information above is
-          correct and can proceed to the next step.
+          {t("disclaimer")}
         </div>
       </div>
     </Form>

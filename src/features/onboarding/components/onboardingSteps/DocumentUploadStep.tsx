@@ -9,6 +9,7 @@ import {
   useUpdateOnboardingStep,
 } from "../../hooks/useOnboarding";
 import { useUploadDocument } from "@/features/documents/hooks/useDocuments";
+import { useTranslations } from "next-intl";
 
 interface DocumentUploadStepProps {
   requiredDocuments: OnboardingDocument[];
@@ -23,6 +24,10 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
 }) => {
   const uploadDocument = useUploadDocument();
   const updateStep = useUpdateOnboardingStep();
+
+    const t = useTranslations("onboarding.steps.step2");
+    const tMain = useTranslations("onboarding");
+    const tCommon = useTranslations("common");
 
   const [documentsData, setDocumentsData] = React.useState<
     Record<string, Record<string, any>>
@@ -121,10 +126,9 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2">Upload Required Documents</h2>
+        <h2 className="text-2xl font-bold mb-2">{t("title")}</h2>
         <p className="text-muted-foreground">
-          Please upload the required documents to complete your onboarding
-          process.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -133,7 +137,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         <CardContent className="p-4">
           <div className="flex items-center justify-end mb-2">
             <span className="text-sm text-gray-500">
-              {uploadedCount} of {requiredDocuments.length} documents uploaded
+              {uploadedCount} {tMain("of")} {requiredDocuments.length} {t("documentsUpload")}
             </span>
           </div>
           <Progress
@@ -143,10 +147,10 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
 
           <div className="flex items-center justify-between mt-3 text-sm">
             <span className="text-green-600">
-              Required: {requiredUploadedCount}/{requiredDocuments.length}
+              {tCommon("required")}: {requiredUploadedCount}/{requiredDocuments.length}
             </span>
             <span className="text-blue-600">
-              Optional: {uploadedCount - requiredUploadedCount}/
+              {tCommon("optional")}: {uploadedCount - requiredUploadedCount}/
               {optionalDocuments.length}
             </span>
           </div>
@@ -158,7 +162,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         <div>
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-red-500" />
-            Required Documents
+            {t("requiredDocuments")}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {requiredDocuments.map((document) => (
@@ -173,7 +177,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         <div className="mt-8">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <FileText className="h-5 w-5 text-blue-500" />
-            Optional Documents
+            {t("optionalDocuments")}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {optionalDocuments.map((document) => (
@@ -185,7 +189,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
 
       {!canProceed ? (
         <div className="text-center text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-          Please upload all required documents to proceed to the next step.
+          {t("disclaimer")}
         </div>
       ) : (
         <div className="flex justify-end gap-2 pt-3">
@@ -195,7 +199,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
             size={"lg"}
             disabled={updateStep.isPending}
           >
-            Next
+            {tCommon("next")}
           </Button>
         </div>
       )}

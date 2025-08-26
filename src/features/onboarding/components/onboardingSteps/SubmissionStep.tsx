@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Mail, Phone, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export const SubmissionStep = ({
   phone,
@@ -9,6 +10,10 @@ export const SubmissionStep = ({
   phone: string;
   email: string;
 }) => {
+  const t = useTranslations("onboarding.steps.step4");
+  const tMain = useTranslations("onboarding");
+  const tCommon = useTranslations("common");
+
   return (
     <div className="space-y-8">
       {/* Success Header */}
@@ -19,13 +24,10 @@ export const SubmissionStep = ({
 
         <div>
           <h2 className="text-3xl font-bold text-primary mb-2">
-            Application Submitted Successfully!
+            {t("title")}
           </h2>
           <p className="text-md text-muted-foreground max-w-2xl mx-auto">
-            Congratulations! Your onboarding application has been submitted and
-            is now under review by our HR team. Once it's approved, you'll be
-            automatically redirected to your dashboard. We're excited to have
-            you on board!
+            {t("subtitle")}
           </p>
         </div>
       </div>
@@ -40,15 +42,15 @@ export const SubmissionStep = ({
               </div>
               <div>
                 <h3 className="font-semibold text-lg text-white">
-                  Application Status: Under Review
+                  {t("statusTitle")}
                 </h3>
                 <p className="text-gray-600 text-white/90">
-                  Your application is being processed by our HR team
+                  {t("statusSubtitle")}
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm text-white/90">Application ID</div>
+              <div className="text-sm text-white/90">{t("applicationId")}</div>
               <div className="font-mono text-white font-semibold">
                 #KF-{Date.now().toString().slice(-6)}
               </div>
@@ -60,19 +62,19 @@ export const SubmissionStep = ({
       {/* Contact Information */}
       <Card>
         <CardContent className="px-6">
-          <h3 className="font-semibold mb-4">Need Help?</h3>
+          <h3 className="font-semibold mb-4">{t("needHelp")}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex gap-3">
               <Mail className="h-5 w-5 text-muted-foreground mt-1" />
               <div>
-                <div className="font-medium">Email Support</div>
+                <div className="font-medium">{t("emailSupport")}</div>
                 <div className="text-sm text-muted-foreground">{email}</div>
               </div>
             </div>
             <div className="flex gap-3">
               <Phone className="h-5 w-5 text-muted-foreground mt-1" />
               <div>
-                <div className="font-medium">Phone Support</div>
+                <div className="font-medium">{t("phoneSupport")}</div>
                 <div className="text-sm text-muted-foreground">{phone}</div>
               </div>
             </div>

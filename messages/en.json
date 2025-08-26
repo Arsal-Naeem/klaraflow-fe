@@ -21,7 +21,9 @@
     "previous": "Previous",
     "submit": "Submit",
     "reset": "Reset",
-    "email": "Email"
+    "email": "Email",
+    "optional": "Optional",
+    "required": "Required"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -226,6 +228,54 @@
         "dob": "Select Date of Birth",
         "maritalStatus": "Select Marital Status",
         "nationality": "Select Nationality"
+      }
+    }
+  },
+  "onboarding": {
+    "title": "Welcome to Your Onboarding Journey",
+    "subtitle": "Complete these steps to get started with your new role",
+    "onboardingProgress": "Onboarding Progress",
+    "step": "Step",
+    "of": "of",
+    "completed": "Completed",
+    "steps": {
+      "names": {
+        "reviewInformation": "Review Information",
+        "uploadDocuments": "Upload Documents",
+        "completeTasks": "Complete Tasks",
+        "submitApplication": "Submit Application"
+      },
+      "step1": {
+        "title": "Review Your Information",
+        "subtitle": "Please review the information filled by HR. You can approve it or request changes if needed.",
+        "basicDetails": "Basic Details",
+        "personalDetails": "Personal Details",
+        "workDetails": "Work Details",
+        "disclaimer": "By pressing Next, you confirm that all the information above is correct and can proceed to the next step."
+      },
+      "step2": {
+        "title": "Upload Required Documents",
+        "subtitle": "Please upload the required documents to complete your onboarding process.",
+        "documentsUpload": "Documents Upload",
+        "requiredDocuments": "Required Documents",
+        "optionalDocuments": "Optional Documents",
+        "disclaimer": "Please upload all required documents to proceed to the next step."
+      },
+      "step3": {
+        "title": "Complete Your Onboarding Tasks",
+        "subtitle": "Complete these tasks to finish your onboarding process. Required tasks must be completed to proceed.",
+        "tasksCompleted": "Tasks Completed",
+        "disclaimer": "Please complete all required tasks to proceed to submission."
+      },
+      "step4": {
+        "title": "Application Submitted Successfully!",
+        "subtitle": "Congratulations! Your onboarding application has been submitted and is now under review by our HR team. Once it's approved, you'll be automatically redirected to your dashboard. We're excited to have you on board!",
+        "statusTitle": "Application Status: Under Review",
+        "statusSubtitle": "Your application is being processed by our HR team",
+        "applicationId": "Application ID",
+        "needHelp": "Need Help?",
+        "emailSupport": "Email Support",
+        "phoneSupport": "Phone Support"
       }
     }
   }

@@ -8,6 +8,7 @@ import {
   useUpdateOnboardingStep,
   useUpdateTodoItem,
 } from "../../hooks/useOnboarding";
+import { useTranslations } from "next-intl";
 
 interface TodoListStepProps {
   todos: TodoItem[];
@@ -20,6 +21,10 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
 }) => {
   const updateTodoItem = useUpdateTodoItem();
   const updateStep = useUpdateOnboardingStep();
+
+  const t = useTranslations("onboarding.steps.step3");
+  const tMain = useTranslations("onboarding");
+  const tCommon = useTranslations("common");
 
   const completedCount = todos.filter((todo) => todo.completed).length;
   const canProceed = todos.every((todo) => todo.completed);
@@ -74,13 +79,8 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2">
-          Complete Your Onboarding Tasks
-        </h2>
-        <p className="text-muted-foreground">
-          Complete these tasks to finish your onboarding process. Required tasks
-          must be completed to proceed.
-        </p>
+        <h2 className="text-2xl font-bold mb-2">{t("title")}</h2>
+        <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       {/* Progress Summary */}
@@ -88,7 +88,8 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
         <CardContent className="px-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-500">
-              {completedCount} of {todos.length} tasks completed
+              {completedCount} {tMain("of")} {todos.length}{" "}
+              {t("tasksCompleted")}
             </span>
           </div>
           <Progress
@@ -108,7 +109,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
 
       {!canProceed ? (
         <div className="text-center text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-          Please complete all required tasks to proceed to submission.
+          {t("disclaimer")}
         </div>
       ) : (
         <div className="flex justify-end gap-2 pt-3">
@@ -118,7 +119,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
             size={"lg"}
             disabled={updateTodoItem?.isPending || updateStep.isPending}
           >
-            Next
+            {tCommon("next")}
           </Button>
         </div>
       )}
