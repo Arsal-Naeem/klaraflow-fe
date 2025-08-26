@@ -26,7 +26,7 @@ import { Employee } from "@/features/employees";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Fetch onboarding data
   const { data: onboardingData, isLoading: isLoadingData } =
