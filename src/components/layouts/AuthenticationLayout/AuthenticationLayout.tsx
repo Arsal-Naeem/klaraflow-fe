@@ -24,11 +24,11 @@ export function AuthenticationLayout({
       className="relative w-full min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{
         backgroundImage:
-          "url(https://images.unsplash.com/photo-1636955735635-b4c0fd54f360?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0)",
+          "url(https://assets.accounts.toggl.com/assets/background-dark-Bh5vyRPM.svg)",
       }}
     >
       <div className="absolute inset-0 bg-black/40 z-0" />
-      <div className="relative z-10 w-md max-w-[90vw]">
+      <div className="relative z-10 w-[350px] max-w-[90vw]">
         <Card className="shadow-2xl backdrop-blur-lg">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold mb-2">{title}</CardTitle>

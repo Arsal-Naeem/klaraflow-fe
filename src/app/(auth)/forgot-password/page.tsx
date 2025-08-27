@@ -104,7 +104,8 @@ export default function ForgetPasswordPage() {
               />
               <Button
                 type="submit"
-                className="mt-2 w-full bg-accent hover:bg-accent text-primary"
+                variant={"accent"}
+                className="mt-2 w-full"
                 disabled={forgotPassword.isPending}
               >
                 {forgotPassword.isPending ? (
@@ -146,7 +147,8 @@ export default function ForgetPasswordPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-accent hover:bg-accent text-primary"
+                  variant={"accent"}
+                  className="flex-1"
                   disabled={verifyResetPin.isPending}
                 >
                   {verifyResetPin.isPending ? (

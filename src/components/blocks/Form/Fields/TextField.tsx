@@ -41,10 +41,13 @@ export function TextField<T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className={className}>
-          <FormLabel>
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
-          </FormLabel>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-red-500">*</span>}
+            </FormLabel>
+          )}
+
           <FormControl>
             <div className="relative">
               <Input
@@ -57,7 +60,9 @@ export function TextField<T extends FieldValues>({
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className={`cursor-pointer absolute ${isRTL ? "left-3" : "right-3"} top-1/2 -translate-y-1/2 text-primary/20 hover:text-primary/50`}
+                  className={`cursor-pointer absolute ${
+                    isRTL ? "left-3" : "right-3"
+                  } top-1/2 -translate-y-1/2 text-primary/20 hover:text-primary/50`}
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />

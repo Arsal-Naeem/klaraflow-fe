@@ -111,7 +111,7 @@ export default function LoginPage() {
           {TABS.map((currentTab) => (
             <Button
               key={currentTab.key}
-              variant={tab === currentTab.key ? "accent" : "outline"}
+              variant={tab === currentTab.key ? "default" : "outline"}
               size="sm"
               className="rounded-full px-4 w-full xs:w-full sm:w-auto"
               onClick={() => handleTabChange(currentTab.key)}
@@ -130,45 +130,56 @@ export default function LoginPage() {
     >
       <div className="px-6 pb-4">
         {tab === "email" ? (
-          <Form {...passwordForm}>
-            <form
-              onSubmit={passwordForm.handleSubmit(handlePasswordLogin)}
-              className="flex flex-col gap-4"
-            >
-              <TextField
-                control={passwordForm.control}
-                name="email"
-                type="email"
-                label="Email"
-                placeholder={t("email")}
-                required
-                disabled={loginWithPassword.isPending}
-              />
-              <TextField
-                control={passwordForm.control}
-                name="password"
-                type="password"
-                label="Password"
-                placeholder={t("password")}
-                required
-                disabled={loginWithPassword.isPending}
-              />
-              <Button
-                type="submit"
-                className="mt-2 w-full bg-accent hover:bg-accent text-primary"
-                disabled={loginWithPassword.isPending}
+          <>
+            <Form {...passwordForm}>
+              <form
+                onSubmit={passwordForm.handleSubmit(handlePasswordLogin)}
+                className="flex flex-col gap-4"
               >
-                {loginWithPassword.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("loggingIn")}
-                  </>
-                ) : (
-                  t("loginButton")
-                )}
-              </Button>
-            </form>
-          </Form>
+                <TextField
+                  control={passwordForm.control}
+                  name="email"
+                  type="email"
+                  label="Email"
+                  placeholder={t("email")}
+                  required
+                  disabled={loginWithPassword.isPending}
+                />
+                <TextField
+                  control={passwordForm.control}
+                  name="password"
+                  type="password"
+                  label="Password"
+                  placeholder={t("password")}
+                  required
+                  disabled={loginWithPassword.isPending}
+                />
+                <Button
+                  type="submit"
+                  variant={"accent"}
+                  className="mt-2 w-full"
+                  disabled={loginWithPassword.isPending}
+                >
+                  {loginWithPassword.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t("loggingIn")}
+                    </>
+                  ) : (
+                    t("loginButton")
+                  )}
+                </Button>
+              </form>
+            </Form>
+            <div className="text-right mt-3">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-primary/50 underline hover:text-primary transition-colors"
+              >
+                {t("forgotPassword")}
+              </Link>
+            </div>
+          </>
         ) : !otpSent ? (
           <Form {...otpSendForm}>
             <form
@@ -186,7 +197,8 @@ export default function LoginPage() {
               />
               <Button
                 type="submit"
-                className="mt-2 w-full bg-accent hover:bg-accent text-primary"
+                variant={"accent"}
+                className="mt-2 w-full"
                 disabled={sendOtp.isPending}
               >
                 {sendOtp.isPending ? (
@@ -236,7 +248,8 @@ export default function LoginPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-accent hover:bg-accent text-primary"
+                  variant={"accent"}
+                  className="flex-1"
                   disabled={verifyOtp.isPending}
                 >
                   {verifyOtp.isPending ? (
@@ -252,15 +265,6 @@ export default function LoginPage() {
             </form>
           </Form>
         )}
-
-        <div className="text-right mt-3">
-          <Link
-            href="/forgot-password"
-            className="text-sm text-primary/50 underline hover:text-primary transition-colors"
-          >
-            {t("forgotPassword")}
-          </Link>
-        </div>
       </div>
     </AuthenticationLayout>
   );

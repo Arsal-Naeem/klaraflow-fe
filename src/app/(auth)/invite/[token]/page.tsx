@@ -99,7 +99,8 @@ export default function ActivatePage() {
             />
             <Button
               type="submit"
-              className="mt-2 w-full bg-accent hover:bg-accent text-primary"
+              variant={"accent"}
+              className="mt-2 w-full"
               disabled={activateAccount.isPending}
             >
               {activateAccount.isPending ? (

@@ -102,7 +102,8 @@ export default function ResetPasswordPage() {
             />
             <Button
               type="submit"
-              className="mt-2 w-full bg-accent hover:bg-accent text-primary"
+              variant={"accent"}
+              className="mt-2 w-full"
               disabled={resetPassword.isPending}
             >
               {resetPassword.isPending ? (
