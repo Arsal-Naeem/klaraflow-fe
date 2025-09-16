@@ -64,6 +64,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import DocumentFormPreview from "./DocumentFormPreview";
+import { useCreateDocumentTemplate, useUpdateDocumentTemplate } from "../hooks/useDocuments";
 
 interface TemplateFormData {
   name: string;
@@ -385,6 +386,10 @@ const DocumentTemplateDrawer = ({
 }) => {
   const { isRTL } = useLanguageNavigation();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Hooks for API operations
+  const createTemplateMutation = useCreateDocumentTemplate();
+  const updateTemplateMutation = useUpdateDocumentTemplate();
   const [collapsedFields, setCollapsedFields] = useState<{
     [key: number]: boolean;
   }>({});
@@ -457,10 +462,33 @@ const DocumentTemplateDrawer = ({
     }
   };
 
-  const onSubmit = (values: TemplateFormData) => {
-    console.log("Template submitted:", values);
-    // TODO: Add API call to save template
-    handleOpenChange(false);
+  const onSubmit = async (values: TemplateFormData) => {
+    try {
+      const templateData = {
+        name: values.name,
+        fields: values.fields.map((field, index) => ({
+          label: field.label,
+          type: field.type,
+          placeholder: field.placeholder || undefined,
+          description: field.description || undefined,
+          required: field.required,
+          width: field.width,
+        }))
+      };
+
+      if (isEdit && template?.id) {
+        await updateTemplateMutation.mutateAsync({
+          templateId: template.id,
+          templateData
+        });
+      } else {
+        await createTemplateMutation.mutateAsync(templateData);
+      }
+      
+      handleOpenChange(false);
+    } catch (error) {
+      console.error("Failed to save template:", error);
+    }
   };
 
   const addField = () => {
@@ -679,8 +707,17 @@ const DocumentTemplateDrawer = ({
                 >
                   Cancel
                 </Button>
-                <Button variant="accent" type="submit">
-                  {isEdit ? "Update Template" : "Create Template"}
+                <Button 
+                  variant="accent" 
+                  type="submit"
+                  disabled={createTemplateMutation.isPending || updateTemplateMutation.isPending}
+                >
+                  {createTemplateMutation.isPending || updateTemplateMutation.isPending
+                    ? "Saving..."
+                    : isEdit 
+                    ? "Update Template" 
+                    : "Create Template"
+                  }
                 </Button>
               </div>
             </form>
