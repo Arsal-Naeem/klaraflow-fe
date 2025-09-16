@@ -62,6 +62,12 @@ import {
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 import { OnboardingTemplate, TodoItem } from "../../types";
 import { DocumentTemplate } from "@/features/documents/types";
+import { 
+  useCreateOnboardingTemplate, 
+  useUpdateOnboardingTemplate 
+} from "../../hooks/useOnboardingTemplates";
+import { useDocumentTemplates } from "@/features/documents/hooks/useDocuments";
+import { toast } from "sonner";
 
 interface TemplateFormData {
   name: string;
@@ -274,7 +280,7 @@ const OnboardingTemplateDrawer = ({
   onClose?: () => void;
 }) => {
   const { isRTL } = useLanguageNavigation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Open immediately when component mounts
   const [collapsedTodos, setCollapsedTodos] = useState<{
     [key: number]: boolean;
   }>({});
@@ -284,6 +290,11 @@ const OnboardingTemplateDrawer = ({
   }>({});
   const [activeId, setActiveId] = useState<string | null>(null);
 
+  // API hooks
+  const createTemplateMutation = useCreateOnboardingTemplate();
+  const updateTemplateMutation = useUpdateOnboardingTemplate();
+  const { data: documentTemplates = [] } = useDocumentTemplates();
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -291,24 +302,7 @@ const OnboardingTemplateDrawer = ({
     })
   );
 
-  // Mock document templates - in real app, this would come from an API
-  const mockDocumentTemplates: DocumentTemplate[] = [
-    {
-      id: "1",
-      name: "Education Certificate",
-      fields: [],
-    },
-    {
-      id: "2",
-      name: "Emirates ID Card",
-      fields: [],
-    },
-    {
-      id: "3",
-      name: "Passport",
-      fields: [],
-    },
-  ];
+  // Use real document templates from API
 
   const form = useForm<TemplateFormData>({
     defaultValues: {
@@ -366,10 +360,33 @@ const OnboardingTemplateDrawer = ({
     }
   };
 
-  const onSubmit = (values: TemplateFormData) => {
-    console.log("Onboarding template submitted:", values);
-    // TODO: Add API call to save template
-    handleOpenChange(false);
+  const onSubmit = async (values: TemplateFormData) => {
+    try {
+      const templateData = {
+        name: values.name,
+        todos: values.todos.map(todo => ({
+          title: todo.title,
+          description: todo.description || "",
+        })),
+        requiredDocuments: values.requiredDocuments,
+        optionalDocuments: values.optionalDocuments,
+      };
+
+      if (isEdit && template?.id) {
+        await updateTemplateMutation.mutateAsync({
+          templateId: template.id,
+          templateData,
+        });
+        toast.success("Template updated successfully");
+      } else {
+        await createTemplateMutation.mutateAsync(templateData);
+        toast.success("Template created successfully");
+      }
+
+      handleOpenChange(false);
+    } catch (error) {
+      toast.error(isEdit ? "Failed to update template" : "Failed to create template");
+    }
   };
 
   const addTodo = () => {
@@ -493,23 +510,6 @@ const OnboardingTemplateDrawer = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetTrigger asChild>
-        {isEdit ? (
-          <DropdownMenuItem
-            onSelect={(e) => {
-              e.preventDefault();
-              setIsOpen(true);
-            }}
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit Template
-          </DropdownMenuItem>
-        ) : (
-          <Button variant={"accent"} size="sm">
-            Create Template
-          </Button>
-        )}
-      </SheetTrigger>
       <SheetContent
         side={isRTL ? "left" : "right"}
         className="w-full max-w-none sm:max-w-none p-0 gap-0"
@@ -555,7 +555,7 @@ const OnboardingTemplateDrawer = ({
                   <div className="space-y-3">
                     <Label className="text-sm font-medium">Required Documents</Label>
                     <div className="space-y-2">
-                      {mockDocumentTemplates.map((doc) => (
+                      {documentTemplates.map((doc) => (
                         <div key={doc.id} className="flex gap-2 items-center space-x-2">
                           <Checkbox
                             id={`required-${doc.id}`}
@@ -577,7 +577,7 @@ const OnboardingTemplateDrawer = ({
                   <div className="space-y-3">
                     <Label className="text-sm font-medium">Optional Documents</Label>
                     <div className="space-y-2">
-                      {mockDocumentTemplates.map((doc) => (
+                      {documentTemplates.map((doc) => (
                         <div key={doc.id} className="flex gap-2 items-center space-x-2">
                           <Checkbox
                             id={`optional-${doc.id}`}

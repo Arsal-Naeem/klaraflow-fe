@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, Fragment } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -59,15 +59,13 @@ export default function FullPageLayout({
               {breadcrumbItems.map((item, index) => {
                 const isLast = index === breadcrumbItems.length - 1;
                 return (
-                  <>
+                  <Fragment key={`breadcrumb-${index}`}>
                     {index > 0 && (
                       <BreadcrumbSeparator
-                        key={`separator-${index}`}
                         className="hidden md:block"
                       />
                     )}
                     <BreadcrumbItem
-                      key={index}
                       className={isLast ? "" : "hidden md:block"}
                     >
                       {item.route ? (
@@ -80,7 +78,7 @@ export default function FullPageLayout({
                         </BreadcrumbPage>
                       )}
                     </BreadcrumbItem>
-                  </>
+                  </Fragment>
                 );
               })}
             </BreadcrumbList>

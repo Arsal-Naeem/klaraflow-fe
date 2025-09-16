@@ -379,13 +379,21 @@ const DocumentTemplateDrawer = ({
   isEdit,
   template,
   onClose,
+  open,
+  onOpenChange,
 }: {
   isEdit: boolean;
   template?: DocumentTemplate;
   onClose?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) => {
   const { isRTL } = useLanguageNavigation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  
+  // Use external control if provided, otherwise use internal state
+  const isOpen = open !== undefined ? open : internalIsOpen;
+  const setIsOpen = onOpenChange || setInternalIsOpen;
   
   // Hooks for API operations
   const createTemplateMutation = useCreateDocumentTemplate();
@@ -583,23 +591,25 @@ const DocumentTemplateDrawer = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetTrigger asChild>
-        {isEdit ? (
-          <DropdownMenuItem
-            onSelect={(e) => {
-              e.preventDefault();
-              setIsOpen(true);
-            }}
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit Template
-          </DropdownMenuItem>
-        ) : (
-          <Button variant={"accent"} size="sm">
-            Create Template
-          </Button>
-        )}
-      </SheetTrigger>
+      {open === undefined && (
+        <SheetTrigger asChild>
+          {isEdit ? (
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+                setIsOpen(true);
+              }}
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Edit Template
+            </DropdownMenuItem>
+          ) : (
+            <Button variant={"accent"} size="sm">
+              Create Template
+            </Button>
+          )}
+        </SheetTrigger>
+      )}
       <SheetContent
         side={isRTL ? "left" : "right"}
         className="w-full max-w-none sm:max-w-none p-0 gap-0"

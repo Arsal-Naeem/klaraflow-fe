@@ -245,13 +245,13 @@ const DocumentSettings = () => {
       </Card>
       
       {/* Document Template Drawer */}
-      {isDrawerOpen && (
-        <DocumentTemplateDrawer
-          isEdit={!!editingTemplate}
-          template={editingTemplate || undefined}
-          onClose={handleDrawerClose}
-        />
-      )}
+      <DocumentTemplateDrawer
+        isEdit={!!editingTemplate}
+        template={editingTemplate || undefined}
+        onClose={handleDrawerClose}
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+      />
     </>
   );
 };
