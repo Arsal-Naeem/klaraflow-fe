@@ -205,7 +205,7 @@ function SortableFieldItem({
                       <FormLabel>Field Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -419,6 +419,7 @@ const DocumentTemplateDrawer = ({
       name: template?.name || "",
       fields: template?.fields?.map((field) => ({
         ...field,
+        type: field?.type || "text", // Ensure type is always set
         width: field?.width || "full", // Provide default for existing templates
       })) || [
         {
@@ -445,6 +446,7 @@ const DocumentTemplateDrawer = ({
         name: template?.name || "",
         fields: template?.fields?.map((field) => ({
           ...field,
+          type: field?.type || "text", // Ensure type is always set
           width: field?.width || "full", // Provide default for existing templates
         })) || [
           {
@@ -474,14 +476,16 @@ const DocumentTemplateDrawer = ({
     try {
       const templateData = {
         name: values.name,
-        fields: values.fields.map((field, index) => ({
-          label: field.label,
-          type: field.type,
-          placeholder: field.placeholder || undefined,
-          description: field.description || undefined,
-          required: field.required,
-          width: field.width,
-        }))
+        fields: values.fields
+          .filter((field) => field.label && field.type) // Filter out incomplete fields
+          .map((field, index) => ({
+            label: field.label,
+            type: field.type,
+            placeholder: field.placeholder || undefined,
+            description: field.description || undefined,
+            required: field.required,
+            width: field.width,
+          }))
       };
 
       if (isEdit && template?.id) {
