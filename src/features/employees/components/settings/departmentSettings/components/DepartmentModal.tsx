@@ -7,7 +7,6 @@ import {
   ResponsiveDialogContent,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
-  ResponsiveDialogTrigger,
 } from "@/components/ui/responsive-dialog";
 import {
   useCreateDepartment,
@@ -15,8 +14,7 @@ import {
 } from "@/features/employees/hooks/useEmployees";
 import { Department } from "@/features/employees/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -29,12 +27,16 @@ type departmentData = z.infer<typeof departmentSchema>;
 const DepartmentModal = ({
   isEdit,
   department,
+  open,
+  onOpenChange,
+  onClose,
 }: {
   isEdit?: boolean;
   department?: Department;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onClose?: () => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const createDepartment = useCreateDepartment();
   const updateDepartment = useUpdateDepartment();
 
@@ -44,6 +46,15 @@ const DepartmentModal = ({
       name: department?.name || "",
     },
   });
+
+  // Reset form when modal opens or department changes
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        name: department?.name || "",
+      });
+    }
+  }, [open, department, form]);
 
   const handleSubmit = async () => {
     try {
@@ -64,21 +75,28 @@ const DepartmentModal = ({
       } else {
         createDepartment.mutate(formData?.name);
       }
+
+      // Close modal after successful submission
+      if (onClose) {
+        onClose();
+      } else if (onOpenChange) {
+        onOpenChange(false);
+      }
     } catch (error) {
       console.error("Form submission error:", error);
     }
   };
 
+  const handleCancel = () => {
+    if (onClose) {
+      onClose();
+    } else if (onOpenChange) {
+      onOpenChange(false);
+    }
+  };
+
   return (
-    <ResponsiveDialog open={isOpen} onOpenChange={setIsOpen}>
-      <ResponsiveDialogTrigger asChild>
-        {
-          <Button onClick={() => setIsOpen(true)} size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Department
-          </Button>
-        }
-      </ResponsiveDialogTrigger>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent className="max-w-4xl">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle className="flex items-center gap-2">
@@ -100,7 +118,7 @@ const DepartmentModal = ({
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end mt-6 pt-4 border-t">
             <Button
               variant="outline"
-              onClick={() => setIsOpen(false)}
+              onClick={handleCancel}
               disabled={
                 createDepartment?.isPending || updateDepartment?.isPending
               }

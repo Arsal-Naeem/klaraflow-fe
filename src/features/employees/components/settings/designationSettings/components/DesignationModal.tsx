@@ -7,7 +7,6 @@ import {
   ResponsiveDialogContent,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
-  ResponsiveDialogTrigger,
 } from "@/components/ui/responsive-dialog";
 import {
   useCreateDesignation,
@@ -15,8 +14,7 @@ import {
 } from "@/features/employees/hooks/useEmployees";
 import { Designation } from "@/features/employees/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -30,12 +28,16 @@ type designationData = z.infer<typeof designationSchema>;
 const DesignationModal = ({
   isEdit,
   designation,
+  open,
+  onOpenChange,
+  onClose,
 }: {
   isEdit?: boolean;
   designation?: Designation;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onClose?: () => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const createDesignation = useCreateDesignation();
   const updateDesignation = useUpdateDesignation();
 
@@ -46,6 +48,16 @@ const DesignationModal = ({
       code: designation?.code || "",
     },
   });
+
+  // Reset form when modal opens or designation changes
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        name: designation?.name || "",
+        code: designation?.code || "",
+      });
+    }
+  }, [open, designation, form]);
 
   const handleSubmit = async () => {
     try {
@@ -66,21 +78,28 @@ const DesignationModal = ({
       } else {
         createDesignation.mutate(formData);
       }
+
+      // Close modal after successful submission
+      if (onClose) {
+        onClose();
+      } else if (onOpenChange) {
+        onOpenChange(false);
+      }
     } catch (error) {
       console.error("Form submission error:", error);
     }
   };
 
+  const handleCancel = () => {
+    if (onClose) {
+      onClose();
+    } else if (onOpenChange) {
+      onOpenChange(false);
+    }
+  };
+
   return (
-    <ResponsiveDialog open={isOpen} onOpenChange={setIsOpen}>
-      <ResponsiveDialogTrigger asChild>
-        {
-          <Button onClick={() => setIsOpen(true)} size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Designation
-          </Button>
-        }
-      </ResponsiveDialogTrigger>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent className="max-w-4xl">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle className="flex items-center gap-2">
@@ -94,7 +113,7 @@ const DesignationModal = ({
               control={form.control}
               name="name"
               label={"name"}
-              placeholder={"Enter department name"}
+              placeholder={"Enter designation name"}
               required
               className="w-full"
             />
@@ -102,7 +121,7 @@ const DesignationModal = ({
               control={form.control}
               name="code"
               label={"code"}
-              placeholder={"Enter department code"}
+              placeholder={"Enter designation code"}
               required
               className="w-full"
             />
@@ -110,7 +129,7 @@ const DesignationModal = ({
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end mt-6 pt-4 border-t">
             <Button
               variant="outline"
-              onClick={() => setIsOpen(false)}
+              onClick={handleCancel}
               disabled={
                 createDesignation?.isPending || updateDesignation?.isPending
               }
