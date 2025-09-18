@@ -94,3 +94,14 @@ export interface EmployeeFilters {
   page?: number;
   limit?: number;
 }
+
+export interface Department {
+  id: string;
+  name: string;
+}
+
+export interface Designation {
+  id: string;
+  code?: string;
+  name: string;
+}

@@ -1,6 +1,6 @@
-import DepartmentSettings from "@/features/employees/components/settings/DepartmentSettings";
+import DepartmentSettings from "@/features/employees/components/settings/departmentSettings/DepartmentSettings";
 import DocumentSettings from "@/features/documents/components/DocumentSettings";
-import DesignationSettings from "@/features/employees/components/settings/DesignationSettings";
+import DesignationSettings from "@/features/employees/components/settings/designationSettings/DesignationSettings";
 import OnboardingTemplateSettings from "@/features/onboarding/components/settings/OnboardingTemplateSettings";
 import { UsersRound } from "lucide-react";
 

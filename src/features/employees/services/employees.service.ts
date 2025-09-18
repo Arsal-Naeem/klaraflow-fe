@@ -110,6 +110,78 @@ export const employeesService = {
     );
     return response.data.data;
   },
+
+  // GET - Fetch all departments
+  async getDepartments(): Promise<{ id: string; name: string }[]> {
+    const response = await api.get<ApiResponse<{ id: string; name: string }[]>>(
+      "/departments"
+    );
+    return response.data.data;
+  },
+
+  // POST - Create new department
+  async createDepartment(name: string): Promise<{ id: string; name: string }> {
+    const response = await api.post<ApiResponse<{ id: string; name: string }>>(
+      "/departments",
+      { name }
+    );
+    return response.data.data;
+  },
+
+  // PUT - Update existing department
+  async updateDepartment(
+    id: string,
+    name: string
+  ): Promise<{ id: string; name: string }> {
+    const response = await api.put<ApiResponse<{ id: string; name: string }>>(
+      `/departments/${id}`,
+      { name }
+    );
+    return response.data.data;
+  },
+
+  // DELETE - Delete department
+  async deleteDepartment(id: string): Promise<void> {
+    await api.delete(`/departments/${id}`);
+  },
+
+  // GET - Fetch all designations
+  async getDesignations(): Promise<
+    { id: string; code?: string; name: string }[]
+  > {
+    const response = await api.get<
+      ApiResponse<{ id: string; code?: string; name: string }[]>
+    >("/designations");
+    return response.data.data;
+  },
+
+  // POST - Create new designation
+  async createDesignation(
+    name: string,
+    code?: string
+  ): Promise<{ id: string; code?: string; name: string }> {
+    const response = await api.post<
+      ApiResponse<{ id: string; code?: string; name: string }>
+    >("/designations", { name, code });
+    return response.data.data;
+  },
+
+  // PUT - Update existing designation
+  async updateDesignation(
+    id: string,
+    name: string,
+    code?: string
+  ): Promise<{ id: string; code?: string; name: string }> {
+    const response = await api.put<
+      ApiResponse<{ id: string; code?: string; name: string }>
+    >(`/designations/${id}`, { name, code });
+    return response.data.data;
+  },
+
+  // DELETE - Delete designation
+  async deleteDesignation(id: string): Promise<void> {
+    await api.delete(`/designations/${id}`);
+  },
 };
 
 export default employeesService;

@@ -151,7 +151,7 @@ const DocumentDrawer = ({
 
       // Call the upload API with the correct parameters
       await uploadDocument.mutateAsync({
-        docId: template.id,
+        templateId: template.id,
         employeeId: employeeId,
         payload: payload,
       });
