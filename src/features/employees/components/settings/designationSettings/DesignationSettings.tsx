@@ -25,14 +25,21 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Edit, Trash2, Plus } from "lucide-react";
 import DesignationModal from "./components/DesignationModal";
 import { Designation } from "@/features/employees/types";
-import { useDeleteDesignation } from "@/features/employees/hooks/useEmployees";
+import {
+  useDeleteDesignation,
+  useDesignations,
+} from "@/features/employees/hooks/useEmployees";
 
 const DesignationSettings = () => {
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: number]: boolean;
   }>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingDesignation, setEditingDesignation] = useState<Designation | null>(null);
+  const [editingDesignation, setEditingDesignation] =
+    useState<Designation | null>(null);
+
+  const { data: designations = [], isLoading, error } = useDesignations();
+  const deleteDesignation = useDeleteDesignation();
 
   const handleDropdownOpenChange = (index: number, open: boolean) => {
     setOpenDropdowns((prev) => ({
@@ -40,8 +47,6 @@ const DesignationSettings = () => {
       [index]: open,
     }));
   };
-
-  const deleteDesignation = useDeleteDesignation();
 
   const handleCreateDesignation = () => {
     setEditingDesignation(null);
@@ -96,11 +101,13 @@ const DesignationSettings = () => {
                 <TableRow>
                   <TableHead>Designation Name</TableHead>
                   <TableHead>Code</TableHead>
-                  <TableHead className="w-[100px] text-center">Actions</TableHead>
+                  <TableHead className="w-[100px] text-center">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockDesignations.length === 0 ? (
+                {designations.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={3}
@@ -110,7 +117,7 @@ const DesignationSettings = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  mockDesignations.map((designation, index) => (
+                  designations.map((designation, index) => (
                     <TableRow
                       key={designation.id}
                       className="odd:bg-background/40"

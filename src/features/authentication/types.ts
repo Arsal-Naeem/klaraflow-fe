@@ -48,13 +48,11 @@ export interface ForgotPasswordRequest {
 export interface ResetPasswordRequest {
   token: string;
   password: string;
-  confirmPassword: string;
 }
 
 export interface ActivateAccountRequest {
   token: string;
   password: string;
-  confirmPassword: string;
 }
 
 // Auth state

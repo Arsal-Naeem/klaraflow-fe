@@ -55,7 +55,6 @@ export default function ActivatePage() {
     activateAccount.mutate({
       token,
       password: data.password,
-      confirmPassword: data.confirmPassword,
     });
   };
 

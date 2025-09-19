@@ -9,6 +9,7 @@ import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { SelectField } from "@/components/blocks/Form/Fields/SelectField";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { useDepartments, useDesignations } from "../../hooks/useEmployees";
 
 const genderOptions = [
   { value: "male", label: "Male" },
@@ -19,18 +20,6 @@ const userRolesOption = [
   { value: "01", label: "Admin" },
   { value: "02", label: "Manager" },
   { value: "03", label: "User" },
-];
-
-const designationOptions = [
-  { value: "01", label: "Developer" },
-  { value: "02", label: "Designer" },
-  { value: "03", label: "Manager" },
-];
-
-const departmentOptions = [
-  { value: "01", label: "Engineering" },
-  { value: "02", label: "Design" },
-  { value: "03", label: "Marketing" },
 ];
 
 export function MandatoryCard({
@@ -46,6 +35,18 @@ export function MandatoryCard({
   const tPlaceholders = useTranslations(
     "addEmployee.mandatoryForm.placeholders"
   );
+
+  const {
+    data: departments = [],
+    isLoading: isDepartmentsLoading,
+    error: departmentsError,
+  } = useDepartments();
+
+  const {
+    data: designations = [],
+    isLoading: isDesignationLoading,
+    error: designationError,
+  } = useDesignations();
 
   const handleNext = async () => {
     const valid = await form.trigger([
@@ -130,14 +131,20 @@ export function MandatoryCard({
             name="designation"
             label={tMandatory("designation")}
             placeholder={tPlaceholders("designation")}
-            options={designationOptions}
+            options={designations.map((d) => ({
+              value: String(d.id),
+              label: d.name,
+            }))}
           />
           <SelectField
             control={form.control}
             name="department"
             label={tMandatory("department")}
             placeholder={tPlaceholders("department")}
-            options={departmentOptions}
+            options={departments.map((d) => ({
+              value: String(d.id),
+              label: d.name,
+            }))}
           />
         </div>
 

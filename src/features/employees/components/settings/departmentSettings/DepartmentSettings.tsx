@@ -25,14 +25,22 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Edit, Trash2, Plus } from "lucide-react";
 import DepartmentModal from "./components/DepartmentModal";
 import { Department } from "@/features/employees/types";
-import { useDeleteDepartment } from "@/features/employees/hooks/useEmployees";
+import {
+  useDeleteDepartment,
+  useDepartments,
+} from "@/features/employees/hooks/useEmployees";
 
 const DepartmentSettings = () => {
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: number]: boolean;
   }>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
+  const [editingDepartment, setEditingDepartment] = useState<Department | null>(
+    null
+  );
+
+  const { data: departments = [], isLoading, error } = useDepartments();
+  const deleteDepartment = useDeleteDepartment();
 
   const handleDropdownOpenChange = (index: number, open: boolean) => {
     setOpenDropdowns((prev) => ({
@@ -40,8 +48,6 @@ const DepartmentSettings = () => {
       [index]: open,
     }));
   };
-
-  const deleteDepartment = useDeleteDepartment();
 
   const handleCreateDepartment = () => {
     setEditingDepartment(null);
@@ -68,18 +74,6 @@ const DepartmentSettings = () => {
     setEditingDepartment(null);
   };
 
-  // Mock departments data
-  const mockDepartments: Department[] = [
-    { id: "1", name: "Human Resources" },
-    { id: "2", name: "Engineering" },
-    { id: "3", name: "Marketing" },
-    { id: "4", name: "Sales" },
-    { id: "5", name: "Finance" },
-    { id: "6", name: "Operations" },
-    { id: "7", name: "Customer Support" },
-    { id: "8", name: "Product Management" },
-  ];
-
   return (
     <>
       <Card>
@@ -98,11 +92,13 @@ const DepartmentSettings = () => {
               <TableHeader className="bg-muted sticky top-0 z-10">
                 <TableRow>
                   <TableHead>Department Name</TableHead>
-                  <TableHead className="w-[100px] text-center">Actions</TableHead>
+                  <TableHead className="w-[100px] text-center">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockDepartments.length === 0 ? (
+                {departments.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={2}
@@ -112,7 +108,7 @@ const DepartmentSettings = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  mockDepartments.map((department, index) => (
+                  departments.map((department, index) => (
                     <TableRow
                       key={department.id}
                       className="odd:bg-background/40"

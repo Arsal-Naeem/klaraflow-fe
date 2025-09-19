@@ -4,16 +4,12 @@ import { DateField } from "@/components/blocks/Form/Fields/DateField";
 import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { useOnboardingTemplates } from "@/features/onboarding/hooks/useOnboardingTemplates";
 
 const jobTypeOptions = [
   { value: "full_time", label: "Full Time" },
   { value: "part_time", label: "Part Time" },
   { value: "contract", label: "Contract" },
-];
-
-const onboardingTemplateOptions = [
-  { value: "template1", label: "Template 1" },
-  { value: "template2", label: "Template 2" },
 ];
 
 const reportToOptions = [
@@ -40,6 +36,12 @@ export function WorkCard({
   const tCommon = useTranslations("common");
   const tWork = useTranslations("addEmployee.workForm");
   const tPlaceholders = useTranslations("addEmployee.workForm.placeholders");
+
+  const {
+    data: onboardingTemplate = [],
+    isLoading,
+    error,
+  } = useOnboardingTemplates();
 
   const handleBack = () => {
     if (setTabValue) {
@@ -88,7 +90,10 @@ export function WorkCard({
             name="onboardingTemplate"
             label={tWork("onboardingTemplate")}
             placeholder={tPlaceholders("onboardingTemplate")}
-            options={onboardingTemplateOptions}
+            options={onboardingTemplate.map((template) => ({
+              value: String(template.id),
+              label: template.name,
+            }))}
             className="w-full"
           />
           <SelectField

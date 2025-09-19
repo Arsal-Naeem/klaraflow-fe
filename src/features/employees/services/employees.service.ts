@@ -40,7 +40,7 @@ export const employeesService = {
   // POST - Create new employee
   async createEmployee(employeeData: CreateEmployeeRequest): Promise<Employee> {
     const response = await api.post<ApiResponse<Employee>>(
-      EMPLOYEES_BASE_URL,
+      "/onboarding/invite",
       employeeData
     );
     return response.data.data;
@@ -49,7 +49,7 @@ export const employeesService = {
   // POST - Create new employee with FormData (for file uploads)
   async createEmployeeWithFiles(formData: FormData): Promise<Employee> {
     const response = await api.post<ApiResponse<Employee>>(
-      EMPLOYEES_BASE_URL,
+      "/onboarding/invite",
       formData,
       {
         headers: {
@@ -114,7 +114,7 @@ export const employeesService = {
   // GET - Fetch all departments
   async getDepartments(): Promise<{ id: string; name: string }[]> {
     const response = await api.get<ApiResponse<{ id: string; name: string }[]>>(
-      "/departments"
+      "/settings/departments"
     );
     return response.data.data;
   },
@@ -122,7 +122,7 @@ export const employeesService = {
   // POST - Create new department
   async createDepartment(name: string): Promise<{ id: string; name: string }> {
     const response = await api.post<ApiResponse<{ id: string; name: string }>>(
-      "/departments",
+      "/settings/departments",
       { name }
     );
     return response.data.data;
@@ -134,7 +134,7 @@ export const employeesService = {
     name: string
   ): Promise<{ id: string; name: string }> {
     const response = await api.put<ApiResponse<{ id: string; name: string }>>(
-      `/departments/${id}`,
+      `/settings/departments/${id}`,
       { name }
     );
     return response.data.data;
@@ -142,7 +142,7 @@ export const employeesService = {
 
   // DELETE - Delete department
   async deleteDepartment(id: string): Promise<void> {
-    await api.delete(`/departments/${id}`);
+    await api.delete(`/settings/departments/${id}`);
   },
 
   // GET - Fetch all designations
@@ -151,7 +151,7 @@ export const employeesService = {
   > {
     const response = await api.get<
       ApiResponse<{ id: string; code?: string; name: string }[]>
-    >("/designations");
+    >("/settings/designations");
     return response.data.data;
   },
 
@@ -162,7 +162,7 @@ export const employeesService = {
   ): Promise<{ id: string; code?: string; name: string }> {
     const response = await api.post<
       ApiResponse<{ id: string; code?: string; name: string }>
-    >("/designations", { name, code });
+    >("/settings/designations", { name, code });
     return response.data.data;
   },
 
@@ -174,13 +174,13 @@ export const employeesService = {
   ): Promise<{ id: string; code?: string; name: string }> {
     const response = await api.put<
       ApiResponse<{ id: string; code?: string; name: string }>
-    >(`/designations/${id}`, { name, code });
+    >(`/settings/designations/${id}`, { name, code });
     return response.data.data;
   },
 
   // DELETE - Delete designation
   async deleteDesignation(id: string): Promise<void> {
-    await api.delete(`/designations/${id}`);
+    await api.delete(`/settings/designations/${id}`);
   },
 };
 
