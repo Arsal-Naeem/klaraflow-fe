@@ -29,6 +29,8 @@ import {
   useDeleteDesignation,
   useDesignations,
 } from "@/features/employees/hooks/useEmployees";
+import DataLoader from "@/components/blocks/Loaders/DataLoader";
+import EmptyState from "@/components/blocks/EmptyStates/EmptyState";
 
 const DesignationSettings = () => {
   const [openDropdowns, setOpenDropdowns] = useState<{
@@ -73,20 +75,11 @@ const DesignationSettings = () => {
     setEditingDesignation(null);
   };
 
-  // Mock designations data
-  const mockDesignations: Designation[] = [
-    { id: "1", code: "HR", name: "Human Resources" },
-    { id: "2", code: "ENG", name: "Engineering" },
-    { id: "3", code: "MKT", name: "Marketing" },
-    { id: "4", code: "SLS", name: "Sales" },
-    { id: "5", code: "FIN", name: "Finance" },
-  ];
-
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Designation Settings</CardTitle>
+          <CardTitle>Designations</CardTitle>
           <CardAction>
             <Button onClick={handleCreateDesignation} size="sm">
               <Plus className="mr-2 h-4 w-4" />
@@ -95,29 +88,24 @@ const DesignationSettings = () => {
           </CardAction>
         </CardHeader>
         <CardContent className="px-2 md:px-6">
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
-                <TableRow>
-                  <TableHead>Designation Name</TableHead>
-                  <TableHead>Code</TableHead>
-                  <TableHead className="w-[100px] text-center">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {designations.length === 0 ? (
+          {isLoading ? (
+            <DataLoader />
+          ) : designations?.length === 0 ? (
+            <EmptyState message="No Designation Available, Add a Designation" />
+          ) : (
+            <div className="overflow-hidden rounded-lg border">
+              <Table>
+                <TableHeader className="bg-muted sticky top-0 z-10">
                   <TableRow>
-                    <TableCell
-                      colSpan={3}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No designations found. Create your first designation!
-                    </TableCell>
+                    <TableHead>Designation Name</TableHead>
+                    <TableHead>Code</TableHead>
+                    <TableHead className="w-[100px] text-center">
+                      Actions
+                    </TableHead>
                   </TableRow>
-                ) : (
-                  designations.map((designation, index) => (
+                </TableHeader>
+                <TableBody>
+                  {designations.map((designation, index) => (
                     <TableRow
                       key={designation.id}
                       className="odd:bg-background/40"
@@ -170,11 +158,11 @@ const DesignationSettings = () => {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
 

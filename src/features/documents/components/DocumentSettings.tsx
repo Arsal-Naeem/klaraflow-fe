@@ -25,12 +25,20 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Eye, Edit, Trash2, Plus } from "lucide-react";
 import DocumentTemplateDrawer from "./DocumentTemplateDrawer";
 import { DocumentTemplate } from "../types";
-import { useDocumentTemplates, useDeleteDocumentTemplate } from "../hooks/useDocuments";
+import {
+  useDocumentTemplates,
+  useDeleteDocumentTemplate,
+} from "../hooks/useDocuments";
 import { Skeleton } from "@/components/ui/skeleton";
+import DataLoader from "@/components/blocks/Loaders/DataLoader";
+import EmptyState from "@/components/blocks/EmptyStates/EmptyState";
 
 const DocumentSettings = () => {
-  const [openDropdowns, setOpenDropdowns] = useState<{ [key: number]: boolean }>({});
-  const [editingTemplate, setEditingTemplate] = useState<DocumentTemplate | null>(null);
+  const [openDropdowns, setOpenDropdowns] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [editingTemplate, setEditingTemplate] =
+    useState<DocumentTemplate | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Fetch document templates
@@ -38,9 +46,9 @@ const DocumentSettings = () => {
   const deleteTemplateMutation = useDeleteDocumentTemplate();
 
   const handleDropdownOpenChange = (index: number, open: boolean) => {
-    setOpenDropdowns(prev => ({
+    setOpenDropdowns((prev) => ({
       ...prev,
-      [index]: open
+      [index]: open,
     }));
   };
 
@@ -55,11 +63,11 @@ const DocumentSettings = () => {
   };
 
   const handleDeleteTemplate = async (templateId: string) => {
-    if (window.confirm('Are you sure you want to delete this template?')) {
+    if (window.confirm("Are you sure you want to delete this template?")) {
       try {
         await deleteTemplateMutation.mutateAsync(templateId);
       } catch (error) {
-        console.error('Failed to delete template:', error);
+        console.error("Failed to delete template:", error);
       }
     }
   };
@@ -69,15 +77,6 @@ const DocumentSettings = () => {
     setEditingTemplate(null);
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="text-center text-red-600">
@@ -86,79 +85,6 @@ const DocumentSettings = () => {
     );
   }
 
-  const MockDocumentsTemplate: DocumentTemplate[] = [
-    {
-      id: "1",
-      name: "Education Certidicate",
-      fields: [
-        {
-          label: "Title",
-          type: "text",
-          required: true,
-          width: "full",
-        },
-        {
-          label: "Attach your document",
-          type: "file",
-          required: false,
-          width: "full",
-        },
-        {
-          label: "Description",
-          type: "textarea",
-          required: false,
-          width: "full",
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "Emirates ID Card",
-      fields: [
-        {
-          label: "First Name",
-          type: "text",
-          placeholder: "Enter your first name",
-          required: true,
-          width: "half",
-        },
-        {
-          label: "Last Name",
-          type: "text",
-          placeholder: "Enter your last name",
-          required: true,
-          width: "half",
-        },
-        {
-          label: "Issue Date",
-          type: "date",
-          placeholder: "Select issue date",
-          description: "The date when the ID was issued",
-          required: false,
-          width: "half",
-        },
-        {
-          label: "Expiry Date",
-          type: "date",
-          required: false,
-          width: "half",
-        },
-        {
-          label: "Front Side",
-          type: "file",
-          required: true,
-          width: "half",
-        },
-        {
-          label: "Back Side",
-          type: "file",
-          required: true,
-          width: "half",
-        },
-      ],
-    },
-  ];
-  
   return (
     <>
       <Card>
@@ -172,35 +98,42 @@ const DocumentSettings = () => {
           </CardAction>
         </CardHeader>
         <CardContent className="px-2 md:px-6">
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Fields</TableHead>
-                  <TableHead className="w-[100px] text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {templates?.length === 0 ? (
+          {isLoading ? (
+            <DataLoader />
+          ) : templates?.length === 0 ? (
+            <EmptyState message="No Document Templates Available, Add a Template" />
+          ) : (
+            <div className="overflow-hidden rounded-lg border">
+              <Table>
+                <TableHeader className="bg-muted sticky top-0 z-10">
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                      No document templates found. Create your first template!
-                    </TableCell>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Fields</TableHead>
+                    <TableHead className="w-[100px] text-center">
+                      Actions
+                    </TableHead>
                   </TableRow>
-                ) : (
-                  templates?.map((template, index) => (
-                    <TableRow key={template.id} className="odd:bg-background/40">
-                      <TableCell className="font-medium">{template.name}</TableCell>
+                </TableHeader>
+                <TableBody>
+                  {templates?.map((template, index) => (
+                    <TableRow
+                      key={template.id}
+                      className="odd:bg-background/40"
+                    >
+                      <TableCell className="font-medium">
+                        {template.name}
+                      </TableCell>
                       <TableCell>
                         <span className="text-sm text-muted-foreground">
                           {template.fields?.length || 0} fields
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
-                        <DropdownMenu 
+                        <DropdownMenu
                           open={openDropdowns[index] || false}
-                          onOpenChange={(open) => handleDropdownOpenChange(index, open)}
+                          onOpenChange={(open) =>
+                            handleDropdownOpenChange(index, open)
+                          }
                         >
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -213,10 +146,12 @@ const DocumentSettings = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => {
-                              handleEditTemplate(template);
-                              handleDropdownOpenChange(index, false);
-                            }}>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                handleEditTemplate(template);
+                                handleDropdownOpenChange(index, false);
+                              }}
+                            >
                               <Edit className="mr-2 h-4 w-4" />
                               Edit Template
                             </DropdownMenuItem>
@@ -230,20 +165,22 @@ const DocumentSettings = () => {
                               disabled={deleteTemplateMutation.isPending}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
-                              {deleteTemplateMutation.isPending ? 'Deleting...' : 'Delete Template'}
+                              {deleteTemplateMutation.isPending
+                                ? "Deleting..."
+                                : "Delete Template"}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
-      
+
       {/* Document Template Drawer */}
       <DocumentTemplateDrawer
         isEdit={!!editingTemplate}

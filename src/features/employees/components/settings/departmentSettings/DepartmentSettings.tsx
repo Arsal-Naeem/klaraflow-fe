@@ -29,6 +29,8 @@ import {
   useDeleteDepartment,
   useDepartments,
 } from "@/features/employees/hooks/useEmployees";
+import DataLoader from "@/components/blocks/Loaders/DataLoader";
+import EmptyState from "@/components/blocks/EmptyStates/EmptyState";
 
 const DepartmentSettings = () => {
   const [openDropdowns, setOpenDropdowns] = useState<{
@@ -78,7 +80,7 @@ const DepartmentSettings = () => {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Department Settings</CardTitle>
+          <CardTitle>Departments</CardTitle>
           <CardAction>
             <Button onClick={handleCreateDepartment} size="sm">
               <Plus className="mr-2 h-4 w-4" />
@@ -87,28 +89,23 @@ const DepartmentSettings = () => {
           </CardAction>
         </CardHeader>
         <CardContent className="px-2 md:px-6">
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
-                <TableRow>
-                  <TableHead>Department Name</TableHead>
-                  <TableHead className="w-[100px] text-center">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {departments.length === 0 ? (
+          {isLoading ? (
+            <DataLoader />
+          ) : departments?.length === 0 ? (
+            <EmptyState message="No Department Available, Add a Department" />
+          ) : (
+            <div className="overflow-hidden rounded-lg border">
+              <Table>
+                <TableHeader className="bg-muted sticky top-0 z-10">
                   <TableRow>
-                    <TableCell
-                      colSpan={2}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No departments found. Create your first department!
-                    </TableCell>
+                    <TableHead>Department Name</TableHead>
+                    <TableHead className="w-[100px] text-center">
+                      Actions
+                    </TableHead>
                   </TableRow>
-                ) : (
-                  departments.map((department, index) => (
+                </TableHeader>
+                <TableBody>
+                  {departments.map((department, index) => (
                     <TableRow
                       key={department.id}
                       className="odd:bg-background/40"
@@ -158,11 +155,11 @@ const DepartmentSettings = () => {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
 

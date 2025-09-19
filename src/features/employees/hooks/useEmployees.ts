@@ -3,7 +3,6 @@ import { toast } from "@/utils/toast";
 import { employeesService } from "../services";
 import {
   Employee,
-  CreateEmployeeRequest,
   UpdateEmployeeRequest,
   EmployeeFilters,
 } from "../types";
@@ -37,56 +36,6 @@ export function useEmployee(id: string, enabled = true) {
     queryFn: () => employeesService.getEmployeeById(id),
     enabled: !!id && enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-}
-
-// Hook to create employee
-export function useCreateEmployee() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (employeeData: CreateEmployeeRequest) =>
-      employeesService.createEmployee(employeeData),
-    onSuccess: (newEmployee) => {
-      queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
-
-      queryClient.setQueryData(
-        employeeKeys.detail(newEmployee.id),
-        newEmployee
-      );
-
-      toast.success("Employee created successfully!");
-    },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Failed to create employee";
-      toast.error(message);
-    },
-  });
-}
-
-// Hook to create employee with files (for profile picture uploads)
-export function useCreateEmployeeWithFiles() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (formData: FormData) =>
-      employeesService.createEmployeeWithFiles(formData),
-    onSuccess: (newEmployee) => {
-      queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
-
-      queryClient.setQueryData(
-        employeeKeys.detail(newEmployee.id),
-        newEmployee
-      );
-
-      toast.success("Employee created successfully!");
-    },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Failed to create employee";
-      toast.success(message);
-    },
   });
 }
 

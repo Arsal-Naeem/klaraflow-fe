@@ -37,29 +37,6 @@ export const employeesService = {
     return response.data.data;
   },
 
-  // POST - Create new employee
-  async createEmployee(employeeData: CreateEmployeeRequest): Promise<Employee> {
-    const response = await api.post<ApiResponse<Employee>>(
-      "/onboarding/invite",
-      employeeData
-    );
-    return response.data.data;
-  },
-
-  // POST - Create new employee with FormData (for file uploads)
-  async createEmployeeWithFiles(formData: FormData): Promise<Employee> {
-    const response = await api.post<ApiResponse<Employee>>(
-      "/onboarding/invite",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response.data.data;
-  },
-
   // PUT - Update existing employee
   async updateEmployee(
     id: string,

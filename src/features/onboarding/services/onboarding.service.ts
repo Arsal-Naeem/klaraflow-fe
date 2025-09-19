@@ -1,18 +1,37 @@
 import api from "@/lib/api";
-import {
-  TodoItem,
-  OnboardingData,
-} from "../types";
+import { TodoItem, OnboardingData, CreateEmployeeRequest } from "../types";
 import { ApiResponse } from "@/types/api.types";
+import { Employee } from "@/features/employees";
 
 // Onboarding API endpoints
 const ONBOARDING_BASE_URL = "/onboarding";
 
 export const onboardingService = {
+  // POST - Create new employee
+  async createEmployee(employeeData: CreateEmployeeRequest): Promise<Employee> {
+    const response = await api.post<ApiResponse<Employee>>(
+      "/onboarding/invite",
+      employeeData
+    );
+    return response.data.data;
+  },
+
+  // POST - Create new employee with FormData (for file uploads)
+  async createEmployeeWithFiles(formData: FormData): Promise<Employee> {
+    const response = await api.post<ApiResponse<Employee>>(
+      "/onboarding/invite",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data.data;
+  },
+
   // GET - Fetch Onboarding Data
-  async getOnboardingData(
-    employeeId?: string
-  ): Promise<OnboardingData> {
+  async getOnboardingData(employeeId?: string): Promise<OnboardingData> {
     const endpoint = employeeId
       ? `${ONBOARDING_BASE_URL}/${employeeId}/data`
       : `${ONBOARDING_BASE_URL}/my-data`;

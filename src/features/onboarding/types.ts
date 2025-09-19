@@ -30,3 +30,25 @@ export interface OnboardingData {
   optionalDocuments: OnboardingDocument[];
   currentStep: number;
 }
+
+export interface CreateEmployeeRequest {
+  empId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  gender: string;
+  userRole: string;
+  designation?: string;
+  department?: string;
+  jobType?: string;
+  hiringDate?: string;
+  onboardingTemplate?: string;
+  reportTo?: string;
+  grade?: string;
+  probationPeriod?: string;
+  dateOfBirth?: string;
+  maritalStatus?: string;
+  nationality?: string;
+  profilePic?: File;
+}

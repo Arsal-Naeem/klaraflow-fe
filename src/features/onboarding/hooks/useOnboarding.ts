@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/utils/toast";
 import { onboardingService } from "../services";
+import { CreateEmployeeRequest } from "../types";
 
 // Query keys for better cache management
 export const onboardingKeys = {
@@ -10,6 +11,41 @@ export const onboardingKeys = {
   todos: () => [...onboardingKeys.all, "todos"] as const,
   template: () => [...onboardingKeys.all, "template"] as const,
 };
+
+export function useCreateEmployee() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (employeeData: CreateEmployeeRequest) =>
+      onboardingService.createEmployee(employeeData),
+    onSuccess: (newEmployee) => {
+      toast.success("Employee created successfully!");
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.message || "Failed to create employee";
+      toast.error(message);
+    },
+  });
+}
+
+// Hook to create employee with files (for profile picture uploads)
+export function useCreateEmployeeWithFiles() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData: FormData) =>
+      onboardingService.createEmployeeWithFiles(formData),
+    onSuccess: (newEmployee) => {
+      toast.success("Employee created successfully!");
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.message || "Failed to create employee";
+      toast.success(message);
+    },
+  });
+}
 
 // Hook to fetch onboarding data
 export function useOnboardingData(employeeId?: string) {

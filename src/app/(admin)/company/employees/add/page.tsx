@@ -12,11 +12,14 @@ import { FormBuilder } from "@/components/blocks/Form/form";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
-import { useCreateEmployee, useCreateEmployeeWithFiles } from "@/features/employees";
 import { MandatoryCard } from "@/features/employees/components/addEmployeeCards/MandatoryCard";
 import { WorkCard } from "@/features/employees/components/addEmployeeCards/WorkCard";
 import { PersonalCard } from "@/features/employees/components/addEmployeeCards/PersonalCard";
 import ProfileCard from "@/features/employees/components/addEmployeeCards/ProfileCard";
+import {
+  useCreateEmployee,
+  useCreateEmployeeWithFiles,
+} from "@/features/onboarding";
 
 const addEmployeeSchema = z.object({
   empId: z.string().min(1, "Employee ID is required"),
@@ -49,7 +52,7 @@ export default function Page() {
   const router = useRouter();
 
   const [tabValue, setTabValue] = useState("mandatory");
-  
+
   // Use React Query hooks for mutations
   const createEmployee = useCreateEmployee();
   const createEmployeeWithFiles = useCreateEmployeeWithFiles();
@@ -58,7 +61,7 @@ export default function Page() {
   const handleSuccess = () => {
     form.reset();
     setTabValue("mandatory");
-    router.push('/company/employees');
+    router.push("/company/employees");
   };
 
   // Add success callbacks to mutations
@@ -102,20 +105,36 @@ export default function Page() {
   const handleSubmit = async () => {
     try {
       const formData = form.getValues();
-      
+
       const validation = addEmployeeSchema.safeParse(formData);
-      
+
       // If validation fails, switching the tabs
       if (!validation.success) {
         const firstError = validation.error.issues[0];
         const fieldName = firstError.path[0] as string;
-        
-        const mandatoryFields = ["empId", "firstName", "lastName", "email", "gender", "userRole"];
-        const workFields = ["designation", "department", "jobType", "hiringDate", "onboardingTemplate", "reportTo", "grade", "probationPeriod"];
+
+        const mandatoryFields = [
+          "empId",
+          "firstName",
+          "lastName",
+          "email",
+          "gender",
+          "userRole",
+        ];
+        const workFields = [
+          "designation",
+          "department",
+          "jobType",
+          "hiringDate",
+          "onboardingTemplate",
+          "reportTo",
+          "grade",
+          "probationPeriod",
+        ];
         const personalFields = ["dateOfBirth", "maritialStatus", "nationality"];
-        
+
         let targetTab = "mandatory";
-        
+
         if (mandatoryFields.includes(fieldName)) {
           targetTab = "mandatory";
         } else if (workFields.includes(fieldName)) {
@@ -123,43 +142,35 @@ export default function Page() {
         } else if (personalFields.includes(fieldName)) {
           targetTab = "personal";
         }
-        
+
         await form.trigger();
-        
+
         if (targetTab !== tabValue) {
           setTabValue(targetTab);
         }
-        
+
         return;
       }
 
       // If validation passes, proceed with form submission
       if (formData.profilePic) {
         const apiFormData = new FormData();
-        
+
         // Append all form fields with proper mapping
         Object.entries(formData).forEach(([key, value]) => {
-          if (key === 'profilePic' && value instanceof File) {
-            apiFormData.append('profilePic', value);
-          } else if (value !== undefined && value !== '') {
+          if (key === "profilePic" && value instanceof File) {
+            apiFormData.append("profilePic", value);
+          } else if (value !== undefined && value !== "") {
             apiFormData.append(key, value as string);
           }
         });
-        
+
         createEmployeeWithFiles.mutate(apiFormData);
       } else {
         const { profilePic, hiringDate, designation, ...restData } = formData;
-        
-        // const mappedData = {
-        //   ...restData,
-        //   hireDate: hiringDate || '',
-        //   position: designation || '',
-        //   department: formData.department || '', // Ensure department is provided
-        // };
-        
+
         createEmployee.mutate(formData);
       }
-      
     } catch (error) {
       console.error("Form submission error:", error);
     }
@@ -179,12 +190,16 @@ export default function Page() {
     {
       name: t("personal"),
       value: "personal",
-      content: <PersonalCard 
-        form={form} 
-        setTabValue={setTabValue} 
-        onSubmit={handleSubmit} 
-        isLoading={createEmployee.isPending || createEmployeeWithFiles.isPending}
-      />,
+      content: (
+        <PersonalCard
+          form={form}
+          setTabValue={setTabValue}
+          onSubmit={handleSubmit}
+          isLoading={
+            createEmployee.isPending || createEmployeeWithFiles.isPending
+          }
+        />
+      ),
     },
   ];
 
