@@ -16,10 +16,7 @@ import { MandatoryCard } from "@/features/employees/components/addEmployeeCards/
 import { WorkCard } from "@/features/employees/components/addEmployeeCards/WorkCard";
 import { PersonalCard } from "@/features/employees/components/addEmployeeCards/PersonalCard";
 import ProfileCard from "@/features/employees/components/addEmployeeCards/ProfileCard";
-import {
-  useCreateEmployee,
-  useCreateEmployeeWithFiles,
-} from "@/features/onboarding";
+import { useCreateEmployee } from "@/features/onboarding";
 
 const addEmployeeSchema = z.object({
   empId: z.string().min(1, "Employee ID is required"),
@@ -33,7 +30,7 @@ const addEmployeeSchema = z.object({
   department: z.string().optional(),
   jobType: z.string().optional(),
   hiringDate: z.string().optional(),
-  onboardingTemplate: z.string().optional(),
+  onboardingTemplateId: z.string().optional(),
   reportTo: z.string().optional(),
   grade: z.string().optional(),
   probationPeriod: z.string().optional(),
@@ -55,7 +52,6 @@ export default function Page() {
 
   // Use React Query hooks for mutations
   const createEmployee = useCreateEmployee();
-  const createEmployeeWithFiles = useCreateEmployeeWithFiles();
 
   // Handle successful employee creation
   const handleSuccess = () => {
@@ -66,10 +62,10 @@ export default function Page() {
 
   // Add success callbacks to mutations
   useEffect(() => {
-    if (createEmployee.isSuccess || createEmployeeWithFiles.isSuccess) {
+    if (createEmployee.isSuccess) {
       handleSuccess();
     }
-  }, [createEmployee.isSuccess, createEmployeeWithFiles.isSuccess]);
+  }, [createEmployee.isSuccess]);
 
   const breadcrumbItems = [
     { name: "Company" },
@@ -91,7 +87,7 @@ export default function Page() {
       department: "",
       jobType: "",
       hiringDate: "",
-      onboardingTemplate: "",
+      onboardingTemplateId: "",
       reportTo: "",
       grade: "",
       probationPeriod: "",
@@ -126,7 +122,7 @@ export default function Page() {
           "department",
           "jobType",
           "hiringDate",
-          "onboardingTemplate",
+          "onboardingTemplateId",
           "reportTo",
           "grade",
           "probationPeriod",
@@ -153,24 +149,18 @@ export default function Page() {
       }
 
       // If validation passes, proceed with form submission
-      if (formData.profilePic) {
-        const apiFormData = new FormData();
+      const apiFormData = new FormData();
 
-        // Append all form fields with proper mapping
-        Object.entries(formData).forEach(([key, value]) => {
-          if (key === "profilePic" && value instanceof File) {
-            apiFormData.append("profilePic", value);
-          } else if (value !== undefined && value !== "") {
-            apiFormData.append(key, value as string);
-          }
-        });
+      // Append all form fields with proper mapping
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "profilePic" && value instanceof File) {
+          apiFormData.append("profilePic", value);
+        } else if (value !== undefined && value !== "") {
+          apiFormData.append(key, value as string);
+        }
+      });
 
-        createEmployeeWithFiles.mutate(apiFormData);
-      } else {
-        const { profilePic, hiringDate, designation, ...restData } = formData;
-
-        createEmployee.mutate(formData);
-      }
+      createEmployee.mutate(apiFormData);
     } catch (error) {
       console.error("Form submission error:", error);
     }
@@ -195,9 +185,7 @@ export default function Page() {
           form={form}
           setTabValue={setTabValue}
           onSubmit={handleSubmit}
-          isLoading={
-            createEmployee.isPending || createEmployeeWithFiles.isPending
-          }
+          isLoading={createEmployee.isPending}
         />
       ),
     },

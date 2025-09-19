@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import { TodoItem, OnboardingData, CreateEmployeeRequest } from "../types";
+import { TodoItem, OnboardingData } from "../types";
 import { ApiResponse } from "@/types/api.types";
 import { Employee } from "@/features/employees";
 
@@ -7,17 +7,8 @@ import { Employee } from "@/features/employees";
 const ONBOARDING_BASE_URL = "/onboarding";
 
 export const onboardingService = {
-  // POST - Create new employee
-  async createEmployee(employeeData: CreateEmployeeRequest): Promise<Employee> {
-    const response = await api.post<ApiResponse<Employee>>(
-      "/onboarding/invite",
-      employeeData
-    );
-    return response.data.data;
-  },
-
   // POST - Create new employee with FormData (for file uploads)
-  async createEmployeeWithFiles(formData: FormData): Promise<Employee> {
+  async createEmployee(formData: FormData): Promise<Employee> {
     const response = await api.post<ApiResponse<Employee>>(
       "/onboarding/invite",
       formData,

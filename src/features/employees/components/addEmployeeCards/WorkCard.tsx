@@ -87,7 +87,7 @@ export function WorkCard({
           />
           <SelectField
             control={form?.control}
-            name="onboardingTemplate"
+            name="onboardingTemplateId"
             label={tWork("onboardingTemplate")}
             placeholder={tPlaceholders("onboardingTemplate")}
             options={onboardingTemplate.map((template) => ({
