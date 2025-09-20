@@ -92,7 +92,6 @@ const DocumentSettings = () => {
           <CardTitle>Document Templates</CardTitle>
           <CardAction>
             <Button onClick={handleCreateTemplate} size="sm">
-              <Plus className="mr-2 h-4 w-4" />
               Create Template
             </Button>
           </CardAction>

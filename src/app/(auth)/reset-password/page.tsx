@@ -61,7 +61,6 @@ export default function ResetPasswordPage() {
     resetPassword.mutate({
       token,
       password: data.password,
-      confirmPassword: data.confirmPassword,
     });
   };
 
@@ -104,16 +103,10 @@ export default function ResetPasswordPage() {
               type="submit"
               variant={"accent"}
               className="mt-2 w-full"
-              disabled={resetPassword.isPending}
+              isLoading={resetPassword.isPending}
+              loadingText={t("resetting", { default: "Resetting..." })}
             >
-              {resetPassword.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t("resetting", { default: "Resetting..." })}
-                </>
-              ) : (
-                t("resetButton", { default: "Reset Password" })
-              )}
+              {t("resetButton", { default: "Reset Password" })}
             </Button>
           </form>
         </Form>

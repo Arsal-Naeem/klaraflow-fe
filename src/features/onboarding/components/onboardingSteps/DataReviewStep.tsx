@@ -662,7 +662,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
           <Button
             onClick={handleNext}
             variant="accent"
-            disabled={updateStep.isPending}
+            isLoading={updateStep.isPending}
           >
             {tCommon("next")}
           </Button>

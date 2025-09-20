@@ -64,7 +64,10 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import DocumentFormPreview from "./DocumentFormPreview";
-import { useCreateDocumentTemplate, useUpdateDocumentTemplate } from "../hooks/useDocuments";
+import {
+  useCreateDocumentTemplate,
+  useUpdateDocumentTemplate,
+} from "../hooks/useDocuments";
 
 interface TemplateFormData {
   name: string;
@@ -390,11 +393,11 @@ const DocumentTemplateDrawer = ({
 }) => {
   const { isRTL } = useLanguageNavigation();
   const [internalIsOpen, setInternalIsOpen] = useState(false);
-  
+
   // Use external control if provided, otherwise use internal state
   const isOpen = open !== undefined ? open : internalIsOpen;
   const setIsOpen = onOpenChange || setInternalIsOpen;
-  
+
   // Hooks for API operations
   const createTemplateMutation = useCreateDocumentTemplate();
   const updateTemplateMutation = useUpdateDocumentTemplate();
@@ -485,18 +488,18 @@ const DocumentTemplateDrawer = ({
             description: field.description || undefined,
             required: field.required,
             width: field.width,
-          }))
+          })),
       };
 
       if (isEdit && template?.id) {
         await updateTemplateMutation.mutateAsync({
           templateId: template.id,
-          templateData
+          templateData,
         });
       } else {
         await createTemplateMutation.mutateAsync(templateData);
       }
-      
+
       handleOpenChange(false);
     } catch (error) {
       console.error("Failed to save template:", error);
@@ -721,17 +724,18 @@ const DocumentTemplateDrawer = ({
                 >
                   Cancel
                 </Button>
-                <Button 
-                  variant="accent" 
+                <Button
+                  variant="accent"
                   type="submit"
-                  disabled={createTemplateMutation.isPending || updateTemplateMutation.isPending}
-                >
-                  {createTemplateMutation.isPending || updateTemplateMutation.isPending
-                    ? "Saving..."
-                    : isEdit 
-                    ? "Update Template" 
-                    : "Create Template"
+                  isLoading={
+                    createTemplateMutation.isPending ||
+                    updateTemplateMutation.isPending
                   }
+                  loadingText={
+                    isEdit ? "Updating Template" : "Creating Template"
+                  }
+                >
+                  {isEdit ? "Update Template" : "Create Template"}
                 </Button>
               </div>
             </form>

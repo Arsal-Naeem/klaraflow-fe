@@ -106,16 +106,10 @@ export default function ForgetPasswordPage() {
                 type="submit"
                 variant={"accent"}
                 className="mt-2 w-full"
-                disabled={forgotPassword.isPending}
+                isLoading={forgotPassword.isPending}
+                loadingText={tCommon("loading")}
               >
-                {forgotPassword.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {tCommon("loading")}
-                  </>
-                ) : (
-                  t("sendCodeButton", { default: "Send Code" })
-                )}
+                {t("sendCodeButton", { default: "Send Code" })}
               </Button>
             </form>
           </Form>
@@ -149,16 +143,10 @@ export default function ForgetPasswordPage() {
                   type="submit"
                   variant={"accent"}
                   className="flex-1"
-                  disabled={verifyResetPin.isPending}
+                  isLoading={verifyResetPin.isPending}
+                  loadingText={tCommon("loading")}
                 >
-                  {verifyResetPin.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {t("verifying", { default: "Verifying..." })}
-                    </>
-                  ) : (
-                    t("verifyButton", { default: "Verify Code" })
-                  )}
+                  {t("verifyButton", { default: "Verify Code" })}
                 </Button>
               </div>
             </form>

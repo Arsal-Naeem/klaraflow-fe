@@ -83,7 +83,6 @@ const DepartmentSettings = () => {
           <CardTitle>Departments</CardTitle>
           <CardAction>
             <Button onClick={handleCreateDepartment} size="sm">
-              <Plus className="mr-2 h-4 w-4" />
               Create Department
             </Button>
           </CardAction>

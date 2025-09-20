@@ -26,9 +26,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-  DropdownMenuItem
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import {
   DndContext,
   closestCenter,
@@ -46,9 +44,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import {
-  useSortable,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
   ChevronRight,
@@ -62,9 +58,9 @@ import {
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 import { OnboardingTemplate, TodoItem } from "../../types";
 import { DocumentTemplate } from "@/features/documents/types";
-import { 
-  useCreateOnboardingTemplate, 
-  useUpdateOnboardingTemplate 
+import {
+  useCreateOnboardingTemplate,
+  useUpdateOnboardingTemplate,
 } from "../../hooks/useOnboardingTemplates";
 import { useDocumentTemplates } from "@/features/documents/hooks/useDocuments";
 import { toast } from "sonner";
@@ -186,10 +182,7 @@ function SortableTodoItem({
                     <FormItem>
                       <FormLabel>Title</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter todo title"
-                          {...field}
-                        />
+                        <Input placeholder="Enter todo title" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -323,7 +316,12 @@ const OnboardingTemplateDrawer = ({
     },
   });
 
-  const { fields: todoFields, append: appendTodo, remove: removeTodo, move: moveTodo } = useFieldArray({
+  const {
+    fields: todoFields,
+    append: appendTodo,
+    remove: removeTodo,
+    move: moveTodo,
+  } = useFieldArray({
     control: form.control,
     name: "todos",
   });
@@ -364,7 +362,7 @@ const OnboardingTemplateDrawer = ({
     try {
       const templateData = {
         name: values.name,
-        todos: values.todos.map(todo => ({
+        todos: values.todos.map((todo) => ({
           title: todo.title,
           description: todo.description || "",
         })),
@@ -385,7 +383,9 @@ const OnboardingTemplateDrawer = ({
 
       handleOpenChange(false);
     } catch (error) {
-      toast.error(isEdit ? "Failed to update template" : "Failed to create template");
+      toast.error(
+        isEdit ? "Failed to update template" : "Failed to create template"
+      );
     }
   };
 
@@ -446,8 +446,12 @@ const OnboardingTemplateDrawer = ({
     setActiveId(null);
 
     if (active.id !== over?.id) {
-      const activeIndex = todoFields.findIndex((todo) => (todo as any).tempId === active.id);
-      const overIndex = todoFields.findIndex((todo) => (todo as any).tempId === over?.id);
+      const activeIndex = todoFields.findIndex(
+        (todo) => (todo as any).tempId === active.id
+      );
+      const overIndex = todoFields.findIndex(
+        (todo) => (todo as any).tempId === over?.id
+      );
 
       if (activeIndex !== -1 && overIndex !== -1) {
         // Use react-hook-form's move function to reorder todos
@@ -480,30 +484,45 @@ const OnboardingTemplateDrawer = ({
   const watchedRequiredDocs = form.watch("requiredDocuments");
   const watchedOptionalDocs = form.watch("optionalDocuments");
 
-  const handleDocumentToggle = (documentId: string, type: "required" | "optional") => {
+  const handleDocumentToggle = (
+    documentId: string,
+    type: "required" | "optional"
+  ) => {
     if (type === "required") {
       const currentRequired = form.getValues("requiredDocuments");
       const currentOptional = form.getValues("optionalDocuments");
-      
+
       if (currentRequired.includes(documentId)) {
         // Remove from required
-        form.setValue("requiredDocuments", currentRequired.filter(id => id !== documentId));
+        form.setValue(
+          "requiredDocuments",
+          currentRequired.filter((id) => id !== documentId)
+        );
       } else {
         // Add to required and remove from optional if it exists there
         form.setValue("requiredDocuments", [...currentRequired, documentId]);
-        form.setValue("optionalDocuments", currentOptional.filter(id => id !== documentId));
+        form.setValue(
+          "optionalDocuments",
+          currentOptional.filter((id) => id !== documentId)
+        );
       }
     } else {
       const currentOptional = form.getValues("optionalDocuments");
       const currentRequired = form.getValues("requiredDocuments");
-      
+
       if (currentOptional.includes(documentId)) {
         // Remove from optional
-        form.setValue("optionalDocuments", currentOptional.filter(id => id !== documentId));
+        form.setValue(
+          "optionalDocuments",
+          currentOptional.filter((id) => id !== documentId)
+        );
       } else {
         // Add to optional and remove from required if it exists there
         form.setValue("optionalDocuments", [...currentOptional, documentId]);
-        form.setValue("requiredDocuments", currentRequired.filter(id => id !== documentId));
+        form.setValue(
+          "requiredDocuments",
+          currentRequired.filter((id) => id !== documentId)
+        );
       }
     }
   };
@@ -534,10 +553,7 @@ const OnboardingTemplateDrawer = ({
                   <FormItem>
                     <FormLabel>Template Name</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter template name"
-                        {...field}
-                      />
+                      <Input placeholder="Enter template name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -549,18 +565,25 @@ const OnboardingTemplateDrawer = ({
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium">Document Templates</h3>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Required Documents */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium">Required Documents</Label>
+                    <Label className="text-sm font-medium">
+                      Required Documents
+                    </Label>
                     <div className="space-y-2">
                       {documentTemplates.map((doc) => (
-                        <div key={doc.id} className="flex gap-2 items-center space-x-2">
+                        <div
+                          key={doc.id}
+                          className="flex gap-2 items-center space-x-2"
+                        >
                           <Checkbox
                             id={`required-${doc.id}`}
                             checked={watchedRequiredDocs.includes(doc.id)}
-                            onCheckedChange={() => handleDocumentToggle(doc.id, "required")}
+                            onCheckedChange={() =>
+                              handleDocumentToggle(doc.id, "required")
+                            }
                           />
                           <Label
                             htmlFor={`required-${doc.id}`}
@@ -575,14 +598,21 @@ const OnboardingTemplateDrawer = ({
 
                   {/* Optional Documents */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium">Optional Documents</Label>
+                    <Label className="text-sm font-medium">
+                      Optional Documents
+                    </Label>
                     <div className="space-y-2">
                       {documentTemplates.map((doc) => (
-                        <div key={doc.id} className="flex gap-2 items-center space-x-2">
+                        <div
+                          key={doc.id}
+                          className="flex gap-2 items-center space-x-2"
+                        >
                           <Checkbox
                             id={`optional-${doc.id}`}
                             checked={watchedOptionalDocs.includes(doc.id)}
-                            onCheckedChange={() => handleDocumentToggle(doc.id, "optional")}
+                            onCheckedChange={() =>
+                              handleDocumentToggle(doc.id, "optional")
+                            }
                           />
                           <Label
                             htmlFor={`optional-${doc.id}`}
@@ -601,7 +631,12 @@ const OnboardingTemplateDrawer = ({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium">Todo Items</h3>
-                  <Button type="button" variant="outline" size="sm" onClick={addTodo}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addTodo}
+                  >
                     <Plus className="mr-2 h-4 w-4" />
                     Add Todo
                   </Button>
@@ -636,8 +671,14 @@ const OnboardingTemplateDrawer = ({
                   <DragOverlay>
                     {activeId ? (
                       <DragOverlayTodoItem
-                        todo={todoFields.find((todo: any) => todo.tempId === activeId) as any}
-                        index={todoFields.findIndex((todo: any) => todo.tempId === activeId)}
+                        todo={
+                          todoFields.find(
+                            (todo: any) => todo.tempId === activeId
+                          ) as any
+                        }
+                        index={todoFields.findIndex(
+                          (todo: any) => todo.tempId === activeId
+                        )}
                         form={form}
                       />
                     ) : null}
@@ -654,7 +695,17 @@ const OnboardingTemplateDrawer = ({
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button
+                  type="submit"
+                  variant={"accent"}
+                  isLoading={
+                    createTemplateMutation.isPending ||
+                    updateTemplateMutation.isPending
+                  }
+                  loadingText={
+                    isEdit ? "Updating Template" : "Creating Template"
+                  }
+                >
                   {isEdit ? "Update Template" : "Create Template"}
                 </Button>
               </div>

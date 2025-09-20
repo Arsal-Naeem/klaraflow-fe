@@ -7,14 +7,12 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/ui/responsive-dialog";
-import {
-  Form,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { TextareaField } from "@/components/blocks/Form/Fields/TextareaField";
 import { DateField } from "@/components/blocks/Form/Fields/DateField";
 import { FileField } from "@/components/blocks/Form/Fields/FileField";
-import { FileText } from "lucide-react";
+import { FileText, Upload } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,37 +48,43 @@ const DocumentDrawer = ({
   // Create dynamic validation schema based on template fields
   const validationSchema = useMemo(() => {
     const schemaFields: Record<string, z.ZodTypeAny> = {};
-    
+
     fields.forEach((field, index) => {
       const fieldKey = field.id || `field_${index}`;
-      
-      if (field.type === 'file') {
+
+      if (field.type === "file") {
         // File validation
         if (field.required) {
-          schemaFields[fieldKey] = z.instanceof(FileList).refine(
-            (files) => files && files.length > 0,
-            `${field.label} is required`
-          );
+          schemaFields[fieldKey] = z
+            .instanceof(FileList)
+            .refine(
+              (files) => files && files.length > 0,
+              `${field.label} is required`
+            );
         } else {
           schemaFields[fieldKey] = z.instanceof(FileList).optional().nullable();
         }
-      } else if (field.type === 'text' || field.type === 'textarea') {
+      } else if (field.type === "text" || field.type === "textarea") {
         // Text field validation
         if (field.required) {
-          schemaFields[fieldKey] = z.string().min(1, `${field.label} is required`);
+          schemaFields[fieldKey] = z
+            .string()
+            .min(1, `${field.label} is required`);
         } else {
           schemaFields[fieldKey] = z.string().optional();
         }
-      } else if (field.type === 'date') {
+      } else if (field.type === "date") {
         // Date field validation
         if (field.required) {
-          schemaFields[fieldKey] = z.string().min(1, `${field.label} is required`);
+          schemaFields[fieldKey] = z
+            .string()
+            .min(1, `${field.label} is required`);
         } else {
           schemaFields[fieldKey] = z.string().optional();
         }
       }
     });
-    
+
     return z.object(schemaFields);
   }, [fields]);
 
@@ -89,7 +93,8 @@ const DocumentDrawer = ({
     return fields.reduce((acc, field, index) => {
       // Use consistent field naming pattern
       const fieldKey = field.id || `field_${index}`;
-      acc[fieldKey] = initialData[fieldKey] || (field.type === 'file' ? null : "");
+      acc[fieldKey] =
+        initialData[fieldKey] || (field.type === "file" ? null : "");
       return acc;
     }, {} as Record<string, any>);
   }, [fields, initialData]);
@@ -107,44 +112,46 @@ const DocumentDrawer = ({
     }
   }, [isOpen, getDefaultValues, form]);
 
-  const prepareFormData = (data: Record<string, any>): DocumentUploadField[] => {
+  const prepareFormData = (
+    data: Record<string, any>
+  ): DocumentUploadField[] => {
     const payload: DocumentUploadField[] = [];
-    
+
     fields.forEach((field, index) => {
       const fieldKey = field.id || `field_${index}`;
       const value = data[fieldKey];
-      
-      if (field.type === 'file') {
+
+      if (field.type === "file") {
         // Handle file fields - get the first file if it's a FileList
         if (value && value.length > 0) {
           payload.push({
             id: field.id || fieldKey,
-            value: value[0] // Take the first file
+            value: value[0], // Take the first file
           });
         }
       } else if (value !== null && value !== undefined && value !== "") {
         // Handle other field types
         let processedValue = value;
-        
+
         // Convert date strings to Date objects if needed
-        if (field.type === 'date' && typeof value === 'string') {
+        if (field.type === "date" && typeof value === "string") {
           processedValue = new Date(value);
         }
-        
+
         payload.push({
           id: field.id || fieldKey,
-          value: processedValue
+          value: processedValue,
         });
       }
     });
-    
+
     return payload;
   };
 
   const handleSubmit = async (data: any) => {
     try {
       console.log("Raw form data:", data);
-      
+
       // Prepare form data to match DocumentUploadField[] structure
       const payload = prepareFormData(data);
       console.log("Prepared payload:", payload);
@@ -176,15 +183,15 @@ const DocumentDrawer = ({
       if (isValid) {
         const formData = form.getValues();
         console.log("Form data:", formData);
-        
+
         // Validate against schema before submission
         const validation = validationSchema.safeParse(formData);
-        
+
         if (!validation.success) {
           console.error("Schema validation failed:", validation.error);
           return;
         }
-        
+
         await handleSubmit(formData);
       }
     } catch (error) {
@@ -305,13 +312,10 @@ const DocumentDrawer = ({
             {fields.length > 0 && (
               <Button
                 onClick={handleFormSubmit}
-                disabled={isLoading || uploadDocument.isPending}
+                isLoading={isLoading || uploadDocument.isPending}
+                loadingText="Uploading"
               >
-                {isLoading || uploadDocument.isPending
-                  ? "Uploading..."
-                  : mode === "edit"
-                  ? "Update"
-                  : "Submit"}
+                {mode === "edit" ? "Update" : "Upload"}
               </Button>
             )}
           </div>

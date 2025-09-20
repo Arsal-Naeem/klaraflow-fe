@@ -141,13 +141,12 @@ const DesignationModal = ({
               onClick={() => {
                 handleSubmit();
               }}
-              disabled={
+              isLoading={
                 createDesignation?.isPending || updateDesignation?.isPending
               }
+              loadingText="Saving"
             >
-              {createDesignation?.isPending || updateDesignation?.isPending
-                ? "Saving..."
-                : "Save"}
+              Save
             </Button>
           </div>
         </ResponsiveDialogBody>

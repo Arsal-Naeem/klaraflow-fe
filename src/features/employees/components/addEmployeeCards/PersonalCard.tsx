@@ -31,7 +31,9 @@ export function PersonalCard({
   const t = useTranslations("addEmployee");
   const tCommon = useTranslations("common");
   const tPersonal = useTranslations("addEmployee.personalForm");
-  const tPlaceholders = useTranslations("addEmployee.personalForm.placeholders");
+  const tPlaceholders = useTranslations(
+    "addEmployee.personalForm.placeholders"
+  );
 
   const handleBack = () => {
     if (setTabValue) {
@@ -44,11 +46,11 @@ export function PersonalCard({
       e.preventDefault();
       e.stopPropagation();
     }
-    
+
     if (form?.formState?.isSubmitting) {
       return;
     }
-    
+
     if (onSubmit) {
       try {
         await onSubmit();
@@ -93,13 +95,14 @@ export function PersonalCard({
           <Button variant={"outline"} onClick={handleBack}>
             {tCommon("back")}
           </Button>
-          <Button 
-            variant={"accent"} 
+          <Button
+            variant={"accent"}
             type="button"
             onClick={handleSave}
-            disabled={isLoading || form?.formState?.isSubmitting}
+            isLoading={isLoading || form?.formState?.isSubmitting}
+            loadingText="Sending Invite"
           >
-            {(isLoading || form?.formState?.isSubmitting) ? "Saving..." : tCommon("save")}
+            {tCommon("save")}
           </Button>
         </div>
       </CardContent>

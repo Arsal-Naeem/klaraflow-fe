@@ -91,7 +91,9 @@ const OnboardingTemplateSettings = () => {
       <CardHeader>
         <CardTitle>Onboarding Templates</CardTitle>
         <CardAction>
-          <Button onClick={handleCreateTemplate}>Create Template</Button>
+          <Button onClick={handleCreateTemplate} size="sm">
+            Create Template
+          </Button>
         </CardAction>
       </CardHeader>
       <CardContent className="px-2 md:px-6">

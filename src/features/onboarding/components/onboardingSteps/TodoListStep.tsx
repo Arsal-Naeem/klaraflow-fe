@@ -117,7 +117,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
             onClick={onNext}
             variant="accent"
             size={"lg"}
-            disabled={updateTodoItem?.isPending || updateStep.isPending}
+            isLoading={updateTodoItem?.isPending || updateStep.isPending}
           >
             {tCommon("next")}
           </Button>

@@ -197,7 +197,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
             onClick={onNext}
             variant="accent"
             size={"lg"}
-            disabled={updateStep.isPending}
+            isLoading={updateStep.isPending}
           >
             {tCommon("next")}
           </Button>

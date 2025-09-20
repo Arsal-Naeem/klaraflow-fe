@@ -14,13 +14,17 @@ import { Loader2 } from "lucide-react";
 import { AuthenticationLayout } from "@/components/layouts/AuthenticationLayout/AuthenticationLayout";
 
 // Form schema
-const activateAccountSchema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const activateAccountSchema = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type ActivateAccountData = z.infer<typeof activateAccountSchema>;
 
@@ -31,7 +35,7 @@ export default function ActivatePage() {
 
   // Redirect if no token
   React.useEffect(() => {
-    if (!token || typeof token !== 'string') {
+    if (!token || typeof token !== "string") {
       router.push("/login");
     }
   }, [token, router]);
@@ -50,8 +54,8 @@ export default function ActivatePage() {
 
   // Handler
   const handleSubmit = async (data: ActivateAccountData) => {
-    if (!token || typeof token !== 'string') return;
-    
+    if (!token || typeof token !== "string") return;
+
     activateAccount.mutate({
       token,
       password: data.password,
@@ -59,7 +63,7 @@ export default function ActivatePage() {
   };
 
   // Don't render if no token
-  if (!token || typeof token !== 'string') {
+  if (!token || typeof token !== "string") {
     return null;
   }
 
@@ -100,16 +104,10 @@ export default function ActivatePage() {
               type="submit"
               variant={"accent"}
               className="mt-2 w-full"
-              disabled={activateAccount.isPending}
+              isLoading={activateAccount.isPending}
+              loadingText={t("activating")}
             >
-              {activateAccount.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t("activating")}
-                </>
-              ) : (
-                t("activateButton")
-              )}
+              {t("activateButton")}
             </Button>
           </form>
         </Form>

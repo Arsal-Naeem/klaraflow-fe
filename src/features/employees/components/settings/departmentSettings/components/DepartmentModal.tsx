@@ -130,13 +130,12 @@ const DepartmentModal = ({
               onClick={() => {
                 handleSubmit();
               }}
-              disabled={
+              isLoading={
                 createDepartment?.isPending || updateDepartment?.isPending
               }
+              loadingText="Saving"
             >
-              {createDepartment?.isPending || updateDepartment?.isPending
-                ? "Saving..."
-                : "Save"}
+              Save
             </Button>
           </div>
         </ResponsiveDialogBody>
