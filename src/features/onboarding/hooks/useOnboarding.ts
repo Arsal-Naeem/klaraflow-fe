@@ -6,6 +6,23 @@ import { OnboardingData } from '../types';
 
 const ONBOARDING_DATA_KEY = 'onboardingData';
 
+export function useCreateEmployee() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData: FormData) =>
+      OnboardingService.createEmployee(formData),
+    onSuccess: (newEmployee) => {
+      toast.success("Employee created successfully!");
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.message || "Failed to create employee";
+      toast.error(message);
+    },
+  });
+}
+
 export const useOnboarding = () => {
   const queryClient = useQueryClient();
 

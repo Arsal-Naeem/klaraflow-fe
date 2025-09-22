@@ -1,128 +1,56 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
-import { TodoItem } from "../../types";
-import {
-  useUpdateOnboardingStep,
-  useUpdateTodoItem,
-} from "../../hooks/useOnboarding";
-import { useTranslations } from "next-intl";
+/*NEW*/
+import { FC } from 'react';
+import { OnboardingData, TodoItem } from '../../types';
+import { useOnboarding } from '../../hooks/useOnboarding';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
-interface TodoListStepProps {
-  todos: TodoItem[];
+interface Props {
+  data: OnboardingData;
   onNext: () => void;
 }
 
-export const TodoListStep: React.FC<TodoListStepProps> = ({
-  todos,
-  onNext,
-}) => {
-  const updateTodoItem = useUpdateTodoItem();
-  const updateStep = useUpdateOnboardingStep();
+const TodoRow: FC<{ todo: TodoItem }> = ({ todo }) => {
+    const { updateTodo } = useOnboarding();
 
-  const t = useTranslations("onboarding.steps.step3");
-  const tMain = useTranslations("onboarding");
-  const tCommon = useTranslations("common");
+    const handleCheckChange = async (checked: boolean) => {
+        await updateTodo({ todoId: todo.id, completed: checked });
+    };
 
-  const completedCount = todos.filter((todo) => todo.completed).length;
-  const canProceed = todos.every((todo) => todo.completed);
-
-  const handleTodoToggle = async (id: string, completed: boolean) => {
-    try {
-      await updateTodoItem.mutateAsync({ id, completed });
-    } catch (error) {
-      console.error("Failed to update todo:", error);
-    }
-  };
-
-  const TodoCard = ({ todo }: { todo: TodoItem }) => {
     return (
-      <Card
-        className={`transition-all duration-200 ${
-          todo.completed && "border-green-600 bg-green-100 dark:bg-green-900/40"
-        }
-      }`}
-      >
-        <CardContent className="px-4">
-          <div className="flex items-start gap-3">
-            <Checkbox
-              checked={todo.completed}
-              onCheckedChange={(checked) =>
-                handleTodoToggle(todo.id, checked as boolean)
-              }
-              className="mt-1 cursor-pointer"
+        <div className="flex items-center space-x-3 p-3 border rounded-md">
+            <Checkbox 
+                id={`todo-${todo.id}`} 
+                checked={todo.is_completed}
+                onCheckedChange={handleCheckChange}
             />
-
-            <div className="flex-1">
-              <div className="flex items-start justify-between mb-2">
-                <h3
-                  className={`font-semibold ${
-                    todo.completed ? "line-through" : ""
-                  }`}
-                >
-                  {todo.title}
-                </h3>
-              </div>
-
-              <p className="text-sm text-muted-foreground">
-                {todo.description}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            <Label htmlFor={`todo-${todo.id}`} className="flex-1 cursor-pointer">
+                <p className="font-medium">{todo.title}</p>
+                {todo.description && <p className="text-sm text-muted-foreground">{todo.description}</p>}
+            </Label>
+        </div>
     );
-  };
+}
+
+export const TodoListStep: FC<Props> = ({ data, onNext }) => {
+  // You might want to enforce all todos are completed before continuing
+  const allTodosCompleted = data.todos.every(todo => todo.is_completed);
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2">{t("title")}</h2>
-        <p className="text-muted-foreground">{t("subtitle")}</p>
-      </div>
-
-      {/* Progress Summary */}
-      <Card>
-        <CardContent className="px-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500">
-              {completedCount} {tMain("of")} {todos.length}{" "}
-              {t("tasksCompleted")}
-            </span>
-          </div>
-          <Progress
-            value={(completedCount / todos.length) * 100}
-            className="h-2"
-          />
-        </CardContent>
-      </Card>
-
-      {/* Tasks by Category */}
-
-      <div className="space-y-3">
-        {todos.map((todo) => (
-          <TodoCard key={todo.id} todo={todo} />
-        ))}
-      </div>
-
-      {!canProceed ? (
-        <div className="text-center text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-          {t("disclaimer")}
-        </div>
-      ) : (
-        <div className="flex justify-end gap-2 pt-3">
-          <Button
-            onClick={onNext}
-            variant="accent"
-            size={"lg"}
-            isLoading={updateTodoItem?.isPending || updateStep.isPending}
-          >
-            {tCommon("next")}
-          </Button>
-        </div>
-      )}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Step 3: Complete Your To-Do List</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {data.todos.map(todo => <TodoRow key={todo.id} todo={todo} />)}
+      </CardContent>
+      <CardFooter className="flex justify-end">
+        <Button onClick={onNext} disabled={!allTodosCompleted}>
+            Continue
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };

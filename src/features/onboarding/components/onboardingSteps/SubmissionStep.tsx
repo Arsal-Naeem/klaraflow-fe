@@ -1,86 +1,35 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, Mail, Phone, Sparkles } from "lucide-react";
-import { useTranslations } from "next-intl";
+/*NEW*/
+import { FC } from 'react';
+import { OnboardingData } from '../../types';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useOnboarding } from '../../hooks/useOnboarding';
 
-export const SubmissionStep = ({
-  phone,
-  email,
-}: {
-  phone: string;
-  email: string;
-}) => {
-  const t = useTranslations("onboarding.steps.step4");
-  const tMain = useTranslations("onboarding");
-  const tCommon = useTranslations("common");
+interface Props {
+  data: OnboardingData;
+  onSubmit: () => void;
+}
+
+export const SubmissionStep: FC<Props> = ({ data, onSubmit }) => {
+  const { submitOnboarding } = useOnboarding();
+  const { isLoading } = submitOnboarding;
 
   return (
-    <div className="space-y-8">
-      {/* Success Header */}
-      <div className="text-center space-y-4">
-        <div className="mx-auto w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
-          <CheckCircle className="h-12 w-12 text-green-600" />
-        </div>
-
-        <div>
-          <h2 className="text-3xl font-bold text-primary mb-2">
-            {t("title")}
-          </h2>
-          <p className="text-md text-muted-foreground max-w-2xl mx-auto">
-            {t("subtitle")}
-          </p>
-        </div>
-      </div>
-
-      {/* Status Card */}
-      <Card className="bg-[linear-gradient(90deg,#280595_0%,#ff2394_100%)] border-none">
-        <CardContent className="px-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-accent/50 rounded-full">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg text-white">
-                  {t("statusTitle")}
-                </h3>
-                <p className="text-gray-600 text-white/90">
-                  {t("statusSubtitle")}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-white/90">{t("applicationId")}</div>
-              <div className="font-mono text-white font-semibold">
-                #KF-{Date.now().toString().slice(-6)}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Contact Information */}
-      <Card>
-        <CardContent className="px-6">
-          <h3 className="font-semibold mb-4">{t("needHelp")}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex gap-3">
-              <Mail className="h-5 w-5 text-muted-foreground mt-1" />
-              <div>
-                <div className="font-medium">{t("emailSupport")}</div>
-                <div className="text-sm text-muted-foreground">{email}</div>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Phone className="h-5 w-5 text-muted-foreground mt-1" />
-              <div>
-                <div className="font-medium">{t("phoneSupport")}</div>
-                <div className="text-sm text-muted-foreground">{phone}</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>You're All Set!</CardTitle>
+        <CardDescription>
+          Please review the information you've provided. Once you submit, your profile will be finalized.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-center text-lg">Thank you for completing your onboarding tasks, {data.employee_data.firstName}.</p>
+      </CardContent>
+      <CardFooter className="flex justify-end">
+        <Button onClick={onSubmit} disabled={isLoading}>
+          {isLoading ? 'Submitting...' : 'Submit Onboarding'}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };

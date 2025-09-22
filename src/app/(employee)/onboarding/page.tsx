@@ -3,34 +3,54 @@
 import React, { useState, useEffect, useMemo, use } from "react";
 import { useOnboarding } from '@/features/onboarding/hooks/useOnboarding';
 import { DataReviewStep, DocumentUploadStep, TodoListStep, SubmissionStep } from '@/features/onboarding/components/onboardingSteps';
-import { FullPageLoader } from '@/components/ui/fullpage-loader';
-
+import { InitialLoader } from '@/components/ui/fullpage-loader';
+import { useRouter } from 'next/navigation';
 
 const OnboardingPage = () => {
-  const { onboardingData, isLoading, isError } = useOnboarding();
+  const router = useRouter();
+  const { onboardingData, isLoading, isError, goToStep, submitOnboarding } = useOnboarding();
 
   if (isLoading) {
-    return <FullPageLoader />;
+    return <InitialLoader />;
   }
 
   if (isError || !onboardingData) {
-    // You can make this a prettier error component
-    return <div>Error loading onboarding data. Please try again later.</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-destructive">Error</h2>
+          <p>Could not load your onboarding information. Please try refreshing the page.</p>
+        </div>
+      </div>
+    );
   }
+
+  if (onboardingData.employee_data.status === 'completed') {
+    router.replace('/dashboard');
+    return <InitialLoader />;
+  }
+
+  const handleNext = async (nextStep: number) => {
+    await goToStep(nextStep);
+  };
+
+  const handleSubmit = async () => {
+    await submitOnboarding();
+    router.push('/dashboard');
+  };
 
   const renderStep = () => {
     switch (onboardingData.current_step) {
-      case 0: // Assuming step 0 is data review
-        return <DataReviewStep />;
-      case 1: // Document Upload
-        return <DocumentUploadStep />;
-      case 2: // Todo List
-        return <TodoListStep />;
-      case 3: // Submission
-        return <SubmissionStep />;
+      case 0:
+        return <DataReviewStep data={onboardingData} onNext={() => handleNext(1)} />;
+      case 1:
+        return <DocumentUploadStep data={onboardingData} onNext={() => handleNext(2)} />;
+      case 2:
+        return <TodoListStep data={onboardingData} onNext={() => handleNext(3)} />;
+      case 3:
+        return <SubmissionStep data={onboardingData} onSubmit={handleSubmit} />;
       default:
-        // Or redirect to dashboard if status is 'completed'
-        return <div>You have completed your onboarding!</div>;
+        return <div>Invalid onboarding step. Please contact support.</div>;
     }
   };
 
