@@ -1,73 +1,76 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/utils/toast";
-import { onboardingService } from "../services";
+/*NEW*/
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { OnboardingService } from '../services/onboarding.service';
+import { toast } from '@/utils/toast';
+import { OnboardingData } from '../types';
 
-// Query keys for better cache management
-export const onboardingKeys = {
-  all: ["onboarding"] as const,
-  data: () => [...onboardingKeys.all, "data"] as const,
-  documents: () => [...onboardingKeys.all, "documents"] as const,
-  todos: () => [...onboardingKeys.all, "todos"] as const,
-  template: () => [...onboardingKeys.all, "template"] as const,
-};
+const ONBOARDING_DATA_KEY = 'onboardingData';
 
-export function useCreateEmployee() {
+export const useOnboarding = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (formData: FormData) =>
-      onboardingService.createEmployee(formData),
-    onSuccess: (newEmployee) => {
-      toast.success("Employee created successfully!");
-    },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Failed to create employee";
-      toast.error(message);
-    },
+  const { data, isLoading, isError } = useQuery<OnboardingData>({
+    queryKey: [ONBOARDING_DATA_KEY],
+    queryFn: OnboardingService.getMyOnboardingData,
   });
-}
 
-// Hook to fetch onboarding data
-export function useOnboardingData(employeeId?: string) {
-  return useQuery({
-    queryKey: [...onboardingKeys.data(), employeeId],
-    queryFn: () => onboardingService.getOnboardingData(employeeId),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 2,
+  const invalidateOnboardingData = () => {
+    queryClient.invalidateQueries({ queryKey: [ONBOARDING_DATA_KEY] });
+  };
+
+  const updateDataMutation = useMutation({
+    mutationFn: OnboardingService.updateMyOnboardingData,
+    onSuccess: (updatedData) => {
+      queryClient.setQueryData([ONBOARDING_DATA_KEY], updatedData);
+      toast.success('Information updated successfully!');
+    },
+    onError: () => toast.error('Failed to update information.'),
   });
-}
 
-// Hook to update todo item
-export function useUpdateTodoItem() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, completed }: { id: string; completed: boolean }) =>
-      onboardingService.updateTodoItem(id, completed),
+  const updateStepMutation = useMutation({
+    mutationFn: OnboardingService.updateOnboardingStep,
+    onSuccess: (updatedData) => {
+      queryClient.setQueryData([ONBOARDING_DATA_KEY], updatedData);
+    },
+    onError: () => toast.error('Failed to move to the next step.'),
+  });
+  
+  const updateTodoMutation = useMutation({
+    mutationFn: OnboardingService.updateTodo,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.todos() });
+        invalidateOnboardingData(); // Refetch all data to get updated todo status
+        toast.success('Task status updated!');
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Failed to update todo item";
-      toast.error(message);
-    },
+    onError: () => toast.error('Failed to update task.'),
   });
-}
 
-// Hook to update onboarding step
-export function useUpdateOnboardingStep() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (step: number) => onboardingService.updateOnboardingStep(step),
-    onSuccess: (data) => {
-      queryClient.setQueryData([...onboardingKeys.data()], data);
+  const uploadDocumentMutation = useMutation({
+    mutationFn: OnboardingService.uploadDocument,
+    onSuccess: () => {
+        invalidateOnboardingData(); // Refetch to show the doc as uploaded
+        toast.success('Document uploaded successfully!');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to update step";
-      toast.error(message);
-    },
+    onError: () => toast.error('Failed to upload document.'),
   });
-}
+
+  const submitOnboardingMutation = useMutation({
+    mutationFn: OnboardingService.submitOnboarding,
+    onSuccess: () => {
+      invalidateOnboardingData();
+      toast.success('Onboarding completed! Welcome aboard!');
+      // Handle redirect here, e.g., router.push('/dashboard')
+    },
+    onError: () => toast.error('Failed to submit onboarding.'),
+  });
+
+  return {
+    onboardingData: data,
+    isLoading,
+    isError,
+    updateEmployeeData: updateDataMutation.mutateAsync,
+    goToStep: updateStepMutation.mutateAsync,
+    updateTodo: updateTodoMutation.mutateAsync,
+    uploadDocument: uploadDocumentMutation.mutateAsync,
+    submitOnboarding: submitOnboardingMutation.mutateAsync,
+  };
+};

@@ -1,12 +1,12 @@
 import api from "@/lib/api";
-import { TodoItem, OnboardingData } from "../types";
+import { TodoItem, OnboardingData, UpdateEmployeeDataPayload } from "../types";
 import { ApiResponse } from "@/types/api.types";
 import { Employee } from "@/features/employees";
 
 // Onboarding API endpoints
 const ONBOARDING_BASE_URL = "/onboarding";
 
-export const onboardingService = {
+export const OnboardingService = {
   // POST - Create new employee with FormData (for file uploads)
   async createEmployee(formData: FormData): Promise<Employee> {
     const response = await api.post<ApiResponse<Employee>>(
@@ -22,32 +22,39 @@ export const onboardingService = {
   },
 
   // GET - Fetch Onboarding Data
-  async getOnboardingData(employeeId?: string): Promise<OnboardingData> {
-    const endpoint = employeeId
-      ? `${ONBOARDING_BASE_URL}/${employeeId}/data`
-      : `${ONBOARDING_BASE_URL}/my-data`;
-
-    const response = await api.get<ApiResponse<OnboardingData>>(endpoint);
-    return response.data.data;
+  getMyOnboardingData: async (): Promise<OnboardingData> => {
+    const { data } = await api.get(`${URL}/my-data`);
+    return data.data;
   },
 
-  // PUT - Update todo item completion
-  async updateTodoItem(id: string, completed: boolean): Promise<TodoItem> {
-    const response = await api.put<ApiResponse<TodoItem>>(
-      `${ONBOARDING_BASE_URL}/todos/${id}`,
-      { completed }
-    );
-    return response.data.data;
+  updateMyOnboardingData: async (payload: UpdateEmployeeDataPayload): Promise<OnboardingData> => {
+    const { data } = await api.put(`${URL}/my-data`, payload);
+    return data.data;
   },
 
-  // PUT - Update onboarding step
-  async updateOnboardingStep(step: number): Promise<OnboardingData> {
-    const response = await api.put<ApiResponse<OnboardingData>>(
-      `${ONBOARDING_BASE_URL}/step`,
-      { currentStep: step }
-    );
-    return response.data.data;
+  updateOnboardingStep: async (step: number): Promise<OnboardingData> => {
+    const { data } = await api.put(`${URL}/step`, { current_step: step });
+    return data.data;
+  },
+
+  updateTodo: async ({ todoId, completed }: { todoId: number; completed: boolean }): Promise<void> => {
+    await api.put(`${URL}/todos/${todoId}`, null, { params: { completed } });
+  },
+
+  uploadDocument: async ({ documentTemplateId, file }: { documentTemplateId: number; file: File }): Promise<{ file_url: string }> => {
+    const formData = new FormData();
+    formData.append('document_template_id', String(documentTemplateId));
+    formData.append('file', file);
+
+    const { data } = await api.post(`${URL}/documents/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data.data;
+  },
+
+  submitOnboarding: async (): Promise<void> => {
+    await api.post(`${URL}/submit`);
   },
 };
 
-export default onboardingService;
+export default OnboardingService;

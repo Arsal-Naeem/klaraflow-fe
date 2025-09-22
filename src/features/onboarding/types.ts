@@ -3,15 +3,23 @@ import { Employee } from "../employees";
 
 // should stay similar
 export interface TodoItem {
-  id: string;
+  id: number;
+  template_id: number;
   title: string;
-  description: string;
-  completed?: boolean;
+  description?: string;
+  order_index: number;
+  created_at: string;
+  is_completed: boolean;
 }
 
-export interface OnboardingDocument extends DocumentTemplate {
+export interface OnboardingDocument {
+  id: number;
+  name: string;
+  fields: any[];
   required: boolean;
   uploaded: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface OnboardingTemplate {
@@ -23,12 +31,12 @@ export interface OnboardingTemplate {
 }
 
 export interface OnboardingData {
-  id?: string;
-  employeeData: Employee;
+  id: number;
+  employee_data: EmployeeData;
   todos: TodoItem[];
-  requiredDocuments: OnboardingDocument[];
-  optionalDocuments: OnboardingDocument[];
-  currentStep: number;
+  required_documents: OnboardingDocument[];
+  optional_documents: OnboardingDocument[];
+  current_step: number;
 }
 
 export interface CreateEmployeeRequest {
@@ -52,3 +60,28 @@ export interface CreateEmployeeRequest {
   nationality?: string;
   profilePic?: File;
 }
+
+export interface EmployeeData {
+  id: number;
+  empId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  gender?: string;
+  userRole?: string;
+  designation?: string;
+  department?: string;
+  jobType?: string;
+  hiringDate?: string;
+  reportTo?: string;
+  grade?: string;
+  probationPeriod?: string;
+  dateOfBirth?: string;
+  maritalStatus?: string;
+  nationality?: string;
+  profilePic?: string;
+  status: string;
+}
+
+export type UpdateEmployeeDataPayload = Partial<Omit<EmployeeData, 'id' | 'email' | 'status'>>;
