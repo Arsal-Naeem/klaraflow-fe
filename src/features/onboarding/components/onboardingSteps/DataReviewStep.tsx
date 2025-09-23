@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Employee } from "@/features/employees";
 import { useUpdateOnboardingStep } from "../../hooks/useOnboarding";
+import onboardingService from "@/features/onboarding/services/onboarding.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import z from "zod";
@@ -268,15 +269,46 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
     ];
     const isValid = await form.trigger(requiredFields);
 
-    if (isValid) {
-      // Log the current form data
-      const formData = form.getValues();
-      console.log("Form data on next:", formData);
-      onNext();
-    } else {
+    if (!isValid) {
       toast.error(
         "Please fix all validation errors before proceeding to the next step."
       );
+      return;
+    }
+
+    // Build multipart FormData to send review data (include profilePic as camelCase)
+    try {
+      const values = form.getValues();
+      const fd = new FormData();
+
+      // Append simple fields
+      fd.append("firstName", values.firstName || "");
+      fd.append("lastName", values.lastName || "");
+      fd.append("email", values.email || "");
+      if (values.phone) fd.append("phone", values.phone);
+      if (values.gender) fd.append("gender", values.gender);
+      if (values.dateOfBirth) fd.append("dateOfBirth", values.dateOfBirth);
+      if (values.maritialStatus) fd.append("maritialStatus", values.maritialStatus);
+      if (values.nationality) fd.append("nationality", values.nationality);
+
+      // Include profilePic (camelCase name required by backend)
+      const profileFile = values.profilePic as File | undefined;
+      if (profileFile) {
+        fd.append("profilePic", profileFile, profileFile.name);
+      }
+
+      // Call reviewOnboarding API
+      await onboardingService.reviewOnboarding(fd);
+
+      // Update step on success
+      await updateStep.mutateAsync(3); // advance to next step (example)
+
+      toast.success("Information reviewed and saved successfully.");
+      onNext();
+    } catch (error: any) {
+      console.error("Failed to submit review:", error);
+      const message = error?.response?.data?.message || "Failed to save review";
+      toast.error(message);
     }
   };
 

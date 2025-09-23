@@ -96,6 +96,32 @@ export const onboardingService = {
 
     return toOnboardingData(raw);
   },
+
+  // PUT - Review onboarding data (multipart/form-data) including profilePic
+  async reviewOnboarding(formData: FormData): Promise<OnboardingData> {
+    const response = await api.put<ApiResponse<any>>(
+      `${ONBOARDING_BASE_URL}/review`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    const raw = response?.data?.data ?? {};
+
+    const toOnboardingData = (r: any): OnboardingData => ({
+      id: r?.id ?? r?.employee_id ?? "",
+      employeeData: r?.employee_data ?? r?.employeeData ?? undefined,
+      todos: r?.todos ?? [],
+      requiredDocuments: r?.required_documents ?? r?.requiredDocuments ?? [],
+      optionalDocuments: r?.optional_documents ?? r?.optionalDocuments ?? [],
+      currentStep: r?.current_step ?? r?.currentStep ?? 1,
+    });
+
+    return toOnboardingData(raw);
+  },
 };
 
 export default onboardingService;
