@@ -28,17 +28,39 @@ export const onboardingService = {
       : `${ONBOARDING_BASE_URL}/my-data`;
 
     const response = await api.get<ApiResponse<any>>(endpoint);
-    const raw = response.data.data;
+    const raw = response?.data?.data ?? {};
 
-    // Transform backend snake_case response to frontend camelCase shape
-    const transformed: OnboardingData = {
-      id: raw.id,
-      employeeData: raw.employee_data || raw.employeeData,
-      todos: raw.todos || [],
-      requiredDocuments: raw.required_documents || raw.requiredDocuments || [],
-      optionalDocuments: raw.optional_documents || raw.optionalDocuments || [],
-      currentStep: raw.current_step ?? raw.currentStep ?? 1,
+    // Helper to normalize backend response to OnboardingData
+    const toOnboardingData = (r: any): OnboardingData => {
+      // backend may return top-level fields for "my-data" (as example provided)
+      // or nested shapes. Use optional chaining and fallbacks.
+      return {
+        id: r?.id ?? r?.employee_id ?? "",
+        // preserve any employee data object or derive from top-level fields
+        employeeData:
+          r?.employee_data ??
+          r?.employeeData ??
+          (r?.firstName || r?.lastName || r?.new_employee_email
+            ? {
+                firstName: r?.firstName ?? r?.first_name ?? "",
+                lastName: r?.lastName ?? r?.last_name ?? "",
+                email:
+                  r?.email ?? r?.new_employee_email ?? r?.new_employee_email ?? "",
+                empId: r?.empId ?? r?.emp_id ?? r?.empId ?? "",
+                phone: r?.phone ?? r?.phone_number ?? "",
+                gender: r?.gender ?? "",
+                dateOfBirth: r?.dateOfBirth ?? r?.date_of_birth ?? r?.dateOfBirth ?? undefined,
+                nationality: r?.nationality ?? r?.nationality ?? undefined,
+              }
+            : undefined),
+        todos: r?.todos ?? [],
+        requiredDocuments: r?.required_documents ?? r?.requiredDocuments ?? [],
+        optionalDocuments: r?.optional_documents ?? r?.optionalDocuments ?? [],
+        currentStep: r?.current_step ?? r?.currentStep ?? 1,
+      };
     };
+
+    const transformed = toOnboardingData(raw);
 
     return transformed;
   },
@@ -59,18 +81,20 @@ export const onboardingService = {
       { currentStep: step }
     );
 
-    const raw = response.data.data;
+    const raw = response?.data?.data ?? {};
 
-    const transformed: OnboardingData = {
-      id: raw.id,
-      employeeData: raw.employee_data || raw.employeeData,
-      todos: raw.todos || [],
-      requiredDocuments: raw.required_documents || raw.requiredDocuments || [],
-      optionalDocuments: raw.optional_documents || raw.optionalDocuments || [],
-      currentStep: raw.current_step ?? raw.currentStep ?? step,
+    const toOnboardingData = (r: any): OnboardingData => {
+      return {
+        id: r?.id ?? r?.employee_id ?? "",
+        employeeData: r?.employee_data ?? r?.employeeData ?? undefined,
+        todos: r?.todos ?? [],
+        requiredDocuments: r?.required_documents ?? r?.requiredDocuments ?? [],
+        optionalDocuments: r?.optional_documents ?? r?.optionalDocuments ?? [],
+        currentStep: r?.current_step ?? r?.currentStep ?? step,
+      };
     };
 
-    return transformed;
+    return toOnboardingData(raw);
   },
 };
 

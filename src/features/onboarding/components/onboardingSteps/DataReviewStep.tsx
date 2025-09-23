@@ -143,17 +143,17 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
   useEffect(() => {
     if (data) {
       form.reset({
-        firstName: data.firstName || "",
-        lastName: data.lastName || "",
-        email: data.email || "",
-        phone: data.phone || "",
-        gender: data.gender || "",
-        dateOfBirth: data.dateOfBirth || "",
-        maritialStatus: data.maritalStatus || "",
-        nationality: data.nationality || "",
+        firstName: data?.firstName || "",
+        lastName: data?.lastName || "",
+        email: data?.email || "",
+        phone: data?.phone || "",
+        gender: data?.gender || "",
+        dateOfBirth: data?.dateOfBirth || "",
+        maritialStatus: data?.maritalStatus || "",
+        nationality: data?.nationality || "",
       });
       // Set initial profile pic URL from data
-      setProfilePicUrl(data.profilePic || "");
+      setProfilePicUrl(data?.profilePic || "");
     }
   }, [data, form]);
   // Avatar click handler
@@ -209,8 +209,10 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
     setSelectedImageForCrop("");
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const getInitials = (firstName?: string, lastName?: string) => {
+    const f = firstName?.charAt(0) ?? "";
+    const l = lastName?.charAt(0) ?? "";
+    return `${f}${l}`.toUpperCase();
   };
 
   const formatDate = (dateString?: string) => {
@@ -318,15 +320,15 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 >
                   <Avatar className="h-24 w-24">
                     <AvatarImage
-                      src={profilePicUrl || data.profilePic}
-                      alt={`${firstName || data.firstName} ${
-                        lastName || data.lastName
+                      src={profilePicUrl || data?.profilePic}
+                      alt={`${firstName || data?.firstName || ""} ${
+                        lastName || data?.lastName || ""
                       }`}
                     />
                     <AvatarFallback className="text-lg">
                       {getInitials(
-                        firstName || data.firstName,
-                        lastName || data.lastName
+                        firstName || data?.firstName || "",
+                        lastName || data?.lastName || ""
                       )}
                     </AvatarFallback>
                   </Avatar>
@@ -354,7 +356,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     <label className="text-sm font-medium text-muted-foreground">
                       {tBasic("empId")}
                     </label>
-                    <p className="font-semibold">{data.empId}</p>
+                    <p className="font-semibold">{data?.empId}</p>
                   </div>
                   {isEditingBasic ? (
                     <>
@@ -440,8 +442,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                           {tBasic("fullName")}
                         </label>
                         <p className="font-semibold">
-                          {firstName || data.firstName}{" "}
-                          {lastName || data.lastName}
+                          {firstName || data?.firstName || ""} {" "}
+                          {lastName || data?.lastName || ""}
                         </p>
                       </div>
                       <div>
@@ -450,7 +452,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         </label>
                         <p className="flex items-center gap-2 justify-center md:justify-start">
                           <Mail className="h-4 w-4 text-gray-400 hidden lg:inline" />
-                          {email || data.email}
+                          {email || data?.email}
                         </p>
                       </div>
                       <div>
@@ -459,7 +461,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                         </label>
                         <p className="flex items-center gap-2 justify-center md:justify-start">
                           <Phone className="h-4 w-4 text-gray-400 hidden lg:inline" />
-                          {phone || data.phone || "Not provided"}
+                          {phone || data?.phone || "Not provided"}
                         </p>
                       </div>
                       <div>
@@ -467,7 +469,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                           {tBasic("gender")}
                         </label>
                         <p className="font-semibold capitalize">
-                          {gender || data.gender}
+                          {gender || data?.gender}
                         </p>
                       </div>
                     </>
@@ -553,7 +555,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                     </label>
                     <p className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
-                      {formatDate(dateOfBirth || data.dateOfBirth)}
+                      {formatDate(dateOfBirth || data?.dateOfBirth)}
                     </p>
                   </div>
 
@@ -562,7 +564,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                       {tPersonal("maritalStatus")}
                     </label>
                     <p className="font-semibold capitalize">
-                      {maritialStatus || data.maritalStatus || "Not specified"}
+                      {maritialStatus || data?.maritalStatus || "Not specified"}
                     </p>
                   </div>
 
@@ -571,7 +573,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                       {tPersonal("nationality")}
                     </label>
                     <p className="font-semibold capitalize">
-                      {nationality || data.nationality || "Not specified"}
+                      {nationality || data?.nationality || "Not specified"}
                     </p>
                   </div>
                 </>
@@ -595,7 +597,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                   {tBasic("designation")}
                 </label>
                 <p className="font-semibold">
-                  {data.designation || "Not specified"}
+                  {data?.designation || "Not specified"}
                 </p>
               </div>
 
@@ -604,7 +606,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                   {tBasic("department")}
                 </label>
                 <p className="font-semibold">
-                  {data.department || "Not specified"}
+                  {data?.department || "Not specified"}
                 </p>
               </div>
 
@@ -613,7 +615,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                   {tWork("jobType")}
                 </label>
                 <p className="font-semibold">
-                  {data.jobType || "Not specified"}
+                  {data?.jobType || "Not specified"}
                 </p>
               </div>
 
@@ -623,7 +625,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 </label>
                 <p className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  {formatDate(data.hiringDate)}
+                  {formatDate(data?.hiringDate)}
                 </p>
               </div>
 
@@ -633,7 +635,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 </label>
                 <p className="flex items-center gap-2">
                   <UserCheck className="h-4 w-4 text-gray-400" />
-                  {data.reportTo || "Not specified"}
+                  {data?.reportTo || "Not specified"}
                 </p>
               </div>
 
@@ -641,7 +643,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 <label className="text-sm font-medium text-muted-foreground">
                   {tWork("grade")}
                 </label>
-                <p className="font-semibold">{data.grade || "Not specified"}</p>
+                <p className="font-semibold">{data?.grade || "Not specified"}</p>
               </div>
 
               <div>
@@ -650,7 +652,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 </label>
                 <p className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-gray-400" />
-                  {data.probationPeriod || "Not specified"}
+                  {data?.probationPeriod || "Not specified"}
                 </p>
               </div>
             </div>
