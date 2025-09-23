@@ -107,7 +107,7 @@ export const documentService = {
     formData.append("fields", JSON.stringify(normalFields));
 
     const response = await api.post<ApiResponse<DocumentUpload>>(
-      `${DOCUMENT_BASE_URL}/upload/${templateId}`,
+      `onboarding/documents/upload`,
       formData,
       {
         headers: {

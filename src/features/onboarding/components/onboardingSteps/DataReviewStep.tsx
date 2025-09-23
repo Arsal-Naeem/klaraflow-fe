@@ -22,7 +22,6 @@ import {
   User2,
 } from "lucide-react";
 import { Employee } from "@/features/employees";
-import { useUpdateOnboardingStep } from "../../hooks/useOnboarding";
 import onboardingService from "@/features/onboarding/services/onboarding.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
@@ -150,11 +149,13 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
         phone: data?.phone || "",
         gender: data?.gender || "",
         dateOfBirth: data?.dateOfBirth || "",
-        maritialStatus: data?.maritalStatus || "",
+        maritialStatus: (data as any)?.maritalStatus || (data as any)?.maritialStatus || "",
         nationality: data?.nationality || "",
       });
       // Set initial profile pic URL from data
-      setProfilePicUrl(data?.profilePic || "");
+      const raw = (data as any)?.profilePic;
+      const normalized = raw ? String(raw).trim() : "";
+      setProfilePicUrl(normalized);
     }
   }, [data, form]);
   // Avatar click handler
@@ -221,8 +222,6 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
     return new Date(dateString).toLocaleDateString();
   };
 
-  // Mutations
-  const updateStep = useUpdateOnboardingStep();
 
   const handleSaveBasic = async () => {
     // Validate basic info fields
@@ -300,9 +299,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
       // Call reviewOnboarding API
       await onboardingService.reviewOnboarding(fd);
 
-      // Update step on success
-      await updateStep.mutateAsync(3); // advance to next step (example)
-
+  // Note: Step progression is handled server-side by individual APIs.
       toast.success("Information reviewed and saved successfully.");
       onNext();
     } catch (error: any) {
@@ -352,7 +349,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
                 >
                   <Avatar className="h-24 w-24">
                     <AvatarImage
-                      src={profilePicUrl || data?.profilePic}
+                      key={profilePicUrl || data?.profilePic}
+                      src={profilePicUrl || (data?.profilePic as string) || undefined}
                       alt={`${firstName || data?.firstName || ""} ${
                         lastName || data?.lastName || ""
                       }`}
@@ -693,11 +691,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-2 pt-6">
-          <Button
-            onClick={handleNext}
-            variant="accent"
-            isLoading={updateStep.isPending}
-          >
+          <Button onClick={handleNext} variant="accent">
             {tCommon("next")}
           </Button>
         </div>

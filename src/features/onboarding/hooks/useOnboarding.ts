@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/utils/toast";
 import { onboardingService } from "../services";
+import { DocumentUploadField } from "@/features/documents/types";
+import { documentKeys } from "@/features/documents/hooks/useDocuments";
 
 // Query keys for better cache management
 export const onboardingKeys = {
@@ -56,18 +58,17 @@ export function useUpdateTodoItem() {
   });
 }
 
-// Hook to update onboarding step
-export function useUpdateOnboardingStep() {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (step: number) => onboardingService.updateOnboardingStep(step),
-    onSuccess: (data) => {
-      queryClient.setQueryData([...onboardingKeys.data()], data);
-    },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || "Failed to update step";
-      toast.error(message);
-    },
-  });
+// NOTE: The step advancing API previously caused race conditions when called from
+// multiple client components. Per recent decision, step progression will be
+// controlled by the backend within each individual API (e.g. document upload,
+// todo completion). To avoid accidental usage we intentionally do NOT export a
+// hook that calls `onboardingService.updateOnboardingStep` here.
+
+// If consumers still import `useUpdateOnboardingStep` it will throw a helpful
+// error to make the migration obvious during development.
+export function useUpdateOnboardingStep(): never {
+  throw new Error(
+    "useUpdateOnboardingStep was removed. Step progression is now handled server-side by each API. Remove calls to this hook."
+  );
 }

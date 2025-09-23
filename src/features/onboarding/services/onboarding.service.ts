@@ -2,6 +2,7 @@ import api from "@/lib/api";
 import { TodoItem, OnboardingData } from "../types";
 import { ApiResponse } from "@/types/api.types";
 import { Employee } from "@/features/employees";
+import { DocumentUpload, DocumentUploadField } from "@/features/documents/types";
 
 // Onboarding API endpoints
 const ONBOARDING_BASE_URL = "/onboarding";
@@ -122,6 +123,7 @@ export const onboardingService = {
 
     return toOnboardingData(raw);
   },
+
 };
 
 export default onboardingService;

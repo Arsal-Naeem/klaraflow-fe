@@ -5,9 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { FileText, AlertCircle } from "lucide-react";
 import { OnboardingDocument } from "../../types";
 import DocumentDrawer from "../../../documents/components/DocumentDrawer";
-import {
-  useUpdateOnboardingStep,
-} from "../../hooks/useOnboarding";
+// step progression is handled server-side; do not call update step from client
 import { useUploadDocument } from "@/features/documents/hooks/useDocuments";
 import { useTranslations } from "next-intl";
 
@@ -25,7 +23,6 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
   employeeId,
 }) => {
   const uploadDocument = useUploadDocument();
-  const updateStep = useUpdateOnboardingStep();
 
     const t = useTranslations("onboarding.steps.step2");
     const tMain = useTranslations("onboarding");
@@ -100,7 +97,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         initialData={documentFormData}
         mode={document.uploaded ? "edit" : "add"}
         onSubmit={handleDocumentSubmit}
-        isLoading={updateStep.isPending || uploadDocument.isPending}
+  isLoading={uploadDocument.isPending}
         trigger={
           <Card
             className={`cursor-pointer transition-all ${
@@ -195,12 +192,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         </div>
       ) : (
         <div className="flex justify-end gap-2 pt-3">
-          <Button
-            onClick={onNext}
-            variant="accent"
-            size={"lg"}
-            isLoading={updateStep.isPending}
-          >
+          <Button onClick={onNext} variant="accent" size={"lg"}>
             {tCommon("next")}
           </Button>
         </div>

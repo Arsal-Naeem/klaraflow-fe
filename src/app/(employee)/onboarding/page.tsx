@@ -28,10 +28,7 @@ import {
   SubmissionStep,
 } from "@/features/onboarding/components/onboardingSteps";
 
-import {
-  useOnboardingData,
-  useUpdateOnboardingStep,
-} from "@/features/onboarding/hooks/useOnboarding";
+import { useOnboardingData } from "@/features/onboarding/hooks/useOnboarding";
 
 import { OnboardingDocument } from "@/features/onboarding/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -214,8 +211,6 @@ const OnboardingPage = () => {
     },
   ];
 
-  // Mutations
-  const updateStep = useUpdateOnboardingStep();
 
   // Update current step based on onboarding status
   useEffect(() => {
@@ -262,12 +257,9 @@ const OnboardingPage = () => {
   );
 
   const handleNextStep = async (nextStep: number) => {
-    try {
-      await updateStep.mutateAsync(nextStep);
-      setCurrentStep(nextStep);
-    } catch (error) {
-      console.error("Failed to update step:", error);
-    }
+    // Step progression is handled by the backend within individual APIs.
+    // Here we optimistically move the UI to the next step.
+    setCurrentStep(nextStep);
   };
 
   return (

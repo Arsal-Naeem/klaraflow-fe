@@ -4,10 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { TodoItem } from "../../types";
-import {
-  useUpdateOnboardingStep,
-  useUpdateTodoItem,
-} from "../../hooks/useOnboarding";
+import { useUpdateTodoItem } from "../../hooks/useOnboarding";
 import { useTranslations } from "next-intl";
 
 interface TodoListStepProps {
@@ -20,7 +17,6 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
   onNext,
 }) => {
   const updateTodoItem = useUpdateTodoItem();
-  const updateStep = useUpdateOnboardingStep();
 
   const t = useTranslations("onboarding.steps.step3");
   const tMain = useTranslations("onboarding");
@@ -113,12 +109,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
         </div>
       ) : (
         <div className="flex justify-end gap-2 pt-3">
-          <Button
-            onClick={onNext}
-            variant="accent"
-            size={"lg"}
-            isLoading={updateTodoItem?.isPending || updateStep.isPending}
-          >
+          <Button onClick={onNext} variant="accent" size={"lg"}>
             {tCommon("next")}
           </Button>
         </div>
