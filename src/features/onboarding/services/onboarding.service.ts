@@ -27,8 +27,20 @@ export const onboardingService = {
       ? `${ONBOARDING_BASE_URL}/${employeeId}/data`
       : `${ONBOARDING_BASE_URL}/my-data`;
 
-    const response = await api.get<ApiResponse<OnboardingData>>(endpoint);
-    return response.data.data;
+    const response = await api.get<ApiResponse<any>>(endpoint);
+    const raw = response.data.data;
+
+    // Transform backend snake_case response to frontend camelCase shape
+    const transformed: OnboardingData = {
+      id: raw.id,
+      employeeData: raw.employee_data || raw.employeeData,
+      todos: raw.todos || [],
+      requiredDocuments: raw.required_documents || raw.requiredDocuments || [],
+      optionalDocuments: raw.optional_documents || raw.optionalDocuments || [],
+      currentStep: raw.current_step ?? raw.currentStep ?? 1,
+    };
+
+    return transformed;
   },
 
   // PUT - Update todo item completion
@@ -42,11 +54,23 @@ export const onboardingService = {
 
   // PUT - Update onboarding step
   async updateOnboardingStep(step: number): Promise<OnboardingData> {
-    const response = await api.put<ApiResponse<OnboardingData>>(
+    const response = await api.put<ApiResponse<any>>(
       `${ONBOARDING_BASE_URL}/step`,
       { currentStep: step }
     );
-    return response.data.data;
+
+    const raw = response.data.data;
+
+    const transformed: OnboardingData = {
+      id: raw.id,
+      employeeData: raw.employee_data || raw.employeeData,
+      todos: raw.todos || [],
+      requiredDocuments: raw.required_documents || raw.requiredDocuments || [],
+      optionalDocuments: raw.optional_documents || raw.optionalDocuments || [],
+      currentStep: raw.current_step ?? raw.currentStep ?? step,
+    };
+
+    return transformed;
   },
 };
 

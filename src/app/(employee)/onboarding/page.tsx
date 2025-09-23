@@ -59,12 +59,15 @@ const OnboardingPage = () => {
   const tSteps = useTranslations("onboarding.steps.names");
   const tCommon = useTranslations("common");
 
-  // Fetch onboarding data
-  const { data: onboardingData, isLoading: isLoadingData } =
-    useOnboardingData();
+  // Fetch onboarding data using the provided hook
+  const {
+    data: onboardingDataResponse,
+    isLoading: isLoadingData,
+    error: onboardingError,
+  } = useOnboardingData();
 
-  // Mock data fallback for demonstration
-  const mockCompanyData = {
+  // Use the API data if available, otherwise keep the previous mock fallback
+  const companyData = (onboardingDataResponse as any)?.company || {
     id: "COMP001",
     name: "KlaraFlow",
     profilePic: "",
@@ -73,28 +76,34 @@ const OnboardingPage = () => {
     email: "hr@klaraflow.com",
   };
 
-  const mockOnboardingData = {
+  const onboardingData: any = onboardingDataResponse || {
     id: "ONB001",
-    empId: "EMP001",
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@company.com",
-    phone: "+1234567890",
-    gender: "male",
-    userRole: "03",
-    designation: "Software Developer",
-    department: "Engineering",
-    jobType: "Full-time",
-    hiringDate: "2024-01-15",
-    onboardingTemplate: "Technical",
-    reportTo: "Jane Smith",
-    grade: "Mid-level",
-    probationPeriod: "3 months",
-    dateOfBirth: "1990-05-15",
-    maritalStatus: "single",
-    nationality: "emirati",
-    profilePic: "",
-    status: "pending",
+    employeeData: {
+      empId: "EMP001",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@company.com",
+      phone: "+1234567890",
+      gender: "male",
+      userRole: "03",
+      designation: "Software Developer",
+      department: "Engineering",
+      jobType: "Full-time",
+      hiringDate: "2024-01-15",
+      onboardingTemplate: "Technical",
+      reportTo: "Jane Smith",
+      grade: "Mid-level",
+      probationPeriod: "3 months",
+      dateOfBirth: "1990-05-15",
+      maritalStatus: "single",
+      nationality: "emirati",
+      profilePic: "",
+      status: "pending",
+    },
+    todos: [],
+    requiredDocuments: [],
+    optionalDocuments: [],
+    currentStep: 1,
   };
 
   const mockDocuments: OnboardingDocument[] = [
@@ -265,15 +274,12 @@ const OnboardingPage = () => {
     <div className="max-w-6xl w-[900px] mx-auto px-4 my-8 space-y-6">
       {/* Header */}
       <div className="text-center flex flex-col items-center mb-8">
-        <div className="flex-shrink-0 mb-4">
-          <Avatar className="h-24 w-24">
-            <AvatarImage
-              src={mockCompanyData.profilePic}
-              alt={`${mockCompanyData.name}`}
-            />
-            <AvatarFallback className="text-2xl">{"KF"}</AvatarFallback>
-          </Avatar>
-        </div>
+          <div className="flex-shrink-0 mb-4">
+            <Avatar className="h-24 w-24">
+              <AvatarImage src={companyData.profilePic} alt={`${companyData.name}`} />
+              <AvatarFallback className="text-2xl">{"KF"}</AvatarFallback>
+            </Avatar>
+          </div>
         <h1 className="text-3xl font-bold mb-2">{t("title")}</h1>
         <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
@@ -373,9 +379,7 @@ const OnboardingPage = () => {
         <CardContent className="p-3 md:p-6">
           {currentStep === 1 && (
             <DataReviewStep
-              data={
-                (onboardingData?.employeeData as Employee) || mockOnboardingData
-              }
+              data={(onboardingData.employeeData as Employee)}
               onNext={() => handleNextStep(2)}
             />
           )}
@@ -387,6 +391,10 @@ const OnboardingPage = () => {
               }
               optionalDocuments={
                 onboardingData?.optionalDocuments || mockDocuments
+              }
+              employeeId={
+                (onboardingData?.employeeData as any)?.id ||
+                (onboardingData?.employeeData as any)?.empId || ""
               }
               onNext={() => handleNextStep(3)}
             />
@@ -400,10 +408,7 @@ const OnboardingPage = () => {
           )}
 
           {currentStep === 4 && (
-            <SubmissionStep
-              phone={mockCompanyData.phone}
-              email={mockCompanyData.email}
-            />
+            <SubmissionStep phone={companyData.phone} email={companyData.email} />
           )}
         </CardContent>
       </Card>

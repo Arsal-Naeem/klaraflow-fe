@@ -62,7 +62,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body
+      <body suppressHydrationWarning
         className={`${poppins.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>

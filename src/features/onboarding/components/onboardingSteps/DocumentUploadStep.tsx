@@ -15,12 +15,14 @@ interface DocumentUploadStepProps {
   requiredDocuments: OnboardingDocument[];
   optionalDocuments?: OnboardingDocument[];
   onNext: () => void;
+  employeeId?: string;
 }
 
 export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
   requiredDocuments,
   optionalDocuments = [],
   onNext,
+  employeeId,
 }) => {
   const uploadDocument = useUploadDocument();
   const updateStep = useUpdateOnboardingStep();
@@ -93,7 +95,7 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
 
     return (
       <DocumentDrawer
-        employeeId="abc"
+        employeeId={employeeId || ""}
         template={document}
         initialData={documentFormData}
         mode={document.uploaded ? "edit" : "add"}

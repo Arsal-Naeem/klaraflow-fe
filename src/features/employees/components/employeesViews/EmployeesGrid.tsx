@@ -12,7 +12,7 @@ import {
   Trash2,
   Eye,
 } from "lucide-react";
-import { Employee } from "../types";
+import { Employee } from "../../types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,

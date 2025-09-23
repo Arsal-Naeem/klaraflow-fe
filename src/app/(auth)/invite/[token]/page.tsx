@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { useTranslations } from "next-intl";
-import { useActivateAccount } from "@/features/authentication";
+import { authService } from "@/features/authentication/services/auth.service";
+import { tokenManager } from "@/features/authentication/hooks/useAuth";
+import { onboardingService } from "@/features/onboarding/services/onboarding.service";
+import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { AuthenticationLayout } from "@/components/layouts/AuthenticationLayout/AuthenticationLayout";
 
@@ -41,7 +44,6 @@ export default function ActivatePage() {
   }, [token, router]);
 
   // Mutations
-  const activateAccount = useActivateAccount();
 
   // Form
   const form = useForm<ActivateAccountData>({
@@ -52,14 +54,43 @@ export default function ActivatePage() {
     },
   });
 
+  const [submitting, setSubmitting] = React.useState(false);
+
   // Handler
   const handleSubmit = async (data: ActivateAccountData) => {
     if (!token || typeof token !== "string") return;
 
-    activateAccount.mutate({
-      token,
-      password: data.password,
-    });
+    setSubmitting(true);
+    try {
+      const response = await authService.activateAccount({
+        token,
+        password: data.password,
+      });
+
+      // store token and user similar to useActivateAccount
+      tokenManager.setToken(response.token);
+      tokenManager.setUser(response.user);
+
+      // Attempt to fetch onboarding data for this user
+      try {
+        const onboardingData = await onboardingService.getOnboardingData();
+        // If onboarding session exists and is in progress (currentStep < 4 or status), redirect to onboarding
+        if (onboardingData && onboardingData.currentStep && onboardingData.currentStep > 0) {
+          router.push("/onboarding");
+          return;
+        }
+      } catch (err) {
+        // ignore and fallthrough
+      }
+
+      // Fallback to dashboard
+      router.push("/dashboard");
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Failed to activate account";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // Don't render if no token
@@ -89,7 +120,7 @@ export default function ActivatePage() {
               label={t("password")}
               placeholder={t("password")}
               required
-              disabled={activateAccount.isPending}
+              disabled={submitting}
             />
             <TextField
               control={form.control}
@@ -98,13 +129,13 @@ export default function ActivatePage() {
               label={t("confirmPassword")}
               placeholder={t("confirmPassword")}
               required
-              disabled={activateAccount.isPending}
+              disabled={submitting}
             />
             <Button
               type="submit"
               variant={"accent"}
               className="mt-2 w-full"
-              isLoading={activateAccount.isPending}
+              isLoading={submitting}
               loadingText={t("activating")}
             >
               {t("activateButton")}
