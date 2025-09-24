@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/utils/toast";
 import { onboardingService } from "../services";
+import { useState, useRef } from 'react';
 import { DocumentUploadField } from "@/features/documents/types";
 import { documentKeys } from "@/features/documents/hooks/useDocuments";
 
@@ -58,17 +59,31 @@ export function useUpdateTodoItem() {
   });
 }
 
+// Hook to advance onboarding step by calling the session increment API.
+// This uses a mutation and an in-memory lock to avoid duplicate calls from the
+// same UI step. The server is the source-of-truth for progression; this
+// helper simply requests the server to advance the session once.
+export function useAdvanceOnboardingStep() {
+  const queryClient = useQueryClient();
+  const inFlightRef = useRef(false);
 
-// NOTE: The step advancing API previously caused race conditions when called from
-// multiple client components. Per recent decision, step progression will be
-// controlled by the backend within each individual API (e.g. document upload,
-// todo completion). To avoid accidental usage we intentionally do NOT export a
-// hook that calls `onboardingService.updateOnboardingStep` here.
-
-// If consumers still import `useUpdateOnboardingStep` it will throw a helpful
-// error to make the migration obvious during development.
-export function useUpdateOnboardingStep(): never {
-  throw new Error(
-    "useUpdateOnboardingStep was removed. Step progression is now handled server-side by each API. Remove calls to this hook."
-  );
+  return {
+    mutateAsync: async () => {
+      if (inFlightRef.current) {
+        // prevent duplicate simultaneous calls
+        return;
+      }
+      inFlightRef.current = true;
+      try {
+        const updated = await onboardingService.incrementOnboardingStep();
+        // Refresh onboarding data cache
+        queryClient.invalidateQueries({ queryKey: onboardingKeys.data() });
+        return updated;
+      } catch (err) {
+        throw err;
+      } finally {
+        inFlightRef.current = false;
+      }
+    },
+  } as const;
 }

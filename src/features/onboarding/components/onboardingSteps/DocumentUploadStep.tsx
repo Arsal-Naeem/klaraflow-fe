@@ -8,6 +8,7 @@ import { onboardingService } from "../../services/onboarding.service";
 import DocumentDrawer from "../../../documents/components/DocumentDrawer";
 // step progression is handled server-side; do not call update step from client
 import { useUploadDocument } from "@/features/documents/hooks/useDocuments";
+import { useAdvanceOnboardingStep } from "@/features/onboarding/hooks/useOnboarding";
 import { useTranslations } from "next-intl";
 
 interface DocumentUploadStepProps {
@@ -24,6 +25,8 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
   employeeId: propEmployeeId,
 }) => {
   const uploadDocument = useUploadDocument();
+  const advanceStep = useAdvanceOnboardingStep();
+  const [advancing, setAdvancing] = React.useState(false);
 
   const [loading, setLoading] = React.useState(false);
   const [fetchedRequired, setFetchedRequired] = React.useState<OnboardingDocument[] | null>(null);
@@ -272,11 +275,27 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
           {t("disclaimer")}
         </div>
       ) : (
-        <div className="flex justify-end gap-2 pt-3">
-          <Button onClick={onNext} variant="accent" size={"lg"}>
-            {tCommon("next")}
-          </Button>
-        </div>
+          <div className="flex justify-end gap-2 pt-3">
+            <Button
+              onClick={async () => {
+                if (advancing) return;
+                setAdvancing(true);
+                try {
+                  await advanceStep.mutateAsync();
+                } catch (err) {
+                  console.warn('Failed to advance onboarding step:', err);
+                } finally {
+                  setAdvancing(false);
+                }
+                onNext();
+              }}
+              variant="accent"
+              size={"lg"}
+              disabled={advancing}
+            >
+              {tCommon("next")}
+            </Button>
+          </div>
       )}
     </div>
   );

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { TodoItem } from "../../types";
-import { useUpdateTodoItem } from "../../hooks/useOnboarding";
+import { useUpdateTodoItem, useAdvanceOnboardingStep } from "../../hooks/useOnboarding";
 import { useTranslations } from "next-intl";
 
 interface TodoListStepProps {
@@ -17,6 +17,8 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
   onNext,
 }) => {
   const updateTodoItem = useUpdateTodoItem();
+  const advanceStep = useAdvanceOnboardingStep();
+  const [advancing, setAdvancing] = React.useState(false);
 
   const t = useTranslations("onboarding.steps.step3");
   const tMain = useTranslations("onboarding");
@@ -108,11 +110,27 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
           {t("disclaimer")}
         </div>
       ) : (
-        <div className="flex justify-end gap-2 pt-3">
-          <Button onClick={onNext} variant="accent" size={"lg"}>
-            {tCommon("next")}
-          </Button>
-        </div>
+          <div className="flex justify-end gap-2 pt-3">
+            <Button
+              onClick={async () => {
+                if (advancing) return;
+                setAdvancing(true);
+                try {
+                  await advanceStep.mutateAsync();
+                } catch (err) {
+                  console.warn("Failed to advance onboarding step:", err);
+                } finally {
+                  setAdvancing(false);
+                }
+                onNext();
+              }}
+              variant="accent"
+              size={"lg"}
+              disabled={advancing}
+            >
+              {tCommon("next")}
+            </Button>
+          </div>
       )}
     </div>
   );

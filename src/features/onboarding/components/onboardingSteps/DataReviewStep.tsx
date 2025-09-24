@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Employee } from "@/features/employees";
 import onboardingService from "@/features/onboarding/services/onboarding.service";
+import { useAdvanceOnboardingStep } from "@/features/onboarding/hooks/useOnboarding";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import z from "zod";
@@ -112,6 +113,9 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
       nationality: "",
     },
   });
+
+  const advanceStep = useAdvanceOnboardingStep();
+  const [advancing, setAdvancing] = useState(false);
 
   // Watch form values for real-time updates
   const watchedValues = useWatch({
@@ -277,6 +281,8 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
     // Build multipart FormData to send review data (include profilePic as camelCase)
     try {
+      if (advancing) return;
+      setAdvancing(true);
       const values = form.getValues();
       const fd = new FormData();
 
@@ -299,13 +305,24 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
       // Call reviewOnboarding API
       await onboardingService.reviewOnboarding(fd);
 
-  // Note: Step progression is handled server-side by individual APIs.
+      // Attempt to advance onboarding step once (best-effort).
+      try {
+        await advanceStep.mutateAsync();
+      } catch (err) {
+        // Non-fatal: log but continue to next UI step since review succeeded
+        console.warn("Failed to advance onboarding step:", err);
+      }
+
+      // Notify user and move UI forward
       toast.success("Information reviewed and saved successfully.");
       onNext();
     } catch (error: any) {
       console.error("Failed to submit review:", error);
       const message = error?.response?.data?.message || "Failed to save review";
       toast.error(message);
+    }
+    finally {
+      setAdvancing(false);
     }
   };
 
@@ -691,7 +708,7 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-2 pt-6">
-          <Button onClick={handleNext} variant="accent">
+          <Button onClick={handleNext} variant="accent" disabled={advancing}>
             {tCommon("next")}
           </Button>
         </div>
