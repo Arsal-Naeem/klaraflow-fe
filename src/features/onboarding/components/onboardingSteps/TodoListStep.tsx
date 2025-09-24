@@ -21,19 +21,44 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
   const updateTodoItem = useUpdateTodoItem();
   const advanceStep = useAdvanceOnboardingStep();
   const [advancing, setAdvancing] = React.useState(false);
+  const [localTodos, setLocalTodos] = React.useState<TodoItem[]>(todos);
+  const [mutatingIds, setMutatingIds] = React.useState<Set<string>>(new Set());
 
   const t = useTranslations("onboarding.steps.step3");
   const tMain = useTranslations("onboarding");
   const tCommon = useTranslations("common");
 
-  const completedCount = todos.filter((todo) => todo.is_completed).length;
-  const canProceed = todos.every((todo) => todo.is_completed);
+  // Use a local copy for optimistic updates so toggling (including uncheck)
+  // reflects immediately in the UI while the mutation is in-flight.
+  React.useEffect(() => {
+    setLocalTodos(todos);
+  }, [todos]);
+
+  const completedCount = localTodos.filter((todo) => todo.is_completed).length;
+  const canProceed = localTodos.length > 0 ? localTodos.every((todo) => todo.is_completed) : false;
 
   const handleTodoToggle = async (id: string, completed: boolean) => {
+    // Optimistically update local state
+    const prevTodos = localTodos;
+    setLocalTodos((t) => t.map((item) => (item.id === id ? { ...item, is_completed: completed } : item)));
+
+    // mark as mutating so UI can disable repeated clicks
+    setMutatingIds((s) => new Set(s).add(id));
+
     try {
       await updateTodoItem.mutateAsync({ id, completed });
-    } catch (error) {
+    } catch (error: any) {
+      // revert optimistic update on error
+      setLocalTodos(prevTodos);
+      const message = error?.response?.data?.message || "Failed to update todo item";
+      toast.error(message);
       console.error("Failed to update todo:", error);
+    } finally {
+      setMutatingIds((s) => {
+        const ns = new Set(s);
+        ns.delete(id);
+        return ns;
+      });
     }
   };
 
@@ -53,6 +78,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
                 handleTodoToggle(todo.id, checked as boolean)
               }
               className="mt-1 cursor-pointer"
+              disabled={mutatingIds.has(todo.id)}
             />
 
             <div className="flex-1">
@@ -102,7 +128,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
       {/* Tasks by Category */}
 
       <div className="space-y-3">
-        {todos.map((todo) => (
+        {localTodos.map((todo) => (
           <TodoCard key={todo.id} todo={todo} />
         ))}
       </div>
