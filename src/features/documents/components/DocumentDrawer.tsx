@@ -202,6 +202,8 @@ const DocumentDrawer = ({
   const renderField = (field: DocumentField, index: number) => {
     const fieldName = field.id || `field_${index}`;
 
+    console.debug('Rendering field:', { name: fieldName, type: field.type, label: field.label });
+
     switch (field.type) {
       case "text":
         return (
@@ -253,7 +255,18 @@ const DocumentDrawer = ({
           />
         );
       default:
-        return null;
+        // Unknown type from backend - fallback to a text input so the user can still enter data
+        return (
+          <TextField
+            key={index}
+            control={form.control}
+            name={fieldName}
+            label={field.label}
+            placeholder={field.placeholder}
+            required={field.required}
+            className="w-full"
+          />
+        );
     }
   };
 
@@ -298,6 +311,9 @@ const DocumentDrawer = ({
               <p className="text-sm text-muted-foreground">
                 This document template doesn't have any fields configured.
               </p>
+              <pre className="text-xs text-muted-foreground mt-4 text-left overflow-auto max-h-40 p-2 bg-muted/5 rounded">
+                {JSON.stringify(template?.fields ?? template, null, 2)}
+              </pre>
             </div>
           )}
 

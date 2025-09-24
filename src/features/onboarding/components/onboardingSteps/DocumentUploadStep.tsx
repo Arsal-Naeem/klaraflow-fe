@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { FileText, AlertCircle } from "lucide-react";
 import { OnboardingDocument } from "../../types";
+import { onboardingService } from "../../services/onboarding.service";
 import DocumentDrawer from "../../../documents/components/DocumentDrawer";
 // step progression is handled server-side; do not call update step from client
 import { useUploadDocument } from "@/features/documents/hooks/useDocuments";
@@ -20,9 +21,14 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
   requiredDocuments,
   optionalDocuments = [],
   onNext,
-  employeeId,
+  employeeId: propEmployeeId,
 }) => {
   const uploadDocument = useUploadDocument();
+
+  const [loading, setLoading] = React.useState(false);
+  const [fetchedRequired, setFetchedRequired] = React.useState<OnboardingDocument[] | null>(null);
+  const [fetchedOptional, setFetchedOptional] = React.useState<OnboardingDocument[] | null>(null);
+  const [fetchedEmployeeId, setFetchedEmployeeId] = React.useState<string | undefined>(propEmployeeId);
 
     const t = useTranslations("onboarding.steps.step2");
     const tMain = useTranslations("onboarding");
@@ -32,11 +38,42 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
     Record<string, Record<string, any>>
   >({});
 
-  const uploadedCount = requiredDocuments.filter((doc) => doc.uploaded).length;
-  const requiredUploadedCount = requiredDocuments.filter(
-    (doc) => doc.uploaded
-  ).length;
-  const canProceed = requiredDocuments.every((doc) => doc.uploaded);
+  // If parent did not supply documents, fetch from onboarding/my-data
+  React.useEffect(() => {
+    const shouldFetch = (!requiredDocuments || requiredDocuments.length === 0) && !fetchedRequired;
+
+    if (!shouldFetch) return;
+
+    let mounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await onboardingService.getOnboardingData();
+
+        if (!mounted) return;
+
+        setFetchedRequired(data.requiredDocuments || []);
+        setFetchedOptional(data.optionalDocuments || []);
+        setFetchedEmployeeId(data.employeeData?.empId || data.id || propEmployeeId);
+      } catch (error) {
+        console.error('Failed to fetch onboarding my-data:', error);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [requiredDocuments, fetchedRequired, propEmployeeId]);
+
+  const effectiveRequired = (requiredDocuments && requiredDocuments.length > 0) ? requiredDocuments : (fetchedRequired || []);
+  const effectiveOptional = (optionalDocuments && optionalDocuments.length > 0) ? optionalDocuments : (fetchedOptional || []);
+  const effectiveEmployeeId = propEmployeeId || fetchedEmployeeId;
+
+  const uploadedCount = effectiveRequired.filter((doc) => doc.uploaded).length + effectiveOptional.filter((doc) => doc.uploaded).length;
+  const requiredUploadedCount = effectiveRequired.filter((doc) => doc.uploaded).length;
+  const canProceed = effectiveRequired.length === 0 ? true : effectiveRequired.every((doc) => doc.uploaded);
 
   const handleDocumentUpdate = async (
     documentId: string,
@@ -58,6 +95,47 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
   const DocumentCard = ({ document }: { document: OnboardingDocument }) => {
     // Get saved data for this document
     const documentFormData = documentsData[document.id] || {};
+
+    // Normalize the document template shape so DocumentDrawer always receives
+    // fields in the expected `DocumentField` format (id, label, type, ...)
+    const normalizeTemplate = (doc: OnboardingDocument) => {
+      const mapField = (f: any, index: number) => {
+        const backendType = (f?.field_type ?? f?.type ?? 'text').toString().toLowerCase();
+        const label = (f?.label ?? f?.name ?? '').toString().toLowerCase();
+        const description = (f?.description ?? '').toString().toLowerCase();
+
+        let mappedType: 'text' | 'textarea' | 'date' | 'file' = 'text';
+
+        if (backendType === 'textarea' || label.includes('textarea') || description.includes('textarea')) {
+          mappedType = 'textarea';
+        } else if (backendType === 'date' || label.includes('date') || description.includes('date') || label.includes('dob')) {
+          mappedType = 'date';
+        } else if (
+          backendType === 'file' || backendType === 'image' || backendType === 'upload' ||
+          label.includes('image') || label.includes('photo') || label.includes('picture') || label.includes('file') || description.includes('image')
+        ) {
+          mappedType = 'file';
+        } else {
+          mappedType = 'text';
+        }
+
+        return {
+          id: f?.id !== undefined && f?.id !== null ? String(f.id) : `field_${index}`,
+          label: f?.label ?? f?.name ?? `Field ${index + 1}`,
+          type: mappedType,
+          placeholder: f?.placeholder ?? undefined,
+          description: f?.description ?? undefined,
+          required: !!f?.required,
+          width: (f?.width === 'full' || f?.width === 'half') ? f.width : 'half',
+        };
+      };
+
+      return {
+        id: document.id ?? (document as any)?.template_id ?? "",
+        name: document.name ?? (document as any)?.title ?? "",
+        fields: Array.isArray((doc as any).fields) ? (doc as any).fields.map(mapField) : [],
+      };
+    };
 
     const handleDocumentSubmit = async (data: Record<string, any>) => {
       console.log("Document form submitted:", data);
@@ -90,10 +168,13 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
       }
     };
 
-    return (
+  const normalizedTemplate = normalizeTemplate(document);
+  console.debug('DocumentCard - normalized template:', normalizedTemplate);
+
+  return (
       <DocumentDrawer
-        employeeId={employeeId || ""}
-        template={document}
+        employeeId={effectiveEmployeeId || ""}
+        template={normalizedTemplate}
         initialData={documentFormData}
         mode={document.uploaded ? "edit" : "add"}
         onSubmit={handleDocumentSubmit}

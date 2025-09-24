@@ -92,6 +92,8 @@ export const documentService = {
       if (field.value instanceof File) {
         // Files stay as binary
         formData.append(field.id, field.value);
+        // Also append to a generic files array so backend can receive all files under 'files'
+        formData.append('files', field.value);
       } else if (field.value instanceof Date) {
         normalFields[field.id] = field.value.toISOString();
       } else if (
@@ -106,8 +108,10 @@ export const documentService = {
     // Add JSON string of normal fields
     formData.append("fields", JSON.stringify(normalFields));
 
+    // Use the onboarding documents submission endpoint (templateId in path)
+    // Backend expects: POST /api/v1/onboarding/documents/submit/{template_id}
     const response = await api.post<ApiResponse<DocumentUpload>>(
-      `onboarding/documents/upload`,
+      `onboarding/documents/submit/${templateId}`,
       formData,
       {
         headers: {
