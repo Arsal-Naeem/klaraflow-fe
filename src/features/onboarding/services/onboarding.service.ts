@@ -189,6 +189,14 @@ export const onboardingService = {
     return toOnboardingData(raw);
   },
 
+  // POST - Submit the onboarding application for HR review
+  async submitOnboarding(): Promise<{ message?: string }> {
+    const response = await api.post<ApiResponse<any>>(
+      `${ONBOARDING_BASE_URL}/submit`
+    );
+    return response?.data ?? { success: false };
+  },
+
 };
 
 export default onboardingService;

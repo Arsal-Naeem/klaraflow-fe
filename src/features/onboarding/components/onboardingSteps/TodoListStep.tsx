@@ -5,6 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { TodoItem } from "../../types";
 import { useUpdateTodoItem, useAdvanceOnboardingStep } from "../../hooks/useOnboarding";
+import { onboardingService } from "@/features/onboarding/services/onboarding.service";
+import { toast } from "@/utils/toast";
 import { useTranslations } from "next-intl";
 
 interface TodoListStepProps {
@@ -113,17 +115,29 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
           <div className="flex justify-end gap-2 pt-3">
             <Button
               onClick={async () => {
-                if (advancing) return;
-                setAdvancing(true);
-                try {
-                  await advanceStep.mutateAsync();
-                } catch (err) {
-                  console.warn("Failed to advance onboarding step:", err);
-                } finally {
-                  setAdvancing(false);
-                }
-                onNext();
-              }}
+                  if (advancing) return;
+                  setAdvancing(true);
+                  try {
+                    // First, submit the onboarding application (must succeed before proceeding)
+                    await onboardingService.submitOnboarding();
+
+                    // Then attempt to advance the onboarding step (best-effort)
+                    try {
+                      await advanceStep.mutateAsync();
+                    } catch (err) {
+                      console.warn("Failed to advance onboarding step:", err);
+                    }
+
+                    // Proceed to next UI step only if submit succeeded
+                    onNext();
+                  } catch (err: any) {
+                    const message = err?.response?.data?.message || 'Failed to submit application';
+                    toast.error(message);
+                    console.error('submitOnboarding failed:', err);
+                  } finally {
+                    setAdvancing(false);
+                  }
+                }}
               variant="accent"
               size={"lg"}
               disabled={advancing}
