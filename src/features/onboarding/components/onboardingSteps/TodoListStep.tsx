@@ -22,8 +22,8 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
   const tMain = useTranslations("onboarding");
   const tCommon = useTranslations("common");
 
-  const completedCount = todos.filter((todo) => todo.completed).length;
-  const canProceed = todos.every((todo) => todo.completed);
+  const completedCount = todos.filter((todo) => todo.is_completed).length;
+  const canProceed = todos.every((todo) => todo.is_completed);
 
   const handleTodoToggle = async (id: string, completed: boolean) => {
     try {
@@ -37,14 +37,14 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
     return (
       <Card
         className={`transition-all duration-200 ${
-          todo.completed && "border-green-600 bg-green-100 dark:bg-green-900/40"
+          todo.is_completed && "border-green-600 bg-green-100 dark:bg-green-900/40"
         }
       }`}
       >
         <CardContent className="px-4">
           <div className="flex items-start gap-3">
             <Checkbox
-              checked={todo.completed}
+              checked={todo.is_completed}
               onCheckedChange={(checked) =>
                 handleTodoToggle(todo.id, checked as boolean)
               }
@@ -55,7 +55,7 @@ export const TodoListStep: React.FC<TodoListStepProps> = ({
               <div className="flex items-start justify-between mb-2">
                 <h3
                   className={`font-semibold ${
-                    todo.completed ? "line-through" : ""
+                    todo.is_completed ? "line-through" : ""
                   }`}
                 >
                   {todo.title}

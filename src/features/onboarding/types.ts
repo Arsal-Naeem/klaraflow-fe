@@ -6,7 +6,7 @@ export interface TodoItem {
   id: string;
   title: string;
   description: string;
-  completed?: boolean;
+  is_completed?: boolean;
 }
 
 export interface OnboardingDocument extends DocumentTemplate {
