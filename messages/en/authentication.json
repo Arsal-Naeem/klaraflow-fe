@@ -1,0 +1,53 @@
+{
+  "login": {
+    "title": "Sign in",
+    "loginViaOTP": "Login via OTP",
+    "loginViaPassword": "Login via Password",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Login",
+    "loggingIn": "Logging in...",
+    "sendOtp": "Send OTP",
+    "sendingOtp": "Sending OTP...",
+    "enterOtp": "Enter OTP",
+    "verifyOtp": "Verify OTP",
+    "verifying": "Verifying...",
+    "back": "Back"
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "sendEmailFailed": "Failed to send reset email. Please try again.",
+    "invalidPin": "Please enter a valid 6-digit pin.",
+    "pinFailed": "Failed to verify pin. Please try again.",
+    "subtitleEmail": "Enter your email to receive a password reset link.",
+    "subtitlePin": "Enter the 6-digit pin sent to your email.",
+    "pinPlaceholder": "Enter 6-digit pin",
+    "verifying": "Verifying pin...",
+    "sendCodeButton": "Send Code",
+    "verifyButton": "Verify Code"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "subtitle": "Enter your new password below.",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "resetButton": "Reset Password",
+    "resetting": "Resetting...",
+    "resetSuccessButton": "Reset Password",
+    "passwordsDoNotMatch": "Passwords do not match.",
+    "resetFailed": "Failed to reset password. Please try again.",
+    "resetSuccessMessage": "Password reset successful! Redirecting..."
+  },
+  "activateAccount": {
+    "headerExtras": "Welcome to KlaraFlow! Set up your password to complete activation.",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "activateButton": "Activate Account",
+    "activating": "Activating...",
+    "passwordsDoNotMatch": "Passwords do not match.",
+    "activationFailed": "Failed to activate account. Please try again.",
+    "activationSuccessMessage": "Account activated successfully! Redirecting...",
+    "invalidToken": "Invalid or expired invitation link."
+  }
+}

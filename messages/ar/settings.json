@@ -1,0 +1,19 @@
+{
+  "menu": {
+    "employeeSettings": "إعدادات الموظف"
+  },
+  "tabs": {
+    "departments": "الأقسام",
+    "designations": "المسميات الوظيفية",
+    "documents": "المستندات"
+  },
+  "theme": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "language": {
+    "english": "English",
+    "arabic": "العربية"
+  }
+}

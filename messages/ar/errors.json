@@ -1,0 +1,7 @@
+{
+  "notFound": "الصفحة غير موجودة",
+  "unauthorized": "وصول غير مصرح به",
+  "serverError": "خطأ في الخادم الداخلي",
+  "networkError": "خطأ في اتصال الشبكة",
+  "validationError": "فشل في التحقق"
+}

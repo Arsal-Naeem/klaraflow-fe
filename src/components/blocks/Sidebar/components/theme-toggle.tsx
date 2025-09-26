@@ -17,9 +17,9 @@ export function ThemeToggle() {
   const { locale } = useLanguageNavigation();
 
   const themeOptions = [
-    { value: "light", label: t('theme.light'), icon: Sun },
-    { value: "dark", label: t('theme.dark'), icon: Moon },
-    { value: "system", label: t('theme.system'), icon: Monitor },
+    { value: "light", label: t('settings.theme.light'), icon: Sun },
+    { value: "dark", label: t('settings.theme.dark'), icon: Moon },
+    { value: "system", label: t('settings.theme.system'), icon: Monitor },
   ];
 
   const currentThemeIcon =

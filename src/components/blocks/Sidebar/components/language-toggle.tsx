@@ -20,7 +20,7 @@ export function LanguageToggle() {
   
   const languageOptions = availableLocales.map(localeConfig => ({
     value: localeConfig.locale,
-    label: t(`language.${localeConfig.locale === 'en' ? 'english' : 'arabic'}`),
+    label: t(`settings.language.${localeConfig.locale === 'en' ? 'english' : 'arabic'}`),
     flag: localeConfig.flag,
     nativeName: localeConfig.nativeName,
   }));

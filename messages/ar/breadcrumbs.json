@@ -1,0 +1,15 @@
+{
+  "dashboard": "لوحة التحكم",
+  "time": "الوقت",
+  "timesheets": "جداول الوقت",
+  "leaveRequests": "طلبات الإجازة",
+  "payroll": "كشف الراتب",
+  "company": "الشركة",
+  "employees": "الموظفون",
+  "departments": "الأقسام",
+  "reports": "التقارير",
+  "organizationSettings": "إعدادات المؤسسة",
+  "profileSettings": "إعدادات الملف الشخصي",
+  "addEmployee": "إضافة موظف",
+  "onboarding": "الانضمام"
+}

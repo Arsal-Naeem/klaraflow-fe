@@ -85,8 +85,8 @@ const data = {
           url: "/company/employees",
         },
         {
-          title: "Departments/Teams",
-          url: "/company/departments",
+          title: "Onboarding",
+          url: "/company/onboarding",
         },
       ],
     },

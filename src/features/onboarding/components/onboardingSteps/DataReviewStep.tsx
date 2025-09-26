@@ -95,9 +95,9 @@ export const DataReviewStep: React.FC<DataReviewStepProps> = ({
 
   const t = useTranslations("onboarding.steps.step1");
   const tCommon = useTranslations("common");
-  const tBasic = useTranslations("addEmployee.mandatoryForm");
-  const tPersonal = useTranslations("addEmployee.personalForm");
-  const tWork = useTranslations("addEmployee.workForm");
+  const tBasic = useTranslations("onboarding.addEmployee.mandatoryForm");
+  const tPersonal = useTranslations("onboarding.addEmployee.personalForm");
+  const tWork = useTranslations("onboarding.addEmployee.workForm");
 
   const form = useForm<addEmployeeData>({
     resolver: zodResolver(addEmployeeSchema),

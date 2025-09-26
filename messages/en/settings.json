@@ -1,0 +1,20 @@
+{
+  "menu": {
+    "employeeSettings": "Employee Settings"
+  },
+  "tabs": {
+    "departments": "Departments",
+    "designations": "Designations",
+    "documents": "Documents",
+    "onboarding": "Onboarding"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "english": "English",
+    "arabic": "العربية"
+  }
+}

@@ -32,10 +32,10 @@ export function WorkCard({
   form?: any;
   setTabValue: (value: string) => void;
 }) {
-  const t = useTranslations("addEmployee");
+  const t = useTranslations("onboarding.addEmployee");
   const tCommon = useTranslations("common");
-  const tWork = useTranslations("addEmployee.workForm");
-  const tPlaceholders = useTranslations("addEmployee.workForm.placeholders");
+  const tWork = useTranslations("onboarding.addEmployee.workForm");
+  const tPlaceholders = useTranslations("onboarding.addEmployee.workForm.placeholders");
 
   const {
     data: onboardingTemplate = [],

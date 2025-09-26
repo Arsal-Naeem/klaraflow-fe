@@ -121,7 +121,10 @@ export function NavMain({
                       className={isArabic ? "border-r" : "border-l"}
                     >
                       {item.items.map((subItem) => {
-                        const isSubActive = subItem.url === activeUrl;
+                        const isSubActive =
+                          activeUrl &&
+                          subItem.url &&
+                          activeUrl.startsWith(subItem.url);
                         return (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton asChild>

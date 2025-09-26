@@ -44,7 +44,7 @@ type addEmployeeData = z.infer<typeof addEmployeeSchema>;
 
 export default function Page() {
   const isDesktop = useIsDesktop();
-  const t = useTranslations("addEmployee");
+  const t = useTranslations("onboarding.addEmployee");
   const { isRTL } = useLanguageNavigation();
   const router = useRouter();
 

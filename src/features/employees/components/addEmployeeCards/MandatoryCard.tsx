@@ -29,11 +29,11 @@ export function MandatoryCard({
   form?: any;
   setTabValue: (value: string) => void;
 }) {
-  const t = useTranslations("addEmployee");
+  const t = useTranslations("onboarding.addEmployee");
   const tCommon = useTranslations("common");
-  const tMandatory = useTranslations("addEmployee.mandatoryForm");
+  const tMandatory = useTranslations("onboarding.addEmployee.mandatoryForm");
   const tPlaceholders = useTranslations(
-    "addEmployee.mandatoryForm.placeholders"
+    "onboarding.addEmployee.mandatoryForm.placeholders"
   );
 
   const {

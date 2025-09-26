@@ -28,11 +28,11 @@ export function PersonalCard({
   onSubmit?: () => Promise<void>;
   isLoading?: boolean;
 }) {
-  const t = useTranslations("addEmployee");
+  const t = useTranslations("onboarding.addEmployee");
   const tCommon = useTranslations("common");
-  const tPersonal = useTranslations("addEmployee.personalForm");
+  const tPersonal = useTranslations("onboarding.addEmployee.personalForm");
   const tPlaceholders = useTranslations(
-    "addEmployee.personalForm.placeholders"
+    "onboarding.addEmployee.personalForm.placeholders"
   );
 
   const handleBack = () => {

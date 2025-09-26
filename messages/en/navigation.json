@@ -1,0 +1,11 @@
+{
+  "dashboard": "Dashboard",
+  "time": "Time",
+  "timesheet": "Timesheet",
+  "leaveRequest": "Leave Request",
+  "payroll": "Payroll",
+  "company": "Company",
+  "employees": "Employees",
+  "onboarding": "Onboarding",
+  "reports": "Reports"
+}

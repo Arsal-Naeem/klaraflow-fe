@@ -1,0 +1,7 @@
+{
+  "notFound": "Page not found",
+  "unauthorized": "Unauthorized access",
+  "serverError": "Internal server error",
+  "networkError": "Network connection error",
+  "validationError": "Validation failed"
+}

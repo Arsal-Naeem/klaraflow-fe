@@ -1,11 +1,11 @@
 import FullPageLayout from "@/components/layouts/FullPageLayout/FullPageLayout";
 
 export default function Page() {
-  const breadcrumbItems = [{ name: "Company" }, { name: "Departments" }];
+  const breadcrumbItems = [{ name: "Company" }, { name: "Onboarding" }];
 
   return (
     <FullPageLayout breadcrumbItems={breadcrumbItems}>
-      <h2>Departments Page</h2>
+      <h2>Onboarding Page</h2>
     </FullPageLayout>
   );
 }
