@@ -42,7 +42,7 @@ type SendOtpData = z.infer<typeof sendOtpSchema>;
 type VerifyOtpData = z.infer<typeof verifyOtpSchema>;
 
 export default function LoginPage() {
-  const t = useTranslations("login");
+  const t = useTranslations("authentication.login");
   const [tab, setTab] = React.useState("email");
   const [otpSent, setOtpSent] = React.useState(false);
 

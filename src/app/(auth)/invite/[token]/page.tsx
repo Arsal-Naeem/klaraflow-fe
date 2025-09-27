@@ -34,7 +34,7 @@ type ActivateAccountData = z.infer<typeof activateAccountSchema>;
 export default function ActivatePage() {
   const { token } = useParams();
   const router = useRouter();
-  const t = useTranslations("activateAccount");
+  const t = useTranslations("authentication.activateAccount");
 
   // Redirect if no token
   React.useEffect(() => {

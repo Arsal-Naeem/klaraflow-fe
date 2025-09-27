@@ -29,7 +29,7 @@ const resetPasswordSchema = z
 type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordPage() {
-  const t = useTranslations("resetPassword");
+  const t = useTranslations("authentication.resetPassword");
   const tCommon = useTranslations("common");
   const router = useRouter();
   const searchParams = useSearchParams();

@@ -29,7 +29,7 @@ type ForgotPasswordEmailData = z.infer<typeof forgotPasswordEmailSchema>;
 type VerifyPinData = z.infer<typeof verifyPinSchema>;
 
 export default function ForgetPasswordPage() {
-  const t = useTranslations("forgotPassword");
+  const t = useTranslations("authentication.forgotPassword");
   const tCommon = useTranslations("common");
   const [step, setStep] = React.useState<"email" | "pin">("email");
   const [userEmail, setUserEmail] = React.useState("");
