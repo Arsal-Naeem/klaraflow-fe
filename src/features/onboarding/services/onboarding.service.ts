@@ -2,7 +2,6 @@ import api from "@/lib/api";
 import { TodoItem, OnboardingData } from "../types";
 import { ApiResponse } from "@/types/api.types";
 import { Employee } from "@/features/employees";
-import { DocumentUpload, DocumentUploadField } from "@/features/documents/types";
 
 // Onboarding API endpoints
 const ONBOARDING_BASE_URL = "/onboarding";
@@ -36,62 +35,91 @@ export const onboardingService = {
       // helper to map backend field to app's DocumentField
       const mapField = (f: any) => {
         // backend might use `field_type` or `type` as the key
-        const backendType = (f?.field_type ?? f?.type ?? 'text').toString().toLowerCase();
+        const backendType = (f?.field_type ?? f?.type ?? "text")
+          .toString()
+          .toLowerCase();
 
         // Heuristics: try to infer a more specific type from label/description when backendType is generic
-        const label = (f?.label ?? f?.name ?? '').toString().toLowerCase();
-        const description = (f?.description ?? '').toString().toLowerCase();
+        const label = (f?.label ?? f?.name ?? "").toString().toLowerCase();
+        const description = (f?.description ?? "").toString().toLowerCase();
 
-        let mappedType: 'text' | 'textarea' | 'date' | 'file' = 'text';
+        let mappedType: "text" | "textarea" | "date" | "file" = "text";
 
-        if (backendType === 'textarea' || label.includes('textarea') || description.includes('textarea')) {
-          mappedType = 'textarea';
-        } else if (backendType === 'date' || label.includes('date') || description.includes('date') || label.includes('dob')) {
-          mappedType = 'date';
-        } else if (
-          backendType === 'file' || backendType === 'image' || backendType === 'upload' ||
-          label.includes('image') || label.includes('photo') || label.includes('picture') || label.includes('file') || description.includes('image')
+        if (
+          backendType === "textarea" ||
+          label.includes("textarea") ||
+          description.includes("textarea")
         ) {
-          mappedType = 'file';
+          mappedType = "textarea";
+        } else if (
+          backendType === "date" ||
+          label.includes("date") ||
+          description.includes("date") ||
+          label.includes("dob")
+        ) {
+          mappedType = "date";
+        } else if (
+          backendType === "file" ||
+          backendType === "image" ||
+          backendType === "upload" ||
+          label.includes("image") ||
+          label.includes("photo") ||
+          label.includes("picture") ||
+          label.includes("file") ||
+          description.includes("image")
+        ) {
+          mappedType = "file";
         } else {
           // default to text
-          mappedType = 'text';
+          mappedType = "text";
         }
 
         return {
           id: f?.id !== undefined && f?.id !== null ? String(f.id) : undefined,
-          label: f?.label ?? f?.name ?? '',
+          label: f?.label ?? f?.name ?? "",
           type: mappedType,
           placeholder: f?.placeholder ?? undefined,
           description: f?.description ?? undefined,
           required: !!f?.required,
-          width: (f?.width === 'full' || f?.width === 'half') ? f.width : (f?.full ? 'full' : 'half'),
+          width:
+            f?.width === "full" || f?.width === "half"
+              ? f.width
+              : f?.full
+              ? "full"
+              : "half",
         };
       };
 
       const mapDocument = (d: any) => ({
-        id: d?.id !== undefined && d?.id !== null ? String(d.id) : '',
-        name: d?.name ?? d?.title ?? '',
+        id: d?.id !== undefined && d?.id !== null ? String(d.id) : "",
+        name: d?.name ?? d?.title ?? "",
         fields: Array.isArray(d?.fields) ? d.fields.map(mapField) : [],
         required: !!d?.required,
         uploaded: !!d?.uploaded,
       });
 
       return {
-        id: r?.id ?? r?.employee_id ?? '',
+        id: r?.id ?? r?.employee_id ?? "",
         employeeData:
           r?.employee_data ??
           r?.employeeData ??
           (r?.firstName || r?.lastName || r?.new_employee_email
             ? {
-                firstName: r?.firstName ?? r?.first_name ?? '',
-                lastName: r?.lastName ?? r?.last_name ?? '',
+                firstName: r?.firstName ?? r?.first_name ?? "",
+                lastName: r?.lastName ?? r?.last_name ?? "",
                 email:
-                  r?.email ?? r?.new_employee_email ?? r?.new_employee_email ?? '',
-                empId: r?.empId ?? r?.emp_id ?? r?.empId ?? '',
-                phone: r?.phone ?? r?.phone_number ?? '',
-                gender: r?.gender ?? '',
-                dateOfBirth: r?.dateOfBirth ?? r?.date_of_birth ?? r?.dateOfBirth ?? undefined,
+                  r?.email ??
+                  r?.new_employee_email ??
+                  r?.new_employee_email ??
+                  "",
+                empId: r?.empId ?? r?.emp_id ?? r?.empId ?? "",
+                phone: r?.phone ?? r?.phone_number ?? "",
+                gender: r?.gender ?? "",
+                dateOfBirth:
+                  r?.dateOfBirth ??
+                  r?.date_of_birth ??
+                  r?.dateOfBirth ??
+                  undefined,
                 nationality: r?.nationality ?? r?.nationality ?? undefined,
               }
             : undefined),
@@ -174,11 +202,13 @@ export const onboardingService = {
   },
 
   async incrementOnboardingStep(): Promise<OnboardingData> {
-    const response = await api.put<ApiResponse<any>>(`${ONBOARDING_BASE_URL}/step`);
+    const response = await api.put<ApiResponse<any>>(
+      `${ONBOARDING_BASE_URL}/step`
+    );
     const raw = response?.data?.data ?? {};
 
     const toOnboardingData = (r: any): OnboardingData => ({
-      id: r?.id ?? r?.employee_id ?? '',
+      id: r?.id ?? r?.employee_id ?? "",
       employeeData: r?.employee_data ?? r?.employeeData ?? undefined,
       todos: r?.todos ?? [],
       requiredDocuments: r?.required_documents ?? r?.requiredDocuments ?? [],
@@ -197,6 +227,23 @@ export const onboardingService = {
     return response?.data ?? { success: false };
   },
 
+  // GET - Fetch all onboarding Users
+  async getAllOnboardingUsers(): Promise<Employee[]> {
+    const response = await api.get<ApiResponse<Employee[]>>(
+      `${ONBOARDING_BASE_URL}/sessions`
+    );
+    return response.data.data;
+  },
+
+  // PUT - Approve an onboarding session (HR action)
+  async approveOnboardingSession(
+    sessionId: string
+  ): Promise<{ message?: string }> {
+    const response = await api.put<ApiResponse<any>>(
+      `${ONBOARDING_BASE_URL}/onboard?sessionId=${sessionId}`
+    );
+    return response?.data ?? { success: false };
+  },
 };
 
 export default onboardingService;

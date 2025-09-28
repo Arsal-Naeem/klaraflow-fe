@@ -62,6 +62,7 @@
       "designation": "المسمى الوظيفي",
       "department": "القسم",
       "dateOfBirth": "تاريخ الميلاد",
+      
       "placeholders": {
         "empId": "أدخل معرّف الموظف",
         "firstName": "أدخل الاسم الأول",
@@ -95,6 +96,7 @@
       "dob": "تاريخ الميلاد",
       "maritalStatus": "الحالة الاجتماعية",
       "nationality": "الجنسية",
+      "sendInvite": "إرسال دعوة",
       "placeholders": {
         "dob": "اختر تاريخ الميلاد",
         "maritalStatus": "اختر الحالة الاجتماعية",

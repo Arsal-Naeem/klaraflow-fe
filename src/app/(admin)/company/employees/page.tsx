@@ -38,7 +38,6 @@ const departmentOptions = [
 export default function Page() {
   const breadcrumbItems = [{ name: "Company" }, { name: "Employees" }];
   const [searchTerm, setSearchTerm] = useState("");
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [viewType, setViewType] = useState<ViewType>("card");
   const [selectedDesignation, setSelectedDesignation] = useState<
     string | undefined
@@ -185,9 +184,8 @@ export default function Page() {
               Manage your company employees
             </p>
           </div>
-          <Link href="/company/employees/add" className="flex gap-2">
+          <Link href="/company/employees/send-invite" className="flex gap-2">
             <Button
-              onClick={() => setShowCreateForm(!showCreateForm)}
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />

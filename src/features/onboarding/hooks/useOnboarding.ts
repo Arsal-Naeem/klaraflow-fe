@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/utils/toast";
 import { onboardingService } from "../services";
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 import { DocumentUploadField } from "@/features/documents/types";
 import { documentKeys } from "@/features/documents/hooks/useDocuments";
 
@@ -12,6 +12,7 @@ export const onboardingKeys = {
   documents: () => [...onboardingKeys.all, "documents"] as const,
   todos: () => [...onboardingKeys.all, "todos"] as const,
   template: () => [...onboardingKeys.all, "template"] as const,
+  users: () => [...onboardingKeys.all, "users"] as const,
 };
 
 export function useCreateEmployee() {
@@ -21,6 +22,7 @@ export function useCreateEmployee() {
     mutationFn: (formData: FormData) =>
       onboardingService.createEmployee(formData),
     onSuccess: (newEmployee) => {
+      queryClient.invalidateQueries({ queryKey: onboardingKeys.users() });
       toast.success("Employee created successfully!");
     },
     onError: (error: any) => {
@@ -54,6 +56,36 @@ export function useUpdateTodoItem() {
     onError: (error: any) => {
       const message =
         error.response?.data?.message || "Failed to update todo item";
+      toast.error(message);
+    },
+  });
+}
+
+// Hook to fetch onboarding Users
+export function useOnboardingUsers() {
+  return useQuery({
+    queryKey: onboardingKeys.users(),
+    queryFn: () => onboardingService.getAllOnboardingUsers(),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: 2,
+  });
+}
+
+// Hook to Approve onboarding data
+export function useApproveOnboardingSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (sessionId: string) =>
+      onboardingService.approveOnboardingSession(sessionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: onboardingKeys.users() });
+      toast.success("Employee Onboarded Successfully!");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to approve onboarding session";
       toast.error(message);
     },
   });

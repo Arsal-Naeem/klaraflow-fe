@@ -102,7 +102,7 @@ export function PersonalCard({
             isLoading={isLoading || form?.formState?.isSubmitting}
             loadingText="Sending Invite"
           >
-            {tCommon("save")}
+            {tPersonal("sendInvite")}
           </Button>
         </div>
       </CardContent>

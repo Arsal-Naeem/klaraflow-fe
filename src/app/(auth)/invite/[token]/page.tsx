@@ -9,11 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { TextField } from "@/components/blocks/Form/Fields/TextField";
 import { useTranslations } from "next-intl";
-import { authService } from "@/features/authentication/services/auth.service";
-import { tokenManager } from "@/features/authentication/hooks/useAuth";
-import { onboardingService } from "@/features/onboarding/services/onboarding.service";
+import { useActivateAccount } from "@/features/authentication/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 import { AuthenticationLayout } from "@/components/layouts/AuthenticationLayout/AuthenticationLayout";
 
 // Form schema
@@ -36,12 +33,14 @@ export default function ActivatePage() {
   const router = useRouter();
   const t = useTranslations("authentication.activateAccount");
 
+  const activateAccount = useActivateAccount();
+
   // Redirect if no token
   React.useEffect(() => {
     if (!token || typeof token !== "string") {
       router.push("/login");
     }
-  }, [token, router]);
+  }, []);
 
   // Mutations
 
@@ -62,31 +61,13 @@ export default function ActivatePage() {
 
     setSubmitting(true);
     try {
-      const response = await authService.activateAccount({
+      activateAccount.mutate({
         token,
         password: data.password,
       });
-
-      // store token and user similar to useActivateAccount
-      tokenManager.setToken(response.token);
-      tokenManager.setUser(response.user);
-
-      // Attempt to fetch onboarding data for this user
-      try {
-        const onboardingData = await onboardingService.getOnboardingData();
-        // If onboarding session exists and is in progress (currentStep < 4 or status), redirect to onboarding
-        if (onboardingData && onboardingData.currentStep && onboardingData.currentStep > 0) {
-          router.push("/onboarding");
-          return;
-        }
-      } catch (err) {
-        // ignore and fallthrough
-      }
-
-      // Fallback to dashboard
-      router.push("/dashboard");
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to activate account";
+      const message =
+        error.response?.data?.message || "Failed to activate account";
       toast.error(message);
     } finally {
       setSubmitting(false);

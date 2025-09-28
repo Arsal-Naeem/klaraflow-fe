@@ -57,7 +57,7 @@ export default function Page() {
   const handleSuccess = () => {
     form.reset();
     setTabValue("mandatory");
-    router.push("/company/employees");
+    router.push("/company/onboarding");
   };
 
   // Add success callbacks to mutations
@@ -70,7 +70,7 @@ export default function Page() {
   const breadcrumbItems = [
     { name: "Company" },
     { name: "Employees" },
-    { name: "Add Employee" },
+    { name: "Send Invite" },
   ];
 
   const form = useForm<addEmployeeData>({

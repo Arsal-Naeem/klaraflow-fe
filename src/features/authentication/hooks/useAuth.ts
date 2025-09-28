@@ -178,18 +178,20 @@ export function useActivateAccount() {
   return useMutation({
     mutationFn: (data: ActivateAccountRequest) =>
       authService.activateAccount(data),
-    onSuccess: (data: LoginResponse) => {
+    onSuccess: (data: any) => {
       // Store token and user data
-      tokenManager.setToken(data.token);
-      tokenManager.setUser(data.user);
+      console.log("Activation successful, storing token and user data.");
+
+      tokenManager.setToken(data?.access_token);
+      tokenManager.setUser(data?.user);
 
       // Update query cache
-      queryClient.setQueryData(authKeys.profile(), data.user);
+      queryClient.setQueryData(authKeys.profile(), data?.user);
 
       toast.success("Account activated successfully! Welcome to KlaraFlow!");
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Redirect to onboarding
+      router.push("/onboarding");
     },
     onError: (error: any) => {
       const message =

@@ -95,6 +95,7 @@
       "dob": "Date of Birth",
       "maritalStatus": "Marital Status",
       "nationality": "Nationality",
+      "sendInvite": "Send Invite",
       "placeholders": {
         "dob": "Select Date of Birth",
         "maritalStatus": "Select Marital Status",
