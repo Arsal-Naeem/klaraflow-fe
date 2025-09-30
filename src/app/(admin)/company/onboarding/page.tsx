@@ -4,6 +4,14 @@ import DataLoader from "@/components/blocks/Loaders/DataLoader";
 import FullPageLayout from "@/components/layouts/FullPageLayout/FullPageLayout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -16,28 +24,35 @@ import {
   useApproveOnboardingSession,
   useOnboardingUsers,
 } from "@/features/onboarding";
-import { useEffect } from "react";
+import { useDebounce } from "@/utils/helpers";
+import { Search } from "lucide-react";
+import { useState } from "react";
+
+const StatusList = [
+  { label: "Invited", value: "invited" },
+  { label: "In Progress", value: "in_progress" },
+  { label: "Submitted", value: "submitted" },
+];
 
 export default function Page() {
   const breadcrumbItems = [{ name: "Company" }, { name: "Onboarding" }];
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+  const debouncedSearch = useDebounce(searchTerm, 300);
 
   const {
     data: users,
     isLoading: isLoadingUsers,
     isError: isErrorUsers,
-  } = useOnboardingUsers();
+  } = useOnboardingUsers({ q: debouncedSearch, status: selectedStatus });
 
   const ApproveOnboardingData = useApproveOnboardingSession();
 
   const ApproveOnboardingDataHandler = (sessionId: string) => {
     ApproveOnboardingData.mutate(sessionId);
   };
-
-  useEffect(() => {
-    if (users) {
-      console.log("Onboarding Users:", users);
-    }
-  }, [users]);
 
   // const getStatusVariant = (status: string) => {
   //   switch (status) {
@@ -71,6 +86,34 @@ export default function Page() {
 
   return (
     <FullPageLayout breadcrumbItems={breadcrumbItems}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Search employees..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div>
+          <Select
+            value={selectedStatus}
+            onValueChange={(value: string) => setSelectedStatus(value)}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Filter by" />
+            </SelectTrigger>
+            <SelectContent>
+              {StatusList.map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       <div className="overflow-hidden rounded-lg border">
         {isLoadingUsers ? (
           <DataLoader />

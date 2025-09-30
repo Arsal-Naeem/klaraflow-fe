@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -26,4 +27,25 @@ export function normalizeTranslationKey(text: string): string {
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .join("");
+}
+
+/**
+ * Custom hook to debounce a value.
+ *
+ * @param value - The value to debounce
+ * @param delay - The delay in milliseconds
+ * @returns The debounced value
+ *
+ * @example
+ * const debouncedSearch = useDebounce(searchTerm, 300);
+ */
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
 }

@@ -228,9 +228,15 @@ export const onboardingService = {
   },
 
   // GET - Fetch all onboarding Users
-  async getAllOnboardingUsers(): Promise<Employee[]> {
+  async getAllOnboardingUsers(params?: { q?: string; status?: string }): Promise<Employee[]> {
+    // Build query string only for provided params
+    const qs: string[] = [];
+    if (params?.q) qs.push(`q=${encodeURIComponent(params.q)}`);
+    if (params?.status) qs.push(`status=${encodeURIComponent(params.status)}`);
+    const queryString = qs.length ? `?${qs.join("&")}` : "";
+
     const response = await api.get<ApiResponse<Employee[]>>(
-      `${ONBOARDING_BASE_URL}/sessions`
+      `${ONBOARDING_BASE_URL}/sessions${queryString}`
     );
     return response.data.data;
   },

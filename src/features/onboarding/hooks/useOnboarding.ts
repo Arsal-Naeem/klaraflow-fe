@@ -62,10 +62,11 @@ export function useUpdateTodoItem() {
 }
 
 // Hook to fetch onboarding Users
-export function useOnboardingUsers() {
+export function useOnboardingUsers(params?: { q?: string; status?: string }) {
   return useQuery({
-    queryKey: onboardingKeys.users(),
-    queryFn: () => onboardingService.getAllOnboardingUsers(),
+    // include params in key so different searches are cached separately
+    queryKey: [...onboardingKeys.users(), params?.q ?? null, params?.status ?? null],
+    queryFn: () => onboardingService.getAllOnboardingUsers(params),
     staleTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,
   });
