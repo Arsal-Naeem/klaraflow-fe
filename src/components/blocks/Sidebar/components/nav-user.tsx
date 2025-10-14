@@ -23,6 +23,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 import Link from "next/link";
+import { useLogout } from "@/features/authentication";
 
 export function NavUser({
   user,
@@ -36,6 +37,11 @@ export function NavUser({
   const { isMobile } = useSidebar();
   const { isRTL } = useLanguageNavigation();
   const t = useTranslations();
+  const logoutMutation = useLogout();
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <SidebarMenu>
@@ -99,6 +105,8 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className={`cursor-pointer ${isRTL ? "flex-row-reverse" : ""}`}
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
             >
               <LogOut className={isRTL ? "ml-2" : "mr-2"} />
               {t("user.logout")}

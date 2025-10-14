@@ -12,41 +12,12 @@ import {
   User,
 } from "../types";
 import { authService } from "../services/auth.service";
+import { clientAuth } from "@/features/authentication/lib/auth";
 
 // Query keys for better cache management
 export const authKeys = {
   all: ["auth"] as const,
   profile: () => [...authKeys.all, "profile"] as const,
-};
-
-// Token management utilities
-export const tokenManager = {
-  getToken: (): string | null => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("auth_token");
-  },
-
-  setToken: (token: string): void => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("auth_token", token);
-  },
-
-  removeToken: (): void => {
-    if (typeof window === "undefined") return;
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user_data");
-  },
-
-  getUser: (): User | null => {
-    if (typeof window === "undefined") return null;
-    const userData = localStorage.getItem("user_data");
-    return userData ? JSON.parse(userData) : null;
-  },
-
-  setUser: (user: User): void => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("user_data", JSON.stringify(user));
-  },
 };
 
 // Hook for login with password
@@ -58,14 +29,12 @@ export function useLoginWithPassword() {
     mutationFn: (credentials: LoginRequest) =>
       authService.loginWithPassword(credentials),
     onSuccess: (data: LoginResponse) => {
-      // Store token and user data
-      tokenManager.setToken(data.token);
-      tokenManager.setUser(data.user);
+      // Store token and user data in cookies
+      clientAuth.setToken(data.token);
+      clientAuth.setUser(data.user);
 
       // Update query cache
       queryClient.setQueryData(authKeys.profile(), data.user);
-
-      toast.success("Login successful!");
 
       // Redirect to dashboard
       router.push("/dashboard");
@@ -99,9 +68,9 @@ export function useVerifyOtp() {
   return useMutation({
     mutationFn: (data: VerifyOtpRequest) => authService.verifyOtp(data),
     onSuccess: (data: LoginResponse) => {
-      // Store token and user data
-      tokenManager.setToken(data.token);
-      tokenManager.setUser(data.user);
+      // Store token and user data in cookies
+      clientAuth.setToken(data.token);
+      clientAuth.setUser(data.user);
 
       // Update query cache
       queryClient.setQueryData(authKeys.profile(), data.user);
@@ -179,11 +148,11 @@ export function useActivateAccount() {
     mutationFn: (data: ActivateAccountRequest) =>
       authService.activateAccount(data),
     onSuccess: (data: any) => {
-      // Store token and user data
+      // Store token and user data in cookies
       console.log("Activation successful, storing token and user data.");
 
-      tokenManager.setToken(data?.access_token);
-      tokenManager.setUser(data?.user);
+      clientAuth.setToken(data?.access_token);
+      clientAuth.setUser(data?.user);
 
       // Update query cache
       queryClient.setQueryData(authKeys.profile(), data?.user);
@@ -207,27 +176,16 @@ export function useLogout() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => authService.logout(),
-    onSuccess: () => {
-      // Clear local storage
-      tokenManager.removeToken();
-
-      // Clear query cache
+    mutationFn: async () => {
+      clientAuth.removeToken();
       queryClient.clear();
-
-      toast.success("Logged out successfully!");
-
-      // Redirect to login
+    },
+    onSuccess: () => {
       router.push("/login");
     },
     onError: (error: any) => {
-      // Even if API call fails, clear local data
-      tokenManager.removeToken();
-      queryClient.clear();
+      toast.error(error?.message || "Logout failed");
       router.push("/login");
-
-      const message = error.response?.data?.message || "Logout failed";
-      toast.error(message);
     },
   });
 }
@@ -237,7 +195,7 @@ export function useProfile() {
   return useQuery({
     queryKey: authKeys.profile(),
     queryFn: authService.getProfile,
-    enabled: !!tokenManager.getToken(),
+    enabled: !!clientAuth.getToken(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false,
   });
@@ -245,8 +203,8 @@ export function useProfile() {
 
 // Hook for checking authentication status
 export function useAuth() {
-  const token = tokenManager.getToken();
-  const user = tokenManager.getUser();
+  const token = clientAuth.getToken();
+  const user = clientAuth.getUser();
 
   return {
     isAuthenticated: !!token && !!user,

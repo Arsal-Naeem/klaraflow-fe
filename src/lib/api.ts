@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { clientAuth } from '../features/authentication/lib/auth';
 
 // Create base axios instance
 export const api = axios.create({
@@ -8,11 +9,11 @@ export const api = axios.create({
   },
 });
 
-// Request interceptor for adding auth token
+// Request interceptor for adding auth token from cookies
 api.interceptors.request.use(
   (config) => {
-    // Add auth token if available
-    const token = localStorage.getItem('auth_token');
+    // Add auth token from cookie if available
+    const token = clientAuth.getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,9 +30,13 @@ api.interceptors.response.use(
   (error) => {
     // Handle common errors here
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
+      // Handle unauthorized access - clear cookies and redirect
+      clientAuth.removeToken();
+      
+      // Only redirect if we're in the browser
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

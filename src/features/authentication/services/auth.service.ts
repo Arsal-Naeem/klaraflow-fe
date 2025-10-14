@@ -85,15 +85,10 @@ export const authService = {
     return response.data.data;
   },
 
-  // POST - Logout
-  async logout(): Promise<void> {
-    await api.post(`${AUTH_BASE_URL}/logout`);
-  },
-
   // GET - Get current user profile
   async getProfile(): Promise<User> {
     const response = await api.get<ApiResponse<User>>(
-      `${AUTH_BASE_URL}/profile`
+      `${AUTH_BASE_URL}/my-data`
     );
     return response.data.data;
   },
