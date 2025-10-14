@@ -13,6 +13,7 @@ import {
 } from "../types";
 import { authService } from "../services/auth.service";
 import { clientAuth } from "@/features/authentication/lib/auth";
+import { useUserStore } from "@/stores/user-store";
 
 // Query keys for better cache management
 export const authKeys = {
@@ -24,6 +25,7 @@ export const authKeys = {
 export function useLoginWithPassword() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { setUser } = useUserStore();
 
   return useMutation({
     mutationFn: (credentials: LoginRequest) =>
@@ -35,6 +37,9 @@ export function useLoginWithPassword() {
 
       // Update query cache
       queryClient.setQueryData(authKeys.profile(), data.user);
+
+      // Update Zustand store
+      setUser(data.user);
 
       // Redirect to dashboard
       router.push("/dashboard");
@@ -64,6 +69,7 @@ export function useSendOtp() {
 export function useVerifyOtp() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { setUser } = useUserStore();
 
   return useMutation({
     mutationFn: (data: VerifyOtpRequest) => authService.verifyOtp(data),
@@ -74,6 +80,9 @@ export function useVerifyOtp() {
 
       // Update query cache
       queryClient.setQueryData(authKeys.profile(), data.user);
+
+      // Update Zustand store
+      setUser(data.user);
 
       toast.success("Login successful!");
 
@@ -143,6 +152,7 @@ export function useResetPassword() {
 export function useActivateAccount() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { setUser } = useUserStore();
 
   return useMutation({
     mutationFn: (data: ActivateAccountRequest) =>
@@ -156,6 +166,9 @@ export function useActivateAccount() {
 
       // Update query cache
       queryClient.setQueryData(authKeys.profile(), data?.user);
+
+      // Update Zustand store
+      setUser(data?.user);
 
       toast.success("Account activated successfully! Welcome to KlaraFlow!");
 
@@ -174,10 +187,12 @@ export function useActivateAccount() {
 export function useLogout() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { clearUser } = useUserStore();
 
   return useMutation({
     mutationFn: async () => {
       clientAuth.removeToken();
+      clearUser();
       queryClient.clear();
     },
     onSuccess: () => {
@@ -204,7 +219,7 @@ export function useProfile() {
 // Hook for checking authentication status
 export function useAuth() {
   const token = clientAuth.getToken();
-  const user = clientAuth.getUser();
+  const { user } = useUserStore();
 
   return {
     isAuthenticated: !!token && !!user,

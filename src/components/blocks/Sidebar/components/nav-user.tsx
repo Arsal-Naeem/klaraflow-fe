@@ -24,24 +24,22 @@ import { LanguageToggle } from "./language-toggle";
 import { useLanguageNavigation } from "@/hooks/use-language-navigation";
 import Link from "next/link";
 import { useLogout } from "@/features/authentication";
+import { useCurrentUser } from "@/features/authentication/hooks/use-current-user";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const { isRTL } = useLanguageNavigation();
   const t = useTranslations();
   const logoutMutation = useLogout();
+  const { user, fullName, initials } = useCurrentUser();
 
   const handleLogout = () => {
     logoutMutation.mutate();
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <SidebarMenu>
@@ -53,11 +51,11 @@ export function NavUser({
               className={`cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground `}
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">AN</AvatarFallback>
+                <AvatarImage src={user.profile_picture_url || ""} alt={fullName} />
+                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className={`grid flex-1 text-sm leading-tight`}>
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{fullName}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown
@@ -78,11 +76,11 @@ export function NavUser({
                 }`}
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">AN</AvatarFallback>
+                  <AvatarImage src={user.profile_picture_url || ""} alt={fullName} />
+                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className={`grid flex-1 text-sm leading-tight `}>
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{fullName}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>

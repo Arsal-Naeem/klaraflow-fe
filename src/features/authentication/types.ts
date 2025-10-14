@@ -1,17 +1,29 @@
 // Authentication related types and interfaces
 
 export interface User {
-  id: string;
+  id: number;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string | null;
+  last_name: string | null;
   role: string;
-  avatar?: string;
-  department?: string;
-  designation?: string;
-  status: "active" | "inactive";
-  createdAt: string;
-  updatedAt: string;
+  profile_picture_url: string | null;
+  department_id: number | null;
+  designation_id: number | null;
+  company_id: number;
+  is_active: boolean;
+  phone: string | null;
+  gender: string | null;
+  dateOfBirth: string | null;
+  nationality: string | null;
+  maritalStatus: string | null;
+  empId: string | null;
+  jobType: string | null;
+  grade: string | null;
+  hiringDate: string | null;
+  probationPeriod: string | null;
+  reportTo: number | null;
+  created_at: string;
+  hashed_password?: string;
 }
 
 export interface LoginRequest {
