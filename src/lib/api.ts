@@ -30,12 +30,26 @@ api.interceptors.response.use(
   (error) => {
     // Handle common errors here
     if (error.response?.status === 401) {
-      // Handle unauthorized access - clear cookies and redirect
-      clientAuth.removeToken();
-      
       // Only redirect if we're in the browser
       if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+        const currentPath = window.location.pathname;
+        
+        // List of auth-related paths where we should NOT redirect on 401
+        const authPaths = [
+          '/login',
+          '/forgot-password',
+          '/reset-password',
+          '/invite',
+        ];
+        
+        // Check if current path is an auth page
+        const isAuthPage = authPaths.some(path => currentPath.startsWith(path));
+        
+        // Only clear token and redirect if NOT on an auth page
+        if (!isAuthPage) {
+          clientAuth.removeToken();
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);
