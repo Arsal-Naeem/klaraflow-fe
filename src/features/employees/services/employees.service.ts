@@ -7,6 +7,7 @@ import {
   EmployeeFilters,
 } from "../types";
 import { ApiResponse } from "@/types/api.types";
+import { ENABLE_MOCK_MODE, mockEmployeesService } from "@/data/mock-api";
 
 // Employee API endpoints
 const EMPLOYEES_BASE_URL = "/employees";
@@ -14,6 +15,11 @@ const EMPLOYEES_BASE_URL = "/employees";
 export const employeesService = {
   // GET - Fetch all employees with optional filters
   async getEmployees(filters?: EmployeeFilters): Promise<EmployeesResponse> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.getEmployees(filters);
+    }
+
     const params = new URLSearchParams();
 
     if (filters?.search) params.append("search", filters.search);
@@ -31,6 +37,11 @@ export const employeesService = {
 
   // GET - Fetch single employee by ID
   async getEmployeeById(id: string): Promise<Employee> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.getEmployeeById(id);
+    }
+
     const response = await api.get<ApiResponse<Employee>>(
       `${EMPLOYEES_BASE_URL}/${id}`
     );
@@ -42,6 +53,11 @@ export const employeesService = {
     id: string,
     employeeData: UpdateEmployeeRequest
   ): Promise<Employee> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.updateEmployee(id, employeeData);
+    }
+
     const response = await api.put<ApiResponse<Employee>>(
       `${EMPLOYEES_BASE_URL}/${id}`,
       employeeData
@@ -51,6 +67,12 @@ export const employeesService = {
 
   // DELETE - Delete employee
   async deleteEmployee(id: string): Promise<void> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      await mockEmployeesService.deleteEmployee(id);
+      return;
+    }
+
     await api.delete(`${EMPLOYEES_BASE_URL}/${id}`);
   },
 
@@ -60,6 +82,11 @@ export const employeesService = {
     file: File,
     documentType: string
   ): Promise<Employee> {
+    // In mock mode, just return updated employee without file upload
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.getEmployeeById(id);
+    }
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("documentType", documentType);
@@ -81,6 +108,11 @@ export const employeesService = {
     id: string,
     status: "active" | "inactive" | "terminated"
   ): Promise<Employee> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.updateEmployee(id, { status });
+    }
+
     const response = await api.put<ApiResponse<Employee>>(
       `${EMPLOYEES_BASE_URL}/${id}/status`,
       { status }
@@ -90,6 +122,11 @@ export const employeesService = {
 
   // GET - Fetch all departments
   async getDepartments(): Promise<{ id: string; name: string }[]> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.getDepartments();
+    }
+
     const response = await api.get<ApiResponse<{ id: string; name: string }[]>>(
       "/settings/departments"
     );
@@ -98,6 +135,11 @@ export const employeesService = {
 
   // POST - Create new department
   async createDepartment(name: string): Promise<{ id: string; name: string }> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.createDepartment(name);
+    }
+
     const response = await api.post<ApiResponse<{ id: string; name: string }>>(
       "/settings/departments",
       { name }
@@ -110,6 +152,11 @@ export const employeesService = {
     id: string,
     name: string
   ): Promise<{ id: string; name: string }> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.updateDepartment(id, name);
+    }
+
     const response = await api.put<ApiResponse<{ id: string; name: string }>>(
       `/settings/departments/${id}`,
       { name }
@@ -119,6 +166,12 @@ export const employeesService = {
 
   // DELETE - Delete department
   async deleteDepartment(id: string): Promise<void> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      await mockEmployeesService.deleteDepartment(id);
+      return;
+    }
+
     await api.delete(`/settings/departments/${id}`);
   },
 
@@ -126,6 +179,11 @@ export const employeesService = {
   async getDesignations(): Promise<
     { id: string; code?: string; name: string }[]
   > {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.getDesignations();
+    }
+
     const response = await api.get<
       ApiResponse<{ id: string; code?: string; name: string }[]>
     >("/settings/designations");
@@ -137,6 +195,11 @@ export const employeesService = {
     name: string,
     code?: string
   ): Promise<{ id: string; code?: string; name: string }> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.createDesignation(name, code);
+    }
+
     const response = await api.post<
       ApiResponse<{ id: string; code?: string; name: string }>
     >("/settings/designations", { name, code });
@@ -149,6 +212,11 @@ export const employeesService = {
     name: string,
     code?: string
   ): Promise<{ id: string; code?: string; name: string }> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockEmployeesService.updateDesignation(id, name, code);
+    }
+
     const response = await api.put<
       ApiResponse<{ id: string; code?: string; name: string }>
     >(`/settings/designations/${id}`, { name, code });
@@ -157,6 +225,12 @@ export const employeesService = {
 
   // DELETE - Delete designation
   async deleteDesignation(id: string): Promise<void> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      await mockEmployeesService.deleteDesignation(id);
+      return;
+    }
+
     await api.delete(`/settings/designations/${id}`);
   },
 };

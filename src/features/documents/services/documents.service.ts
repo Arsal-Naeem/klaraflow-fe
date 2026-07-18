@@ -3,6 +3,7 @@
 import api from "@/lib/api";
 import { ApiResponse } from "@/types/api.types";
 import { DocumentUpload, DocumentUploadField, DocumentTemplate } from "../types";
+import { ENABLE_MOCK_MODE, mockDocumentsService } from "@/data/mock-api";
 
 // Document API endpoints
 const DOCUMENT_BASE_URL = "/document";
@@ -12,6 +13,11 @@ export const documentService = {
   
   // GET - Fetch all document templates
   async getDocumentTemplates(): Promise<DocumentTemplate[]> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockDocumentsService.getDocumentTemplates();
+    }
+
     const response = await api.get<ApiResponse<DocumentTemplate[]>>(
       `${DOCUMENT_BASE_URL}/templates`
     );
@@ -20,6 +26,11 @@ export const documentService = {
 
   // GET - Fetch single document template by ID
   async getDocumentTemplateById(templateId: string): Promise<DocumentTemplate> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockDocumentsService.getDocumentTemplateById(templateId);
+    }
+
     const response = await api.get<ApiResponse<DocumentTemplate>>(
       `${DOCUMENT_BASE_URL}/templates/${templateId}`
     );
@@ -38,6 +49,11 @@ export const documentService = {
       width: "half" | "full";
     }[];
   }): Promise<DocumentTemplate> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockDocumentsService.createDocumentTemplate(templateData);
+    }
+
     const response = await api.post<ApiResponse<DocumentTemplate>>(
       `${DOCUMENT_BASE_URL}/templates`,
       templateData
@@ -60,6 +76,11 @@ export const documentService = {
       }[];
     }
   ): Promise<DocumentTemplate> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      return mockDocumentsService.updateDocumentTemplate(templateId, templateData);
+    }
+
     const response = await api.put<ApiResponse<DocumentTemplate>>(
       `${DOCUMENT_BASE_URL}/templates/${templateId}`,
       templateData
@@ -69,6 +90,12 @@ export const documentService = {
 
   // DELETE - Delete document template
   async deleteDocumentTemplate(templateId: string): Promise<void> {
+    // Use mock service in prototype mode
+    if (ENABLE_MOCK_MODE) {
+      await mockDocumentsService.deleteDocumentTemplate(templateId);
+      return;
+    }
+
     await api.delete(`${DOCUMENT_BASE_URL}/templates/${templateId}`);
   },
 
@@ -80,6 +107,17 @@ export const documentService = {
     employeeId: string,
     payload: DocumentUploadField[]
   ): Promise<DocumentUpload> {
+    // In mock mode, just return mock response
+    if (ENABLE_MOCK_MODE) {
+      return {
+        id: 'doc_' + Date.now(),
+        templateId,
+        employeeId,
+        status: 'completed',
+        uploadedAt: new Date().toISOString(),
+      } as DocumentUpload;
+    }
+
     const formData = new FormData();
 
     // Add employeeId
