@@ -80,7 +80,7 @@ export default function LeaveRequestsPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex w-full flex-col gap-6 p-6">
       <PageHeader
         breadcrumbs={[
           { label: "Company", href: "/company" },
@@ -89,7 +89,7 @@ export default function LeaveRequestsPage() {
         title="Leave Requests"
         subtitle="Track and approve employee time-off requests."
         actions={
-          <Button variant="accent" onClick={() => setAddOpen(true)}>
+          <Button variant="default" onClick={() => setAddOpen(true)}>
             <Plus className="h-4 w-4" /> New Request
           </Button>
         }
