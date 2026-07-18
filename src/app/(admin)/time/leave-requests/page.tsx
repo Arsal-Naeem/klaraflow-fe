@@ -1,11 +1,189 @@
-import FullPageLayout from "@/components/layouts/FullPageLayout/FullPageLayout";
+"use client";
 
-export default function Page() {
-  const breadcrumbItems = [{ name: "Time" }, { name: "Leave Requests" }];
+import * as React from "react";
+import {
+  Plus,
+  Search,
+  LayoutGrid,
+  List,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  XCircle,
+} from "lucide-react";
+import { cn } from "@/utils/helpers";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { GradientCard } from "@/components/ui/gradient-card";
+import { LeaveRequestList } from "@/features/leave-requests/components/LeaveRequestList";
+import { LeaveRequestCards } from "@/features/leave-requests/components/LeaveRequestCards";
+import { AddLeaveRequestDialog } from "@/features/leave-requests/components/AddLeaveRequestDialog";
+import {
+  mockLeaveRequests,
+  getStatusVariant,
+} from "@/features/leave-requests/data/mockLeaveRequests";
+import { LeaveRequest, LeaveStatus } from "@/features/leave-requests/types";
+
+type ViewMode = "table" | "cards";
+
+export default function LeaveRequestsPage() {
+  const [requests, setRequests] =
+    React.useState<LeaveRequest[]>(mockLeaveRequests);
+  const [view, setView] = React.useState<ViewMode>("cards");
+  const [search, setSearch] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState<"all" | LeaveStatus>(
+    "all",
+  );
+  const [addOpen, setAddOpen] = React.useState(false);
+
+  const filtered = requests.filter((r) => {
+    const q = search.toLowerCase();
+    const matchesSearch = [r.employeeName, r.leaveType, r.id, r.reason].some(
+      (f) => f.toLowerCase().includes(q),
+    );
+    const matchesStatus = statusFilter === "all" || r.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleAdd = (entry: Omit<LeaveRequest, "id">) => {
+    const nextNum = 2001 + requests.length;
+    setRequests((prev) => [{ id: `LR-${nextNum}`, ...entry }, ...prev]);
+  };
+  const handleDelete = (id: string) =>
+    setRequests((prev) => prev.filter((r) => r.id !== id));
+  const handleStatusChange = (id: string, status: LeaveStatus) =>
+    setRequests((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status } : r)),
+    );
+
+  const stats = [
+    {
+      label: "Total Requests",
+      value: requests.length,
+      icon: CalendarDays,
+    },
+    {
+      label: "Approved",
+      value: requests.filter((r) => r.status === "approved").length,
+      icon: CheckCircle2,
+    },
+    {
+      label: "Pending",
+      value: requests.filter((r) => r.status === "pending").length,
+      icon: Clock3,
+    },
+    {
+      label: "Rejected",
+      value: requests.filter((r) => r.status === "rejected").length,
+      icon: XCircle,
+    },
+  ];
 
   return (
-    <FullPageLayout breadcrumbItems={breadcrumbItems}>
-      <h2>Leave Requests Page</h2>
-    </FullPageLayout>
+    <div className="flex flex-col gap-6 p-6">
+      <PageHeader
+        breadcrumbs={[
+          { label: "Company", href: "/company" },
+          { label: "Leave Requests" },
+        ]}
+        title="Leave Requests"
+        subtitle="Track and approve employee time-off requests."
+        actions={
+          <Button variant="accent" onClick={() => setAddOpen(true)}>
+            <Plus className="h-4 w-4" /> New Request
+          </Button>
+        }
+      />
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {stats.map((s) => (
+          <GradientCard key={s.label} className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-xs">{s.label}</p>
+                <p className="mt-1 text-2xl font-semibold">{s.value}</p>
+              </div>
+              <s.icon className="text-muted-foreground h-5 w-5" />
+            </div>
+          </GradientCard>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative min-w-[220px] flex-1">
+          <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search leave requests..."
+            className="border-input bg-background focus-visible:ring-ring/50 h-9 w-full rounded-md border pl-9 pr-3 text-sm outline-none focus-visible:ring-[3px]"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+          className="border-input bg-background h-9 rounded-md border px-3 text-sm outline-none"
+        >
+          <option value="all">All statuses</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <div className="bg-muted flex items-center rounded-md p-0.5">
+          <button
+            onClick={() => setView("table")}
+            className={cn(
+              "flex h-8 cursor-pointer items-center gap-1.5 rounded px-2.5 text-sm transition-colors",
+              view === "table"
+                ? "bg-background shadow-sm"
+                : "text-muted-foreground",
+            )}
+          >
+            <List className="h-4 w-4" /> Table
+          </button>
+          <button
+            onClick={() => setView("cards")}
+            className={cn(
+              "flex h-8 cursor-pointer items-center gap-1.5 rounded px-2.5 text-sm transition-colors",
+              view === "cards"
+                ? "bg-background shadow-sm"
+                : "text-muted-foreground",
+            )}
+          >
+            <LayoutGrid className="h-4 w-4" /> Cards
+          </button>
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="text-muted-foreground rounded-lg border border-dashed p-12 text-center text-sm">
+          No leave requests found.
+        </div>
+      ) : view === "table" ? (
+        <LeaveRequestList
+          requests={filtered}
+          getStatusVariant={getStatusVariant}
+          onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
+        />
+      ) : (
+        <LeaveRequestCards
+          requests={filtered}
+          getStatusVariant={getStatusVariant}
+          onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
+        />
+      )}
+
+      <p className="text-muted-foreground text-center text-xs">
+        Showing {filtered.length} of {requests.length} requests
+      </p>
+
+      <AddLeaveRequestDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onAdd={handleAdd}
+      />
+    </div>
   );
 }
