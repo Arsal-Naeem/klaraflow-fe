@@ -1,10 +1,10 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import { PayrollApprover } from "../types";
-import { initials } from "../data/mockPayroll";
+import { avatarUrl, initials } from "../data/mockPayroll";
 
 const STATUS_MAP = {
   approved: { variant: "default", label: "Approved", Icon: CheckCircle2 },
@@ -25,6 +25,7 @@ export function PayrollApprovers({
         return (
           <div key={i} className="flex items-center gap-3">
             <Avatar className="h-9 w-9">
+              {/* <AvatarImage src={avatarUrl(a.name)} alt={a.name} /> */}
               <AvatarFallback className="bg-muted text-xs">
                 {initials(a.name)}
               </AvatarFallback>

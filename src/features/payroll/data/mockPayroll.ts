@@ -21,6 +21,10 @@ export const initials = (name: string): string =>
     .join("")
     .toUpperCase();
 
+// Real profile photos via a free, no-key API. Falls back to initials if offline.
+export const avatarUrl = (seed: string): string =>
+  `https://i.pravatar.cc/150?u=${encodeURIComponent(seed)}`;
+
 const AVATAR_COLORS = [
   "from-pink-500 to-purple-600",
   "from-blue-500 to-indigo-600",

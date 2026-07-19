@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,7 @@ import { Download, Eye, MoreHorizontal } from "lucide-react";
 import { EmployeePayroll } from "../types";
 import {
   TOTAL_STAGES,
+  avatarUrl,
   formatPKR,
   getStatusVariant,
   getTotals,
@@ -62,11 +63,12 @@ export function EmployeePayrollList({
               <TableRow
                 key={p.id}
                 className="cursor-pointer odd:bg-muted/20 hover:bg-muted/50"
-                onClick={() => router.push(`/company/payroll/${p.id}`)}
+                onClick={() => router.push(`/payroll/${p.id}`)}
               >
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
+                      {/* <AvatarImage src={avatarUrl(p.employeeId)} alt={p.employeeName} /> */}
                       <AvatarFallback
                         className={`bg-gradient-to-br ${p.avatarColor} text-xs font-medium text-white`}
                       >
@@ -117,7 +119,7 @@ export function EmployeePayrollList({
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/company/payroll/${p.id}`);
+                          router.push(`/payroll/${p.id}`);
                         }}
                       >
                         <Eye className="mr-2 h-4 w-4" /> View payslip

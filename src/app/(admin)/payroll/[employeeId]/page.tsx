@@ -1,28 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Payslip } from "@/features/payroll/components/Payslip";
+import { Payslip, PayslipLine } from "@/features/payroll/components/Payslip";
 import { PayrollStages } from "@/features/payroll/components/PayrollStages";
 import { PayrollApprovers } from "@/features/payroll/components/PayrollApprovers";
-import { ArrowLeft, CheckCircle2, Download, Undo2 } from "lucide-react";
+import {
+  AddAdjustmentDialog,
+  PayrollAdjustment,
+} from "@/features/payroll/components/AddAdjustmentDialog";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Download,
+  Lock,
+  Plus,
+  Undo2,
+} from "lucide-react";
 import {
   TOTAL_STAGES,
+  avatarUrl,
   buildApprovers,
   buildStages,
   formatPKR,
   getPayrollById,
   getStatusVariant,
-  getTotals,
   initials,
   STATUS_LABEL,
   statusFromCompleted,
 } from "@/features/payroll/data/mockPayroll";
+
+// Adjustments are allowed until the run reaches Approval (stage index 3).
+const APPROVAL_INDEX = 3;
 
 export default function EmployeePayrollDetailPage() {
   const params = useParams();
@@ -31,14 +45,48 @@ export default function EmployeePayrollDetailPage() {
     : params.employeeId;
   const payroll = getPayrollById(employeeId ?? "");
 
-  // Local, session-only workflow state seeded from the mock.
+  // Local, session-only state seeded from the mock.
   const [completed, setCompleted] = useState(payroll?.completedStages ?? 0);
+  const [adjustments, setAdjustments] = useState<PayrollAdjustment[]>([]);
+  const [addOpen, setAddOpen] = useState(false);
+
+  const editable = completed < APPROVAL_INDEX;
+
+  const earnings = useMemo<PayslipLine[]>(() => {
+    if (!payroll) return [];
+    return [
+      ...payroll.earnings.map((e) => ({ label: e.label, amount: e.amount })),
+      ...adjustments
+        .filter((a) => a.kind === "earning")
+        .map((a) => ({
+          id: a.id,
+          label: a.label,
+          amount: a.amount,
+          isAdjustment: true,
+        })),
+    ];
+  }, [payroll, adjustments]);
+
+  const deductions = useMemo<PayslipLine[]>(() => {
+    if (!payroll) return [];
+    return [
+      ...payroll.deductions.map((d) => ({ label: d.label, amount: d.amount })),
+      ...adjustments
+        .filter((a) => a.kind === "deduction")
+        .map((a) => ({
+          id: a.id,
+          label: a.label,
+          amount: a.amount,
+          isAdjustment: true,
+        })),
+    ];
+  }, [payroll, adjustments]);
 
   if (!payroll) {
     return (
       <div className="flex w-full flex-col gap-4 p-6">
         <Link
-          href="/company/payroll"
+          href="/payroll"
           className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-sm"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Payroll
@@ -50,18 +98,24 @@ export default function EmployeePayrollDetailPage() {
     );
   }
 
-  const { gross, totalDeductions, net } = getTotals(payroll);
+  const gross = earnings.reduce((s, l) => s + l.amount, 0);
+  const totalDeductions = deductions.reduce((s, l) => s + l.amount, 0);
+  const net = gross - totalDeductions;
   const status = statusFromCompleted(completed);
   const stages = buildStages(completed);
   const approvers = buildApprovers(completed);
 
   const approve = () => setCompleted((c) => Math.min(TOTAL_STAGES, c + 1));
   const sendBack = () => setCompleted((c) => Math.max(0, c - 1));
+  const addAdjustment = (a: PayrollAdjustment) =>
+    setAdjustments((prev) => [...prev, a]);
+  const removeAdjustment = (id: string) =>
+    setAdjustments((prev) => prev.filter((a) => a.id !== id));
 
   return (
     <div className="flex w-full flex-col gap-6 p-6">
       <Link
-        href="/company/payroll"
+        href="/payroll"
         className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-sm"
       >
         <ArrowLeft className="h-4 w-4" /> Back to Payroll
@@ -69,19 +123,14 @@ export default function EmployeePayrollDetailPage() {
 
       <PageHeader
         breadcrumbs={[
-          { label: "Company", href: "/company" },
-          { label: "Payroll", href: "/company/payroll" },
+          { label: "Payroll", href: "/payroll" },
           { label: payroll.employeeName },
         ]}
         title={payroll.employeeName}
         subtitle={`${payroll.designation} · ${payroll.department} · ${payroll.payPeriod}`}
         actions={
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={sendBack}
-              disabled={completed === 0}
-            >
+            <Button variant="outline" onClick={sendBack} disabled={completed === 0}>
               <Undo2 className="mr-2 h-4 w-4" /> Send back
             </Button>
             <Button
@@ -102,6 +151,7 @@ export default function EmployeePayrollDetailPage() {
         <div className="relative flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Avatar className="h-14 w-14">
+              {/* <AvatarImage src={avatarUrl(payroll.employeeId)} alt={payroll.employeeName} /> */}
               <AvatarFallback
                 className={`bg-gradient-to-br ${payroll.avatarColor} text-lg font-semibold text-white`}
               >
@@ -127,9 +177,7 @@ export default function EmployeePayrollDetailPage() {
             </div>
             <div>
               <p className="text-muted-foreground text-xs">Deductions</p>
-              <p className="text-sm font-semibold">
-                - {formatPKR(totalDeductions)}
-              </p>
+              <p className="text-sm font-semibold">- {formatPKR(totalDeductions)}</p>
             </div>
             <div>
               <p className="text-muted-foreground text-xs">Net Pay</p>
@@ -151,19 +199,46 @@ export default function EmployeePayrollDetailPage() {
                   {new Date(payroll.payDate).toLocaleDateString()}
                 </p>
               </div>
-              <Button
-                variant="outline"
-                className="h-8"
-                onClick={() =>
-                  alert(
-                    `Prototype: payslip for ${payroll.employeeName} would download here.`,
-                  )
-                }
-              >
-                <Download className="mr-2 h-4 w-4" /> Download
-              </Button>
+              <div className="flex items-center gap-2">
+                {editable ? (
+                  <Button
+                    variant="outline"
+                    className="h-8"
+                    onClick={() => setAddOpen(true)}
+                  >
+                    <Plus className="mr-2 h-4 w-4" /> Add adjustment
+                  </Button>
+                ) : (
+                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                    <Lock className="h-3.5 w-3.5" /> Locked after approval
+                  </span>
+                )}
+                <Button
+                  variant="outline"
+                  className="h-8"
+                  onClick={() =>
+                    alert(
+                      `Prototype: payslip for ${payroll.employeeName} would download here.`
+                    )
+                  }
+                >
+                  <Download className="mr-2 h-4 w-4" /> Download
+                </Button>
+              </div>
             </div>
-            <Payslip payroll={payroll} />
+            <Payslip
+              earnings={earnings}
+              deductions={deductions}
+              paymentMethod={payroll.paymentMethod}
+              bankAccount={payroll.bankAccount}
+              editable={editable}
+              onRemove={removeAdjustment}
+            />
+            <p className="text-muted-foreground mt-3 text-[11px]">
+              Base salary and standard components are managed in Employee →
+              Compensation. Only one-time adjustments can be added here, and only
+              before the run is approved.
+            </p>
           </div>
         </div>
 
@@ -190,6 +265,12 @@ export default function EmployeePayrollDetailPage() {
           </div>
         </div>
       </div>
+
+      <AddAdjustmentDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onAdd={addAdjustment}
+      />
     </div>
   );
 }

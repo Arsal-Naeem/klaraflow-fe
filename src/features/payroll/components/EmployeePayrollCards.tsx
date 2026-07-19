@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { GradientCard } from "@/components/ui/gradient-card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,7 @@ import { ArrowRight, Download, Eye, MoreHorizontal } from "lucide-react";
 import { EmployeePayroll } from "../types";
 import {
   TOTAL_STAGES,
+  avatarUrl,
   formatPKR,
   getStatusVariant,
   getTotals,
@@ -37,12 +38,13 @@ export function EmployeePayrollCards({
       {items.map((p) => {
         const { net } = getTotals(p);
         const status = statusFromCompleted(p.completedStages);
-        const open = () => router.push(`/company/payroll/${p.id}`);
+        const open = () => router.push(`/payroll/${p.id}`);
         return (
           <GradientCard key={p.id} className="cursor-pointer" onClick={open}>
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <Avatar className="h-11 w-11">
+                  {/* <AvatarImage src={avatarUrl(p.employeeId)} alt={p.employeeName} /> */}
                   <AvatarFallback
                     className={`bg-gradient-to-br ${p.avatarColor} text-sm font-medium text-white`}
                   >
