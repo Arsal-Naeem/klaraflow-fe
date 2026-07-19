@@ -185,7 +185,7 @@ export default function Page() {
                       </TableCell>
 
                       <TableCell className="text-xs">
-                        {employee?.new_employee_email}
+                        {employee?.new_employee_email || employee?.email}
                       </TableCell>
                       <TableCell className="text-xs">
                         {getStepVariant(
