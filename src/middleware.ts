@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Routes that require authentication
+// Routes that require authentication 
 const protectedRoutes = [
   '/dashboard',
   '/company',
