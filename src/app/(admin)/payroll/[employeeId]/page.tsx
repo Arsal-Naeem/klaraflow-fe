@@ -161,7 +161,7 @@ export default function EmployeePayrollDetailPage() {
             <div>
               <div className="flex items-center gap-2">
                 <p className="text-lg font-semibold">{payroll.employeeName}</p>
-                <Badge variant={getStatusVariant(status)}>
+                <Badge variant={getStatusVariant(status) as any}>
                   {STATUS_LABEL[status]}
                 </Badge>
               </div>
